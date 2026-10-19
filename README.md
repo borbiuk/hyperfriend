@@ -2,7 +2,7 @@
 
 Hyperfriend is a **browser extension for Chrome and Firefox** that adds a one-click **copy link** button to every
 Pull Request and Issue on [GitHub](https://github.com). The button copies a rich hyperlink, so a pasted link in
-Microsoft Teams, Slack and other chats shows readable text such as `Pull Request 12: Add copy button`
+Microsoft Teams, Slack and other chats shows readable text such as `PR 12: Add copy button to PR list`
 instead of a bare URL.
 
 Chrome Web Store and Firefox Add-ons listings are coming soon.
@@ -15,8 +15,8 @@ Chrome Web Store and Firefox Add-ons listings are coming soon.
 
 - **Pull Requests and Issues**: a button next to the title of every item in list views and next to the title on the detail pages.
 - **Rich hyperlink**: the clipboard gets both formats at once, so every chat app picks the best one.
-    - `text/html`: `<a href="https://github.com/OWNER/REPO/pull/12">Pull Request 12: Add copy button</a>`
-    - `text/plain`: `Pull Request 12: Add copy button — https://github.com/OWNER/REPO/pull/12`
+    - `text/html`: `<a href="https://github.com/OWNER/REPO/pull/12">PR 12: Add copy button to PR list</a>`
+    - `text/plain`: `PR 12: Add copy button to PR list — https://github.com/OWNER/REPO/pull/12`
 - **Looks like GitHub**: styled like GitHub's own icon buttons (Primer "invisible" icon button, 24 px in lists and 32 px in page headers), with GitHub-style tooltips ("Copy link to pull request" / "Copy link to issue"). On detail pages it sits right after the `#number` of the title.
 - **Clear feedback**: after a click the icon changes to a check mark and the tooltip shows "Copied!", or a cross and "Copy failed", for 1.5 seconds. Screen readers announce the result, and the accessible label is, for example, "Copy link to pull request #12".
 - **Works with GitHub navigation**: buttons appear on pages that GitHub loads without a full page refresh and are never duplicated.
@@ -33,18 +33,18 @@ Chrome Web Store and Firefox Add-ons listings are coming soon.
 Click the Hyperfriend icon in the browser toolbar to open the settings popup. It has one template for Pull Request
 links and one for Issue links. Defaults:
 
-- Pull Request: `Pull Request {{pr_number}}: {{pr_name}}`
+- Pull Request: `PR {{pr_number}}: {{pr_name}}`
 - Issue: `Issue {{issue_number}}: {{issue_name}}`
 
-| Placeholder        | Available in  | Replaced with                  | Example                |
-| ------------------ | ------------- | ------------------------------ | ---------------------- |
-| `{{pr_number}}`    | Pull Requests | Pull Request number            | `12`                   |
-| `{{pr_name}}`      | Pull Requests | Pull Request title             | `Add copy button`      |
-| `{{issue_number}}` | Issues        | Issue number                   | `34`                   |
-| `{{issue_name}}`   | Issues        | Issue title                    | `Button is not shown`  |
-| `{{owner}}`        | Both          | Repository owner               | `borbiuk`              |
-| `{{repo}}`         | Both          | Repository name                | `hyperfriend`          |
-| `{{url}}`          | Both          | Canonical Pull Request / Issue | `https://github.com/…` |
+| Placeholder        | Available in  | Replaced with                  | Example                      |
+| ------------------ | ------------- | ------------------------------ | ---------------------------- |
+| `{{pr_number}}`    | Pull Requests | Pull Request number            | `12`                         |
+| `{{pr_name}}`      | Pull Requests | Pull Request title             | `Add copy button to PR list` |
+| `{{issue_number}}` | Issues        | Issue number                   | `34`                         |
+| `{{issue_name}}`   | Issues        | Issue title                    | `Button is not shown`        |
+| `{{owner}}`        | Both          | Repository owner               | `borbiuk`                    |
+| `{{repo}}`         | Both          | Repository name                | `hyperfriend`                |
+| `{{url}}`          | Both          | Canonical Pull Request / Issue | `https://github.com/…`       |
 
 Notes:
 
@@ -71,7 +71,7 @@ File format (schema version 1):
 	"schemaVersion": 1,
 	"exportedAt": "2026-10-19T18:00:00.000Z",
 	"templates": {
-		"pull-request": "Pull Request {{pr_number}}: {{pr_name}}",
+		"pull-request": "PR {{pr_number}}: {{pr_name}}",
 		"issue": "Issue {{issue_number}}: {{issue_name}}"
 	}
 }
@@ -88,6 +88,7 @@ Import rules:
 ### Settings popup
 
 - **GitHub look**: built with Primer React, the design system of GitHub.
+- **Header**: the popup shows the extension icon next to the name.
 - **Live preview**: each template field is marked with a Pull Request or Issue icon, lists the available placeholders and shows the resulting link text for a sample item.
 - **Autosave**: changes are saved about 300 ms after you stop typing, with a "Saved" status.
 - **Footer**: **Reset to defaults** restores both templates, **Export** and **Import** share them as a file (see above), and a link opens the GitHub repository.
@@ -218,6 +219,7 @@ The version lives in `public/manifest.json`. The pre-commit hook copies it to `p
 
 ### Store submission notes
 
+- **Store assets** (promo tiles, screenshots and their sources) live in `design/store/`; see [design/store/README.md](design/store/README.md) for which file goes where in the Chrome Web Store dashboard and how to regenerate them.
 - **Chrome Web Store**: upload the `hyperfriend-build-chrome_*.zip` created by `npm run zip`. The 128×128 icon the store requires is part of the package (`assets/logo-128.png`; see [design/icon](design/icon/README.md)).
 - **Firefox Add-ons (AMO)**: upload `hyperfriend-build-firefox_*.zip`. Because the code is bundled and minified, AMO also needs a **source archive**: the repository without `node_modules/`, `dist/` and `dist-firefox/`. Build steps for the reviewer:
     1. Use Node.js 22 or newer.

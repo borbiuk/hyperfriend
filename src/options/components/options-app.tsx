@@ -7,6 +7,7 @@ import { useConfig } from '../hooks/use-config';
 import { useViewMode } from '../hooks/use-view-mode';
 
 import { FooterActions } from './footer-actions';
+import { Logo } from './logo';
 import { SettingsSection } from './settings-section';
 import { FieldControls, TemplateField } from './template-field';
 
@@ -78,16 +79,22 @@ export function OptionsApp() {
 				color: 'var(--fgColor-default)',
 			}}
 		>
-			<header>
-				<Heading as="h1" variant="small">
-					Hyperfriend
-				</Heading>
-				<Text
-					size="small"
-					style={{ color: 'var(--fgColor-muted)', display: 'block' }}
-				>
-					Link templates
-				</Text>
+			<header style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+				<Logo size={28} />
+				<div>
+					<Heading as="h1" variant="small">
+						Hyperfriend
+					</Heading>
+					<Text
+						size="small"
+						style={{
+							color: 'var(--fgColor-muted)',
+							display: 'block',
+						}}
+					>
+						Link templates
+					</Text>
+				</div>
 			</header>
 
 			{config && (

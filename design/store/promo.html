@@ -1,0 +1,345 @@
+<!doctype html>
+<!--
+	Source for the Chrome Web Store promo images.
+	Rendered by design/store/render.sh as:
+	  promo.html?size=small&theme=dark|light    -> 440 x 280
+	  promo.html?size=marquee&theme=dark|light  -> 1400 x 560
+	Colors and type follow the GitHub 2026 brand palette (neutrals + Green 4 accent) and Mona Sans.
+-->
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Hyperfriend promo</title>
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Mona+Sans:wght@400;500;600&display=block"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=block"
+		/>
+		<style>
+			:root {
+				--bg: #121613;
+				--surface: #1b211d;
+				--line: #353d37;
+				--fg: #ffffff;
+				--muted: #96a199;
+				--accent: #0fbf3e;
+				--accent-strong: #5fed83;
+				--link: #4493f8;
+				--tooltip-bg: #3d444d;
+				--sans:
+					'Mona Sans', -apple-system, 'Segoe UI', Helvetica, Arial,
+					sans-serif;
+				--mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+			}
+			.light {
+				--bg: #f2f5f3;
+				--surface: #ffffff;
+				--line: #d2d9d4;
+				--fg: #000000;
+				--muted: #5a615c;
+				--accent: #08872b;
+				--accent-strong: #0fbf3e;
+				--link: #0969da;
+				--tooltip-bg: #25292e;
+			}
+			* {
+				box-sizing: border-box;
+			}
+			html,
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			body {
+				background: var(--bg);
+				color: var(--fg);
+				font-family: var(--sans);
+				font-feature-settings: 'liga' 0;
+				overflow: hidden;
+			}
+			.canvas {
+				position: relative;
+				overflow: hidden;
+				background: var(--bg);
+			}
+			.eyebrow {
+				font-family: var(--mono);
+				text-transform: uppercase;
+				letter-spacing: 1px;
+				color: var(--muted);
+			}
+			h1 {
+				margin: 0;
+				font-weight: 500;
+				letter-spacing: 0;
+			}
+			p {
+				margin: 0;
+				color: var(--muted);
+			}
+			.accent-line {
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				height: 4px;
+				background: var(--accent-strong);
+			}
+
+			/* Small promo tile 440 x 280 */
+			.small {
+				width: 440px;
+				height: 280px;
+				display: flex;
+				align-items: center;
+				gap: 24px;
+				padding: 0 36px;
+			}
+			.small img {
+				width: 120px;
+				height: 120px;
+				flex: none;
+				margin: 0 -12px;
+			}
+			.small .text {
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
+			}
+			.small .eyebrow {
+				font-size: 11px;
+			}
+			.small h1 {
+				font-size: 38px;
+				line-height: 40px;
+			}
+			.small p {
+				font-size: 15px;
+				line-height: 21px;
+				max-width: 220px;
+			}
+
+			/* Marquee 1400 x 560 */
+			.marquee {
+				width: 1400px;
+				height: 560px;
+				display: grid;
+				grid-template-columns: 560px 1fr;
+				align-items: center;
+				padding: 0 80px;
+				gap: 40px;
+			}
+			.marquee .brand {
+				display: flex;
+				flex-direction: column;
+				gap: 22px;
+			}
+			.marquee .brand img {
+				width: 128px;
+				height: 128px;
+				margin: -16px;
+			}
+			.marquee .eyebrow {
+				font-size: 15px;
+			}
+			.marquee h1 {
+				font-size: 80px;
+				line-height: 78px;
+			}
+			.marquee p {
+				font-size: 22px;
+				line-height: 32px;
+				max-width: 470px;
+			}
+
+			.demo {
+				display: flex;
+				flex-direction: column;
+				gap: 22px;
+			}
+			.list {
+				background: var(--surface);
+				border: 2px solid var(--line);
+				border-radius: 12px;
+				overflow: visible;
+			}
+			.row {
+				position: relative;
+				display: flex;
+				flex-direction: column;
+				gap: 6px;
+				padding: 16px 20px;
+				border-top: 2px solid var(--line);
+			}
+			.row:first-child {
+				border-top: 0;
+			}
+			.title {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				font-size: 18px;
+				font-weight: 600;
+			}
+			.pr-icon {
+				width: 18px;
+				height: 18px;
+				flex: none;
+			}
+			.meta {
+				display: flex;
+				align-items: center;
+				gap: 6px;
+				font-size: 13px;
+				color: var(--muted);
+				padding-left: 26px;
+			}
+			.avatar {
+				width: 16px;
+				height: 16px;
+				border-radius: 50%;
+				background: linear-gradient(
+					135deg,
+					var(--accent-strong),
+					var(--accent)
+				);
+			}
+			.copy {
+				width: 28px;
+				height: 28px;
+				border-radius: 6px;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				color: var(--muted);
+			}
+			.copy.active {
+				background: rgba(129, 139, 152, 0.2);
+				color: var(--accent-strong);
+			}
+			.tooltip {
+				position: absolute;
+				left: 100%;
+				top: 50%;
+				transform: translate(14px, -50%);
+				background: var(--tooltip-bg);
+				color: #ffffff;
+				font-size: 14px;
+				padding: 6px 10px;
+				border-radius: 6px;
+				white-space: nowrap;
+			}
+			.title .wrap {
+				position: relative;
+				display: inline-flex;
+			}
+			.chat {
+				align-self: flex-start;
+				display: flex;
+				gap: 12px;
+				align-items: flex-start;
+				background: var(--surface);
+				border: 2px solid var(--line);
+				border-radius: 12px;
+				padding: 14px 18px;
+			}
+			.chat .who {
+				width: 32px;
+				height: 32px;
+				border-radius: 50%;
+				background: var(--line);
+				flex: none;
+			}
+			.chat .msg {
+				display: flex;
+				flex-direction: column;
+				gap: 4px;
+				font-size: 16px;
+			}
+			.chat .name {
+				font-size: 13px;
+				color: var(--muted);
+			}
+			.chat a {
+				color: var(--link);
+				text-decoration: underline;
+				text-underline-offset: 3px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="root"></div>
+		<script>
+			const params = new URLSearchParams(location.search);
+			const size = params.get('size') || 'small';
+			const theme = params.get('theme') || 'dark';
+			const ICON = '../icon/hyperfriend-icon.svg';
+			const PR_ICON =
+				'<svg class="pr-icon" viewBox="0 0 16 16" fill="var(--accent-strong)" aria-hidden="true"><path d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z"/></svg>';
+			const COPY_ICON =
+				'<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg>';
+			const CHECK_ICON =
+				'<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/></svg>';
+
+			const root = document.getElementById('root');
+			if (size === 'marquee') {
+				const rows = [
+					[
+						'Add keyboard shortcut to copy the current pull request link',
+						'#1',
+						false,
+					],
+					['Support GitHub Enterprise Server hosts', '#2', true],
+					[
+						'Show copy button on commit and release pages',
+						'#3',
+						false,
+					],
+				];
+				root.innerHTML = `
+			<div class="canvas marquee ${theme}">
+				<div class="brand">
+					<img src="${ICON}" alt="">
+					<span class="eyebrow">Browser extension for GitHub</span>
+					<h1>Hyperfriend</h1>
+					<p>Copy pull request and issue links as rich hyperlinks, ready to paste into Teams, Slack and other chats.</p>
+				</div>
+				<div class="demo">
+					<div class="list">${rows
+						.map(
+							([title, num, active]) => `
+						<div class="row">
+							<div class="title">${PR_ICON}<span>${title}</span>
+								<span class="wrap"><span class="copy${active ? ' active' : ''}">${active ? CHECK_ICON : COPY_ICON}</span>${active ? '<span class="tooltip">Copied!</span>' : ''}</span>
+							</div>
+							<div class="meta">${num} · <span class="avatar"></span> borbiuk opened today</div>
+						</div>`
+						)
+						.join('')}
+					</div>
+					<div class="chat">
+						<span class="who"></span>
+						<div class="msg"><span class="name">You · now</span><span>Could you review <a>PR 2: Support GitHub Enterprise Server hosts</a>?</span></div>
+					</div>
+				</div>
+				<div class="accent-line"></div>
+			</div>`;
+			} else {
+				root.innerHTML = `
+			<div class="canvas small ${theme}">
+				<img src="${ICON}" alt="">
+				<div class="text">
+					<span class="eyebrow">For GitHub</span>
+					<h1>Hyperfriend</h1>
+					<p>Rich links to pull requests and issues in one click.</p>
+				</div>
+				<div class="accent-line"></div>
+			</div>`;
+			}
+			document.body.className = theme;
+		</script>
+	</body>
+</html>

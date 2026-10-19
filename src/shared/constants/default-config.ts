@@ -10,7 +10,7 @@ export const CONFIG_STORAGE_KEY = 'hyperfriend-config';
  */
 export const DEFAULT_CONFIG: ConfigModel = {
 	templates: {
-		[LinkType.PullRequest]: 'Pull Request {{pr_number}}: {{pr_name}}',
+		[LinkType.PullRequest]: 'PR {{pr_number}}: {{pr_name}}',
 		[LinkType.Issue]: 'Issue {{issue_number}}: {{issue_name}}',
 	},
 };
