@@ -4,6 +4,7 @@ import {
 	CopyButtonPlacement,
 	TargetResolver,
 } from '../components/copy-button';
+import { tooltip } from '../components/tooltip';
 
 import { ConfigStore } from './config-store';
 import {
@@ -64,6 +65,19 @@ const TITLE_BUTTON_SELECTOR = `${COPY_BUTTON_SELECTOR}.hyperfriend-copy-button--
 /** Text of a `#123` number element next to a title */
 const NUMBER_TEXT_REGEX = /^#\d+$/;
 
+/** Title text (may contain `#123` references) and our own UI, never the number element */
+const TITLE_TEXT_SELECTOR =
+	'[data-testid="issue-title"], .markdown-title, .js-issue-title, [data-hyperfriend]';
+
+/** Title button inside a flex container that already has a gap: no own margin */
+const FLUSH_CLASS = 'hyperfriend-copy-button--flush';
+
+/** Title button in inline text (classic header): aligned to the line top plus an offset */
+const INLINE_CLASS = 'hyperfriend-copy-button--inline';
+
+/** Custom property holding that offset, so the button is centered on the line */
+const INLINE_OFFSET_PROPERTY = '--hyperfriend-inline-offset';
+
 /**
  * Finds Pull Request / Issue titles on the page and injects copy buttons next to them.
  * Idempotent: safe to call on every DOM change.
@@ -82,8 +96,17 @@ export class ButtonInjector {
 	 */
 	public scan(): void {
 		this.removeStaleRowButtons();
+		tooltip.hideIfDetached();
 
-		switch (detectPageKind()) {
+		const kind = detectPageKind();
+		if (kind === PageKind.Unsupported) {
+			return;
+		}
+
+		// Before any button can be clicked, so the first "Copied!" is announced
+		tooltip.attach();
+
+		switch (kind) {
 			case PageKind.List:
 				this.scanList();
 				return;
@@ -130,21 +153,35 @@ export class ButtonInjector {
 			return;
 		}
 
-		// The React PR header keeps `#123` next to the h1: the button goes after it, outside the heading.
-		// The Issue page and the classic header keep `#123` inside the h1, which wraps long titles
-		// and is followed by page actions: a sibling would sit at the far right edge and read as a
-		// page action, so the button is appended inside the h1, right after the number. Trade-off:
-		// there, the heading's accessible name includes the button label.
-		const numberSibling = header.nextElementSibling;
-		const button =
-			numberSibling &&
-			NUMBER_TEXT_REGEX.test(normalizeText(numberSibling.textContent))
-				? this.ensureButtonAfter(
-						numberSibling,
-						resolver,
-						CopyButtonPlacement.Title
-					)
-				: this.ensureButtonInside(header, resolver);
+		// The button follows the `#123` number, centered on its line:
+		// - React PR header: the number is in an inline-flex wrapper next to the h1 (outside the heading);
+		// - Issue page: the number is in an inline-flex wrapper inside the h1, together with GitHub's
+		//   "Edit issue title" button (signed in); ours goes last, after it, using the wrapper's gap;
+		// - classic header: the number is a plain span inside the h1; ours goes right after it.
+		// On the Issue page and the classic header the button is inside the h1 on purpose: the h1
+		// wraps long titles and is followed by page actions, so a sibling would sit at the far right
+		// edge and read as a page action. Trade-off: there, the heading's accessible name includes
+		// the button label.
+		const number = this.findNumberElement(header);
+		const container = number?.parentElement;
+		let button: HTMLButtonElement;
+		if (!number) {
+			button = this.ensureButtonLast(header, resolver);
+		} else if (
+			container &&
+			container !== header &&
+			this.isFlex(container)
+		) {
+			button = this.ensureButtonLast(container, resolver);
+		} else {
+			button = this.ensureButtonAfter(
+				number,
+				resolver,
+				CopyButtonPlacement.Title
+			);
+		}
+
+		this.alignTitleButton(button);
 
 		header.setAttribute(PROCESSED_ATTRIBUTE, '');
 		this.removeOtherTitleButtons(button);
@@ -179,6 +216,72 @@ export class ButtonInjector {
 		}
 
 		return anchor;
+	}
+
+	/**
+	 * Returns the innermost `#123` element in the header or right next to it.
+	 */
+	private findNumberElement(header: Element): Element | null {
+		const scope = header.parentElement ?? header;
+		const sibling = header.nextElementSibling;
+
+		for (const element of scope.querySelectorAll('span')) {
+			if (
+				!(header.contains(element) || sibling?.contains(element)) ||
+				element.closest(TITLE_TEXT_SELECTOR) ||
+				!NUMBER_TEXT_REGEX.test(normalizeText(element.textContent))
+			) {
+				continue;
+			}
+
+			const innerNumber = Array.from(element.children).some((child) =>
+				NUMBER_TEXT_REGEX.test(normalizeText(child.textContent))
+			);
+			if (!innerNumber) {
+				return element;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Flex wrappers center the button themselves (and may space it with their gap);
+	 * in inline text (classic header) it is centered on the line box with a top offset.
+	 */
+	private alignTitleButton(button: HTMLButtonElement): void {
+		const parent = button.parentElement;
+		if (!parent) {
+			return;
+		}
+
+		const inFlex = this.isFlex(parent);
+		button.classList.toggle(FLUSH_CLASS, inFlex && this.hasGap(parent));
+		button.classList.toggle(INLINE_CLASS, !inFlex);
+		if (inFlex) {
+			button.style.removeProperty(INLINE_OFFSET_PROPERTY);
+			return;
+		}
+
+		const lineHeight = parseFloat(getComputedStyle(parent).lineHeight);
+		const offset = Number.isFinite(lineHeight)
+			? Math.max(0, (lineHeight - button.offsetHeight) / 2)
+			: 0;
+		const value = `${offset}px`;
+		if (button.style.getPropertyValue(INLINE_OFFSET_PROPERTY) !== value) {
+			button.style.setProperty(INLINE_OFFSET_PROPERTY, value);
+		}
+	}
+
+	private isFlex(element: Element): boolean {
+		return getComputedStyle(element).display.includes('flex');
+	}
+
+	private hasGap(element: Element): boolean {
+		const style = getComputedStyle(element);
+		return (
+			style.display.includes('flex') && parseFloat(style.columnGap) > 0
+		);
 	}
 
 	/**
@@ -226,24 +329,35 @@ export class ButtonInjector {
 	}
 
 	/**
-	 * Makes sure the header contains a copy button as its last child.
+	 * Makes sure the container has a title copy button as its last child
+	 * (moved back to the end if GitHub appends its own controls later).
 	 */
-	private ensureButtonInside(
-		header: Element,
+	private ensureButtonLast(
+		container: Element,
 		resolver: TargetResolver
 	): HTMLButtonElement {
-		const current = header.querySelector(
+		const current = container.querySelector(
 			`:scope > ${COPY_BUTTON_SELECTOR}`
 		);
 		const existing = CopyButton.from(current);
 		if (existing) {
 			existing.update(resolver);
-			return existing.element;
+			// Moving a focused / hovered button would drop focus and leave the tooltip behind;
+			// it is moved on a later scan instead
+			const button = existing.element;
+			const busy =
+				button.contains(document.activeElement) ||
+				tooltip.isShownFor(button);
+			if (container.lastElementChild !== button && !busy) {
+				container.append(button);
+			}
+
+			return button;
 		}
 
 		current?.remove();
 		const button = this.createButton(resolver, CopyButtonPlacement.Title);
-		header.append(button);
+		container.append(button);
 
 		return button;
 	}

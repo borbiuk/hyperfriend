@@ -7,6 +7,7 @@ import { ButtonInjector } from './services/button-injector';
 import { ConfigStore } from './services/config-store';
 import { PageObserver } from './services/page-observer';
 import './styles/copy-button.css';
+import './styles/tooltip.css';
 
 /**
  * Main content script entry point.

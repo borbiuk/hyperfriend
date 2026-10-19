@@ -1,3 +1,4 @@
+import { GitPullRequestIcon, IssueOpenedIcon } from '@primer/octicons-react';
 import { Button, Heading, Link, Text } from '@primer/react';
 import { LinkTargetModel, LinkType } from '@shared/models';
 import { configService } from '@shared/services';
@@ -91,6 +92,7 @@ export function OptionsApp() {
 					<TemplateField
 						type={LinkType.PullRequest}
 						label="Pull Request link template"
+						icon={GitPullRequestIcon}
 						value={config.templates[LinkType.PullRequest]}
 						sample={SAMPLE_PULL_REQUEST}
 						resetEpoch={resetEpoch}
@@ -99,6 +101,7 @@ export function OptionsApp() {
 					<TemplateField
 						type={LinkType.Issue}
 						label="Issue link template"
+						icon={IssueOpenedIcon}
 						value={config.templates[LinkType.Issue]}
 						sample={SAMPLE_ISSUE}
 						resetEpoch={resetEpoch}

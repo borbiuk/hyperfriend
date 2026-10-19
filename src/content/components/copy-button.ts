@@ -1,5 +1,5 @@
-import { ConfigModel, LinkTargetModel } from '@shared/models';
-import { copyLink, renderTemplate } from '@shared/services';
+import { ConfigModel, LinkTargetModel, LinkType } from '@shared/models';
+import { copyLink } from '@shared/services';
 
 import {
 	CHECK_ICON,
@@ -8,6 +8,8 @@ import {
 	Octicon,
 	X_ICON,
 } from '../icons/octicons';
+
+import { tooltip } from './tooltip';
 
 /** Selector of injected copy buttons */
 export const COPY_BUTTON_SELECTOR = '[data-hyperfriend="copy-button"]';
@@ -46,13 +48,23 @@ const STATE_ICONS: Record<CopyButtonState, Octicon> = {
 	[CopyButtonState.Failed]: X_ICON,
 };
 
-const STATE_LABELS: Record<
+/** Feedback shown in the tooltip and announced after a click (like Primer ClipboardCopy) */
+const FEEDBACK_MESSAGES: Record<
 	Exclude<CopyButtonState, CopyButtonState.Idle>,
 	string
 > = {
 	[CopyButtonState.Copied]: 'Copied!',
 	[CopyButtonState.Failed]: 'Copy failed',
 };
+
+/** Short labels for the tooltip (like GitHub's own icon buttons); the accessible name adds `#number` */
+const LABELS: Record<LinkType, string> = {
+	[LinkType.PullRequest]: 'Copy link to pull request',
+	[LinkType.Issue]: 'Copy link to issue',
+};
+
+/** Label when the target can not be resolved */
+const FALLBACK_LABEL = 'Copy link';
 
 /**
  * Icon button that copies a rich link to a Pull Request or Issue.
@@ -85,6 +97,10 @@ export class CopyButton {
 		button.addEventListener('auxclick', this.stopEvent);
 		button.addEventListener('keydown', this.handleKey);
 		button.addEventListener('keyup', this.handleKey);
+		button.addEventListener('mouseenter', this.showTooltip);
+		button.addEventListener('focus', this.handleFocus);
+		button.addEventListener('mouseleave', this.hideTooltip);
+		button.addEventListener('blur', this.hideTooltip);
 
 		this.element = button;
 		CopyButton.instances.set(button, this);
@@ -106,7 +122,7 @@ export class CopyButton {
 	}
 
 	/**
-	 * Replaces the target resolver and refreshes the label (e.g. after a re-render or a config change).
+	 * Replaces the target resolver and refreshes the label (e.g. after a re-render).
 	 *
 	 * @param resolveTarget - New resolver.
 	 */
@@ -150,46 +166,95 @@ export class CopyButton {
 		event.stopPropagation();
 	};
 
-	private showFeedback(state: CopyButtonState): void {
+	private readonly showTooltip = (): void => {
+		tooltip.show(this.element, this.getTooltipText());
+	};
+
+	private readonly handleFocus = (): void => {
+		// Keyboard focus only: a mouse click already shows the tooltip on hover
+		if (this.element.matches(':focus-visible')) {
+			this.showTooltip();
+		}
+	};
+
+	private readonly hideTooltip = (): void => {
+		tooltip.hide(this.element);
+	};
+
+	private showFeedback(
+		state: CopyButtonState.Copied | CopyButtonState.Failed
+	): void {
 		window.clearTimeout(this.resetTimer);
 		this.state = state;
 		this.render();
 
+		const message = FEEDBACK_MESSAGES[state];
+		tooltip.show(this.element, message, true);
+		tooltip.announce(message);
+
 		this.resetTimer = window.setTimeout(() => {
 			this.state = CopyButtonState.Idle;
 			this.render();
+			this.restoreTooltip();
 		}, FEEDBACK_DURATION_MS);
 	}
 
-	private getIdleLabel(): string {
-		const target = this.resolveTarget();
-		if (!target) {
-			return 'Copy link';
+	/**
+	 * After the feedback: back to the label while hovered / focused, otherwise hidden.
+	 */
+	private restoreTooltip(): void {
+		const button = this.element;
+		if (!tooltip.isShownFor(button)) {
+			return;
 		}
 
-		const text = renderTemplate(
-			this.getConfig().templates[target.type],
-			target
-		);
+		if (button.matches(':hover') || button.matches(':focus-visible')) {
+			tooltip.show(button, this.getLabel(), true);
+			return;
+		}
 
-		return `Copy link: ${text}`;
+		tooltip.hide(button);
+	}
+
+	private getTooltipText(): string {
+		if (this.state === CopyButtonState.Idle) {
+			return this.getLabel();
+		}
+
+		return FEEDBACK_MESSAGES[this.state];
+	}
+
+	private getLabel(): string {
+		const target = this.resolveTarget();
+		if (!target) {
+			return FALLBACK_LABEL;
+		}
+
+		return LABELS[target.type];
+	}
+
+	/**
+	 * Tooltip label plus the number, so the buttons of a list have distinct names.
+	 */
+	private getAccessibleName(): string {
+		const target = this.resolveTarget();
+		if (!target) {
+			return FALLBACK_LABEL;
+		}
+
+		return `${LABELS[target.type]} #${target.number}`;
 	}
 
 	private render(): void {
 		const button = this.element;
-		const label =
-			this.state === CopyButtonState.Idle
-				? this.getIdleLabel()
-				: STATE_LABELS[this.state];
-
 		if (button.dataset.state !== this.state) {
 			button.dataset.state = this.state;
 			button.replaceChildren(createOcticon(STATE_ICONS[this.state]));
 		}
 
+		const label = this.getAccessibleName();
 		if (button.getAttribute('aria-label') !== label) {
 			button.setAttribute('aria-label', label);
-			button.title = label;
 		}
 	}
 }

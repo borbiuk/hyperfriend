@@ -1,7 +1,7 @@
 /*
-	Hyperfriend copy-link button.
-	Colors come from GitHub's Primer CSS variables (with light-theme fallbacks),
-	so the button follows GitHub's light and dark themes.
+	Hyperfriend copy-link button: mirrors Primer `IconButton variant="invisible"`
+	(values measured on github.com). Colors come from GitHub's Primer CSS variables,
+	with light-theme fallbacks, so the button follows GitHub's light and dark themes.
 */
 
 .hyperfriend-copy-button {
@@ -13,14 +13,19 @@
 	flex: none;
 	align-items: center;
 	justify-content: center;
+	/* List rows: compact, the height of the row title line and of GitHub's row icons */
 	width: 24px;
 	height: 24px;
-	margin: 0 0 0 4px;
+	margin: 0 0 0 var(--base-size-4, 4px);
 	padding: 0;
 	border: 0;
-	border-radius: 6px;
-	background: transparent;
-	color: var(--fgColor-muted, #59636e);
+	border-radius: var(--borderRadius-medium, 6px);
+	background-color: transparent;
+	box-shadow: none;
+	color: var(
+		--button-invisible-iconColor-rest,
+		var(--fgColor-muted, #59636e)
+	);
 	font: inherit;
 	font-size: 0;
 	line-height: 0;
@@ -28,20 +33,54 @@
 	cursor: pointer;
 	user-select: none;
 	-webkit-user-select: none;
+	appearance: none;
 	transition:
-		background-color 80ms ease-out,
-		color 80ms ease-out;
+		color 80ms cubic-bezier(0.65, 0, 0.35, 1),
+		background-color 80ms cubic-bezier(0.65, 0, 0.35, 1);
 }
 
+/*
+	List rows: as tall as the title line, aligned to its top, so the button is centered on the
+	title text and does not make the row taller (`middle` would push it ~2px down).
+*/
+.hyperfriend-copy-button--row {
+	vertical-align: top;
+}
+
+/* Detail pages: Primer medium icon button, like GitHub's "Edit issue title" */
 .hyperfriend-copy-button--title {
-	width: 28px;
-	height: 28px;
-	margin-left: 8px;
+	width: var(--control-medium-size, 32px);
+	height: var(--control-medium-size, 32px);
 }
 
+/* Inside a flex wrapper that already spaces its children (Issue page number + Edit button) */
+.hyperfriend-copy-button--flush {
+	margin-left: 0;
+}
+
+/* In inline text (classic header): centered on the line box, the offset is set by the script */
+.hyperfriend-copy-button--inline {
+	vertical-align: top;
+	margin-top: var(--hyperfriend-inline-offset, 0px);
+}
+
+/* Like Primer: the background changes on hover, the icon color stays muted */
 .hyperfriend-copy-button:hover {
-	background: var(--bgColor-neutral-muted, rgba(129, 139, 152, 0.15));
-	color: var(--fgColor-default, #1f2328);
+	background-color: var(
+		--button-invisible-bgColor-hover,
+		var(--control-transparent-bgColor-hover, rgba(129, 139, 152, 0.1))
+	);
+	color: var(
+		--button-invisible-iconColor-hover,
+		var(--fgColor-muted, #59636e)
+	);
+}
+
+.hyperfriend-copy-button:active {
+	background-color: var(
+		--button-invisible-bgColor-active,
+		var(--control-transparent-bgColor-active, rgba(129, 139, 152, 0.15))
+	);
 }
 
 .hyperfriend-copy-button:focus {
@@ -49,7 +88,9 @@
 }
 
 .hyperfriend-copy-button:focus-visible {
-	outline: 2px solid var(--focus-outlineColor, #0969da);
+	box-shadow: none;
+	outline: 2px solid
+		var(--focus-outline-color, var(--focus-outlineColor, #0969da));
 	outline-offset: -2px;
 }
 

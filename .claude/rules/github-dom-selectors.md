@@ -29,7 +29,14 @@ List paths are deliberately restricted: do not widen them to `.*`, or pages such
 [button-injector.ts](../../src/content/services/button-injector.ts):
 
 - **List rows**: title links `a[data-testid="listitem-title-link"]`, `issue-pr-title-link`, `issue-listitem-title-link`, `a[id^="issue_"][id$="_link"]` and search result titles (`[data-testid="results-list"] .search-title a[href]`). If none is found, the fallback is a `a[href*="/pull/"], a[href*="/issues/"]` link inside `main` / `[role="main"]` that parses as an exact item link and has no hash or query (comment links like `#issuecomment-1` and filter links are not titles). Links inside dialogs, tooltips, menus, popovers, hovercards and the extension's own UI are ignored. The button is inserted **after the heading that wraps the title link** (or after the link itself), so it never becomes part of the title text.
-- **Detail pages**: the title header (`h1[data-component="PH_Title"]`, `[data-testid="issue-title"]`, `.gh-header-title`, `bdi.js-issue-title`), skipping sticky scroll headers that repeat the title. The button is placed **outside the `h1`** (so the heading name stays clean): after the `#123` number element when it is a sibling of the header, otherwise right after the header. Only the classic `.gh-header-title` header (for example the PR `/files` header) keeps the button **inside** the `h1`, because the `h1` fills its flex row and a sibling would end up far from the title.
+- **Detail pages**: the title header (`h1[data-component="PH_Title"]`, `[data-testid="issue-title"]`, `.gh-header-title`, `bdi.js-issue-title`), skipping sticky scroll headers that repeat the title. The button goes right **after the `#123` number element** and is vertically centered on its line. Placement depends on the header:
+
+    - React PR header: the number is in an inline-flex wrapper next to the `h1` (outside the heading); the button is added last inside that wrapper, so it stays outside the `h1`.
+    - Issue page: the number is in an inline-flex wrapper **inside** the `h1`, together with GitHub's "Edit issue title" pencil when signed in; the button goes last in that wrapper, after the pencil, using the wrapper's gap.
+    - Classic header (for example PR `/files`): the number is a plain span inside the `h1`; the button follows it.
+
+    On the Issue page and the classic header the button is inside the `h1` on purpose: the `h1` wraps long titles and is followed by page actions, so a sibling would sit at the far right and read as a page action. Trade-off: there the heading's accessible name includes the button label.
+
 - **Titles** come from the link text (lists) or the header title element (detail pages). Fallbacks for detail pages when the header yields nothing: `document.title`, then `meta[property="og:title"]`, parsed with the `… · Pull Request #n · owner/repo` / `… · Issue #n · owner/repo` suffixes removed.
 - **Canonical URL** is built from owner, repo and number: `https://github.com/{owner}/{repo}/pull/{n}` or `/issues/{n}`. Never copy `location.href` as is (it can include tabs such as `/files`, queries or hashes).
 - **Titles are data** — `title` is raw text; escaping is done by `buildLinkPayload` in `@shared/services`, not in the DOM code.
@@ -53,9 +60,10 @@ GitHub navigates without full page loads (Turbo), and React re-renders list rows
 
 ## Styling and behavior
 
-- [copy-button.css](../../src/content/styles/copy-button.css) uses GitHub's Primer CSS variables that exist on the page (for example `--fgColor-muted`, `--bgColor-neutral-muted`, `--borderColor-default`) with light-theme fallbacks, so the button follows GitHub's light and dark themes.
+- [copy-button.css](../../src/content/styles/copy-button.css) styles the button like Primer `IconButton variant="invisible"`: 24×24 in list rows, 32×32 on detail headers, the icon stays muted on hover. Colors come from GitHub's Primer CSS variables that exist on the page (for example `--fgColor-muted`, `--bgColor-neutral-muted`, `--borderColor-default`) with light-theme fallbacks, so the button follows GitHub's light and dark themes.
+- **Tooltip**: there is no native `title`. One shared GitHub-style tooltip (`.hyperfriend-tooltip`, `data-hyperfriend="tooltip"`, styles in [tooltip.css](../../src/content/styles/tooltip.css), logic in [tooltip.ts](../../src/content/components/tooltip.ts)) shows "Copy link to pull request" / "Copy link to issue" on hover and focus, then "Copied!" / "Copy failed" for 1.5 s. It is `aria-hidden`; a hidden polite live region (`data-hyperfriend="live-region"`) announces the result. Both are created on supported pages and removed on `turbo:before-cache` so they do not end up in Turbo snapshots.
 - Icons are inline SVG (Octicons `copy`, `check`, `x`, 16 px) in [octicons.ts](../../src/content/icons/octicons.ts). Do not pull React into the content script.
-- The click handler calls `copyLink` synchronously (no `await` before it) with the config from `ConfigStore`. States: copy icon, then "Copied!" (check icon) or "Copy failed" (x icon) for 1.5 s. `aria-label` and `title` are `Copy link: <text>`.
+- The click handler calls `copyLink` synchronously (no `await` before it) with the config from `ConfigStore`. States: copy icon, then "Copied!" (check icon) or "Copy failed" (x icon) for 1.5 s. `aria-label` is `Copy link to pull request #12` / `Copy link to issue #7` (not the rendered template text), so buttons in a list have distinct names.
 
 ## Verifying changes
 

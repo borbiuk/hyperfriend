@@ -1,4 +1,4 @@
-import { CheckIcon } from '@primer/octicons-react';
+import { CheckIcon, Icon } from '@primer/octicons-react';
 import { FormControl, Text, TextInput, Token } from '@primer/react';
 import { DEFAULT_CONFIG, TEMPLATE_PLACEHOLDERS } from '@shared/constants';
 import { LinkTargetModel, LinkType } from '@shared/models';
@@ -14,6 +14,8 @@ const SAVED_VISIBLE_MS = 2000;
 interface TemplateFieldProps {
 	type: LinkType;
 	label: string;
+	/** Octicon shown before the label, like in the GitHub repository tabs. */
+	icon: Icon;
 	/** Template currently stored in the config. */
 	value: string;
 	/** Sample item used for the live preview. */
@@ -33,6 +35,7 @@ interface TemplateFieldProps {
 export function TemplateField({
 	type,
 	label,
+	icon: LabelIcon,
 	value,
 	sample,
 	resetEpoch,
@@ -153,7 +156,22 @@ export function TemplateField({
 
 	return (
 		<FormControl>
-			<FormControl.Label htmlFor={inputId}>{label}</FormControl.Label>
+			<FormControl.Label htmlFor={inputId}>
+				<span
+					style={{
+						display: 'inline-flex',
+						alignItems: 'center',
+						gap: 8,
+					}}
+				>
+					<LabelIcon
+						size={16}
+						aria-hidden="true"
+						fill="var(--fgColor-muted)"
+					/>
+					{label}
+				</span>
+			</FormControl.Label>
 			<TextInput
 				id={inputId}
 				block

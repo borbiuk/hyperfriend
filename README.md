@@ -17,7 +17,8 @@ Chrome Web Store and Firefox Add-ons listings are coming soon.
 - **Rich hyperlink**: the clipboard gets both formats at once, so every chat app picks the best one.
     - `text/html`: `<a href="https://github.com/OWNER/REPO/pull/12">Pull Request 12: Add copy button</a>`
     - `text/plain`: `Pull Request 12: Add copy button — https://github.com/OWNER/REPO/pull/12`
-- **Clear feedback**: after a click the icon changes to a check mark ("Copied!") or a cross ("Copy failed") for 1.5 seconds. The tooltip and the accessible label show the text that will be copied (`Copy link: <text>`).
+- **Looks like GitHub**: styled like GitHub's own icon buttons (Primer "invisible" icon button, 24 px in lists and 32 px in page headers), with GitHub-style tooltips ("Copy link to pull request" / "Copy link to issue"). On detail pages it sits right after the `#number` of the title.
+- **Clear feedback**: after a click the icon changes to a check mark and the tooltip shows "Copied!", or a cross and "Copy failed", for 1.5 seconds. Screen readers announce the result, and the accessible label is, for example, "Copy link to pull request #12".
 - **Works with GitHub navigation**: buttons appear on pages that GitHub loads without a full page refresh and are never duplicated.
 - **Light and dark**: the button uses GitHub's own theme colors, so it follows the GitHub theme you use.
 
@@ -49,7 +50,7 @@ Notes:
 ### Settings popup
 
 - **GitHub look**: built with Primer React, the design system of GitHub.
-- **Live preview**: each template field shows the resulting link text for a sample Pull Request or Issue and lists the available placeholders.
+- **Live preview**: each template field is marked with a Pull Request or Issue icon, lists the available placeholders and shows the resulting link text for a sample item.
 - **Autosave**: changes are saved about 300 ms after you stop typing, with a "Saved" status. **Reset to defaults** restores both templates.
 - **Light and dark themes**: the popup follows the operating system theme.
 
@@ -59,14 +60,14 @@ Notes:
 
 All pages are on `github.com`.
 
-| Page Type                 | URL                                                                                                                                 | What you get                                     |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| **Repository PR list**    | `/OWNER/REPO/pulls`, filters `/pulls/assigned/USER`, `/created_by/USER`, `/mentioned/USER`, `/review-requested/USER`, `/pulls/USER` | Copy button after every item title               |
-| **Repository Issue list** | `/OWNER/REPO/issues`, filters `/issues/assigned/USER`, `/created_by/USER`, `/mentioned/USER`, `/review-requested/USER`              | Copy button after every item title               |
-| **Dashboards**            | `/pulls`, `/issues` and their `assigned`, `created`, `mentioned`, `review-requested`, `recent-activity` tabs \*                     | Copy button after every item title               |
-| **Search results**        | `/search?type=pullrequests`, `/search?type=issues`                                                                                  | Copy button after every result title             |
-| **Pull Request page**     | `/OWNER/REPO/pull/12`, including `/files`, `/commits`, `/checks`                                                                    | Copy button next to the title in the page header |
-| **Issue page**            | `/OWNER/REPO/issues/34`                                                                                                             | Copy button next to the title in the page header |
+| Page Type                 | URL                                                                                                                                 | What you get                                       |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| **Repository PR list**    | `/OWNER/REPO/pulls`, filters `/pulls/assigned/USER`, `/created_by/USER`, `/mentioned/USER`, `/review-requested/USER`, `/pulls/USER` | Copy button after every item title                 |
+| **Repository Issue list** | `/OWNER/REPO/issues`, filters `/issues/assigned/USER`, `/created_by/USER`, `/mentioned/USER`, `/review-requested/USER`              | Copy button after every item title                 |
+| **Dashboards**            | `/pulls`, `/issues` and their `assigned`, `created`, `mentioned`, `review-requested`, `recent-activity` tabs \*                     | Copy button after every item title                 |
+| **Search results**        | `/search?type=pullrequests`, `/search?type=issues`                                                                                  | Copy button after every result title               |
+| **Pull Request page**     | `/OWNER/REPO/pull/12`, including `/files`, `/commits`, `/checks`                                                                    | Copy button right after the `#number` of the title |
+| **Issue page**            | `/OWNER/REPO/issues/34`                                                                                                             | Copy button right after the `#number` of the title |
 
 Other pages (for example `/OWNER/REPO/issues/new`) are left untouched.
 
