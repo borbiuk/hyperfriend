@@ -1,6 +1,10 @@
 import { CheckIcon, Icon } from '@primer/octicons-react';
 import { FormControl, Text, TextInput, Token } from '@primer/react';
-import { DEFAULT_CONFIG, TEMPLATE_PLACEHOLDERS } from '@shared/constants';
+import {
+	DEFAULT_CONFIG,
+	MAX_TEMPLATE_LENGTH,
+	TEMPLATE_PLACEHOLDERS,
+} from '@shared/constants';
 import { LinkTargetModel, LinkType } from '@shared/models';
 import { buildLinkPayload, configService } from '@shared/services';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -164,6 +168,7 @@ export function TemplateField({
 	};
 
 	const preview = buildLinkPayload(sample, {
+		...DEFAULT_CONFIG,
 		templates: { ...DEFAULT_CONFIG.templates, [type]: draft },
 	}).text;
 	const inputId = `template-${type}`;
@@ -191,6 +196,8 @@ export function TemplateField({
 				monospace
 				size="small"
 				value={draft}
+				// Longer templates could be exported but not imported again.
+				maxLength={MAX_TEMPLATE_LENGTH}
 				onChange={(event) => handleChange(event.target.value)}
 				onBlur={flush}
 				spellCheck={false}

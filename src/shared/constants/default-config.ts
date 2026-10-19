@@ -1,4 +1,4 @@
-import { ConfigModel, LinkType } from '@shared/models';
+import { ConfigModel, LinkType, ShortcutType } from '@shared/models';
 
 /**
  * Key under which the config is stored in chrome.storage.sync.
@@ -13,7 +13,19 @@ export const DEFAULT_CONFIG: ConfigModel = {
 		[LinkType.PullRequest]: 'PR {{pr_number}}: {{pr_name}}',
 		[LinkType.Issue]: 'Issue {{issue_number}}: {{issue_name}}',
 	},
+	shortcuts: {
+		[ShortcutType.CopyLink]: { keys: ['Shift', 'KeyC'], enabled: true },
+	},
+	display: {
+		authorAvatars: true,
+	},
 };
+
+/**
+ * Maximum length of a link template in characters (after trimming), enforced on import
+ * and by the popup fields.
+ */
+export const MAX_TEMPLATE_LENGTH = 500;
 
 /**
  * Placeholder names (without braces) available in the template of each link type.

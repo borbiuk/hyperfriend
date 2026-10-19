@@ -1,3 +1,5 @@
+import { LinkTargetModel } from '@shared/models';
+
 import {
 	COPY_BUTTON_SELECTOR,
 	CopyButton,
@@ -8,11 +10,15 @@ import { tooltip } from '../components/tooltip';
 
 import { ConfigStore } from './config-store';
 import {
+	findNumberElement,
 	normalizeText,
 	parseDetailPage,
 	parseListLink,
 } from './link-target-parser';
 import { detectPageKind, PageKind } from './page-detector';
+
+/** Keyboard shortcut of the title button for assistive technologies */
+const KEY_SHORTCUTS_ATTRIBUTE = 'aria-keyshortcuts';
 
 /** Marker set on hosts (title links / headers) that got a copy button */
 const PROCESSED_ATTRIBUTE = 'data-hyperfriend-processed';
@@ -62,13 +68,6 @@ const ROW_BUTTON_SELECTOR = `${COPY_BUTTON_SELECTOR}.hyperfriend-copy-button--${
 /** Title buttons, as injected for detail pages */
 const TITLE_BUTTON_SELECTOR = `${COPY_BUTTON_SELECTOR}.hyperfriend-copy-button--${CopyButtonPlacement.Title}`;
 
-/** Text of a `#123` number element next to a title */
-const NUMBER_TEXT_REGEX = /^#\d+$/;
-
-/** Title text (may contain `#123` references) and our own UI, never the number element */
-const TITLE_TEXT_SELECTOR =
-	'[data-testid="issue-title"], .markdown-title, .js-issue-title, [data-hyperfriend]';
-
 /** Title button inside a flex container that already has a gap: no own margin */
 const FLUSH_CLASS = 'hyperfriend-copy-button--flush';
 
@@ -85,11 +84,44 @@ const INLINE_OFFSET_PROPERTY = '--hyperfriend-inline-offset';
 export class ButtonInjector {
 	/**
 	 * @param configStore - Source of the current config.
+	 * @param getKeyShortcuts - Returns the `aria-keyshortcuts` value of the title button
+	 * (the copy link shortcut on this page), or `null` when no shortcut applies.
 	 */
-	constructor(private readonly configStore: ConfigStore) {}
+	constructor(
+		private readonly configStore: ConfigStore,
+		private readonly getKeyShortcuts: () => string | null = () => null
+	) {}
 
 	/** Title link each row button belongs to */
 	private readonly rowAnchors = new WeakMap<Element, HTMLAnchorElement>();
+
+	/**
+	 * Returns the title copy button of the current detail page.
+	 *
+	 * @returns The button, or `null` when it is not injected (yet).
+	 */
+	public getTitleButton(): CopyButton | null {
+		for (const element of document.querySelectorAll(
+			TITLE_BUTTON_SELECTOR
+		)) {
+			const button = CopyButton.from(element);
+			if (button) {
+				return button;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Resolves the Pull Request / Issue of the current detail page without a title button,
+	 * from the title header or, failing that, the document title.
+	 *
+	 * @returns The target, or `null` if it can not be resolved.
+	 */
+	public resolveDetailTarget(): LinkTargetModel | null {
+		return parseDetailPage(this.findDetailHeader());
+	}
 
 	/**
 	 * Scans the page and injects missing buttons; refreshes labels of existing ones.
@@ -162,7 +194,7 @@ export class ButtonInjector {
 		// wraps long titles and is followed by page actions, so a sibling would sit at the far right
 		// edge and read as a page action. Trade-off: there, the heading's accessible name includes
 		// the button label.
-		const number = this.findNumberElement(header);
+		const number = findNumberElement(header);
 		const container = number?.parentElement;
 		let button: HTMLButtonElement;
 		if (!number) {
@@ -182,6 +214,7 @@ export class ButtonInjector {
 		}
 
 		this.alignTitleButton(button);
+		this.updateKeyShortcuts(button);
 
 		header.setAttribute(PROCESSED_ATTRIBUTE, '');
 		this.removeOtherTitleButtons(button);
@@ -219,33 +252,6 @@ export class ButtonInjector {
 	}
 
 	/**
-	 * Returns the innermost `#123` element in the header or right next to it.
-	 */
-	private findNumberElement(header: Element): Element | null {
-		const scope = header.parentElement ?? header;
-		const sibling = header.nextElementSibling;
-
-		for (const element of scope.querySelectorAll('span')) {
-			if (
-				!(header.contains(element) || sibling?.contains(element)) ||
-				element.closest(TITLE_TEXT_SELECTOR) ||
-				!NUMBER_TEXT_REGEX.test(normalizeText(element.textContent))
-			) {
-				continue;
-			}
-
-			const innerNumber = Array.from(element.children).some((child) =>
-				NUMBER_TEXT_REGEX.test(normalizeText(child.textContent))
-			);
-			if (!innerNumber) {
-				return element;
-			}
-		}
-
-		return null;
-	}
-
-	/**
 	 * Flex wrappers center the button themselves (and may space it with their gap);
 	 * in inline text (classic header) it is centered on the line box with a top offset.
 	 */
@@ -270,6 +276,21 @@ export class ButtonInjector {
 		const value = `${offset}px`;
 		if (button.style.getPropertyValue(INLINE_OFFSET_PROPERTY) !== value) {
 			button.style.setProperty(INLINE_OFFSET_PROPERTY, value);
+		}
+	}
+
+	/**
+	 * Announces the copy link shortcut on the title button while it is enabled (no visible hint).
+	 */
+	private updateKeyShortcuts(button: HTMLButtonElement): void {
+		const value = this.getKeyShortcuts();
+		if (value === null) {
+			button.removeAttribute(KEY_SHORTCUTS_ATTRIBUTE);
+			return;
+		}
+
+		if (button.getAttribute(KEY_SHORTCUTS_ATTRIBUTE) !== value) {
+			button.setAttribute(KEY_SHORTCUTS_ATTRIBUTE, value);
 		}
 	}
 

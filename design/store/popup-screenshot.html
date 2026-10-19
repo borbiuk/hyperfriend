@@ -1,0 +1,187 @@
+<!doctype html>
+<!--
+	Source for the popup screenshots of the Chrome Web Store listing (1280 x 800).
+	Captured by design/store/capture-screenshots.mjs as:
+	  popup-screenshot.html?tab=templates|shortcuts|general&theme=dark|light
+	The popup itself is the built dist/options.html in an iframe, so the page must be served
+	over http from the repository root (the capture script does that).
+	Colors and type follow promo.html (GitHub 2026 brand neutrals, Green accent, Mona Sans).
+-->
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Hyperfriend popup screenshot</title>
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Mona+Sans:wght@400;500;600&display=block"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=block"
+		/>
+		<style>
+			:root {
+				--bg: #121613;
+				--fg: #ffffff;
+				--muted: #96a199;
+				--line: #353d37;
+				--accent-strong: #5fed83;
+				--shadow: rgba(0, 0, 0, 0.55);
+				--sans:
+					'Mona Sans', -apple-system, 'Segoe UI', Helvetica, Arial,
+					sans-serif;
+				--mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+			}
+			.light {
+				--bg: #f2f5f3;
+				--fg: #000000;
+				--muted: #5a615c;
+				--line: #d2d9d4;
+				--accent-strong: #0fbf3e;
+				--shadow: rgba(18, 22, 19, 0.18);
+			}
+			* {
+				box-sizing: border-box;
+			}
+			html,
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			body {
+				width: 1280px;
+				height: 800px;
+				overflow: hidden;
+				background: var(--bg);
+				color: var(--fg);
+				font-family: var(--sans);
+				font-feature-settings: 'liga' 0;
+			}
+			.canvas {
+				position: relative;
+				width: 1280px;
+				height: 800px;
+				display: grid;
+				grid-template-columns: 1fr auto;
+				align-items: center;
+				gap: 64px;
+				padding: 0 96px;
+			}
+			.text {
+				display: flex;
+				flex-direction: column;
+				gap: 20px;
+			}
+			.eyebrow {
+				font-family: var(--mono);
+				font-size: 15px;
+				text-transform: uppercase;
+				letter-spacing: 1px;
+				color: var(--muted);
+			}
+			h1 {
+				margin: 0;
+				font-size: 56px;
+				line-height: 60px;
+				font-weight: 500;
+			}
+			p {
+				margin: 0;
+				font-size: 22px;
+				line-height: 32px;
+				color: var(--muted);
+				max-width: 440px;
+			}
+			kbd {
+				font-family: var(--sans);
+				font-size: 0.82em;
+				font-weight: 500;
+				border: 2px solid var(--line);
+				border-bottom-width: 4px;
+				border-radius: 10px;
+				padding: 0 12px;
+				white-space: nowrap;
+			}
+			.frame {
+				border: 1px solid var(--line);
+				border-radius: 14px;
+				overflow: hidden;
+				box-shadow: 0 24px 64px var(--shadow);
+			}
+			/* The popup is 400 px wide; it is shown 1.25x larger for readability */
+			.scaler {
+				width: 500px;
+				overflow: hidden;
+			}
+			iframe {
+				display: block;
+				width: 400px;
+				border: 0;
+				transform: scale(1.25);
+				transform-origin: top left;
+			}
+			.accent-line {
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				height: 4px;
+				background: var(--accent-strong);
+			}
+		</style>
+	</head>
+	<body>
+		<div id="root"></div>
+		<script>
+			const params = new URLSearchParams(location.search);
+			const tab = params.get('tab') || 'templates';
+			const theme = params.get('theme') || 'light';
+
+			const COPY = {
+				templates: {
+					eyebrow: 'Link templates',
+					title: 'Links that read like a sentence',
+					text: 'Choose the link text for pull requests and issues. The preview shows exactly what you paste.',
+				},
+				shortcuts: {
+					eyebrow: 'Keyboard shortcut',
+					title: 'Copy the link with <kbd>Shift</kbd> <kbd>C</kbd>',
+					text: 'Press it on an open pull request or issue. Pick other keys or turn the shortcut off.',
+				},
+				general: {
+					eyebrow: 'Team settings',
+					title: 'One link format for the whole team',
+					text: 'Export templates and shortcuts to a JSON file. Teammates import it in one click.',
+				},
+			};
+			const copy = COPY[tab] || COPY.templates;
+
+			document.body.className = theme;
+			document.getElementById('root').innerHTML = `
+			<div class="canvas ${theme}">
+				<div class="text">
+					<span class="eyebrow">${copy.eyebrow}</span>
+					<h1>${copy.title}</h1>
+					<p>${copy.text}</p>
+				</div>
+				<div class="frame"><div class="scaler">
+					<iframe id="popup" src="../../dist/options.html#${tab}" title="Hyperfriend popup"></iframe>
+				</div></div>
+				<div class="accent-line"></div>
+			</div>`;
+
+			// Fits the frame to the popup content once it has rendered (same origin over http).
+			const popup = document.getElementById('popup');
+			window.fitPopup = () => {
+				const height = Math.ceil(
+					popup.contentDocument
+						.querySelector('main')
+						.getBoundingClientRect().height
+				);
+				popup.style.height = `${height}px`;
+				popup.parentElement.style.height = `${height * 1.25}px`;
+				return height;
+			};
+		</script>
+	</body>
+</html>

@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import { parseOptionsHash } from '../utils/options-hash';
+
 export type ViewMode = 'popup' | 'tab';
 
 /**
@@ -8,14 +10,16 @@ export type ViewMode = 'popup' | 'tab';
  *
  * `chrome.tabs.getCurrent()` is used because it needs no permission and is reliable:
  * it resolves with the tab only for pages rendered in a tab, and with `undefined` for
- * the popup. The `#tab` URL hash is an explicit override (handy for manual testing).
+ * the popup. This also covers the page the popup opens with `chrome.tabs.create()`
+ * (e.g. `options.html#general`). The `tab` hash token (`#tab`, `#tab,general`, see
+ * parseOptionsHash) is an explicit override (handy for manual testing).
  *
  * @returns The view mode, or `null` until the check has finished. Callers must not
  * treat `null` as the popup: a click in a tab must never take the popup branch.
  */
 export function useViewMode(): ViewMode | null {
-	const [mode, setMode] = useState<ViewMode | null>(
-		location.hash === '#tab' ? 'tab' : null
+	const [mode, setMode] = useState<ViewMode | null>(() =>
+		parseOptionsHash(location.hash).forceTabView ? 'tab' : null
 	);
 
 	useEffect(() => {

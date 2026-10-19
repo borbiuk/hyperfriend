@@ -18,6 +18,9 @@ export enum PageKind {
 /** `/{owner}/{repo}/pull/{n}` with optional sub-path (`/files`, `/commits`, ...) */
 const PULL_REQUEST_PAGE_REGEX = /^\/[^/]+\/[^/]+\/pull\/\d+(?:\/.*)?$/;
 
+/** `/{owner}/{repo}/pull/{n}` only: the Conversation tab, no sub-path */
+const PULL_REQUEST_CONVERSATION_REGEX = /^\/[^/]+\/[^/]+\/pull\/\d+\/?$/;
+
 /** `/{owner}/{repo}/issues/{n}` */
 const ISSUE_PAGE_REGEX = /^\/[^/]+\/[^/]+\/issues\/\d+\/?$/;
 
@@ -73,4 +76,16 @@ export function detectPageKind(
 	}
 
 	return PageKind.Unsupported;
+}
+
+/**
+ * Returns whether the page is the main Pull Request page (Conversation tab),
+ * not one of its sub-tabs (`/files`, `/commits`, `/checks`, ...).
+ *
+ * @param location - Location to inspect (defaults to the current page).
+ */
+export function isPullRequestConversation(
+	location: Location | URL = window.location
+): boolean {
+	return PULL_REQUEST_CONVERSATION_REGEX.test(location.pathname);
 }

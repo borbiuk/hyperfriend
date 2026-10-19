@@ -1,0 +1,27 @@
+/*
+ * Tabs of the settings UI (UnderlinePanels). The panels are siblings of the tab list.
+ * All panels share one grid cell and the hidden ones keep their layout box (invisible),
+ * so the panel area is always as tall as the tallest tab and the popup never jumps.
+ */
+.hyperfriend-tabs {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+}
+
+/* The tab list spans the full popup width; its own inline padding lines it up. */
+.hyperfriend-tabs > .hyperfriend-tabs__list {
+	grid-row: 1;
+	width: auto;
+	margin-inline: -16px;
+}
+
+.hyperfriend-tabs__panel {
+	grid-row: 2;
+	grid-column: 1;
+	padding-top: 16px;
+}
+
+.hyperfriend-tabs__panel[hidden] {
+	display: block;
+	visibility: hidden;
+}

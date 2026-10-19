@@ -1,7 +1,33 @@
 import { CONFIG_STORAGE_KEY, DEFAULT_CONFIG } from '@shared/constants';
-import { ConfigModel, LinkType } from '@shared/models';
+import {
+	ConfigModel,
+	DisplayModel,
+	LinkType,
+	SettingsImportModel,
+	ShortcutBindingModel,
+	ShortcutType,
+} from '@shared/models';
+import { normalizeShortcut } from '@shared/utils';
 
 let warnedUnavailable = false;
+
+/**
+ * Tail of the queue of storage writes. Every read-modify-write (and `reset`) runs after
+ * the previous one settles, so overlapping calls in one context can't lose updates or
+ * bring back data after a reset. Always resolves, so a failed write doesn't block it.
+ */
+let writeQueue: Promise<void> = Promise.resolve();
+
+/**
+ * Runs `task` after all previously queued writes have settled.
+ *
+ * @returns Settles with the task's own result.
+ */
+function enqueueWrite(task: () => Promise<void>): Promise<void> {
+	const run = writeQueue.then(task);
+	writeQueue = run.catch(() => {});
+	return run;
+}
 
 /**
  * Returns `chrome.storage.sync` when available, otherwise `null` (logs a warning once).
@@ -22,36 +48,112 @@ function getStorage(): chrome.storage.SyncStorageArea | null {
 }
 
 /**
- * Creates a fresh copy of the default config.
+ * Creates a deep copy of a config, so callers can change it without touching the original.
+ *
+ * @param config - Config to copy.
+ * @returns An independent copy.
  */
-function cloneDefaultConfig(): ConfigModel {
-	return { templates: { ...DEFAULT_CONFIG.templates } };
+export function cloneConfig(config: ConfigModel): ConfigModel {
+	const shortcuts = {} as Record<ShortcutType, ShortcutBindingModel>;
+	for (const type of Object.values(ShortcutType)) {
+		const binding = config.shortcuts[type];
+		shortcuts[type] = { keys: [...binding.keys], enabled: binding.enabled };
+	}
+
+	return {
+		templates: { ...config.templates },
+		shortcuts,
+		display: { ...config.display },
+	};
 }
 
 /**
- * Merges a raw stored value over DEFAULT_CONFIG, ignoring unknown keys and non-string templates.
+ * Creates a fresh copy of DEFAULT_CONFIG.
+ */
+export function cloneDefaultConfig(): ConfigModel {
+	return cloneConfig(DEFAULT_CONFIG);
+}
+
+/**
+ * Returns true for a plain (non-null, non-array) object.
+ */
+function isObject(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+/**
+ * Copies the string templates of known link types into the config; anything else is ignored.
+ */
+function applyTemplates(config: ConfigModel, templates: unknown): void {
+	if (!isObject(templates)) {
+		return;
+	}
+
+	for (const type of Object.values(LinkType)) {
+		const value = templates[type];
+		if (typeof value === 'string') {
+			config.templates[type] = value;
+		}
+	}
+}
+
+/**
+ * Copies the valid parts of the bindings of known shortcut types into the config.
+ * Invalid `keys` (see normalizeShortcut: no modifier, browser-reserved, unknown keys) or a
+ * non-boolean `enabled` keep the config's value.
+ */
+function applyShortcuts(config: ConfigModel, shortcuts: unknown): void {
+	if (!isObject(shortcuts)) {
+		return;
+	}
+
+	for (const type of Object.values(ShortcutType)) {
+		const binding = shortcuts[type];
+		if (!isObject(binding)) {
+			continue;
+		}
+
+		const current = config.shortcuts[type];
+		const keys = normalizeShortcut(binding.keys);
+		config.shortcuts[type] = {
+			keys: keys ?? current.keys,
+			enabled:
+				typeof binding.enabled === 'boolean'
+					? binding.enabled
+					: current.enabled,
+		};
+	}
+}
+
+/**
+ * Copies the boolean display preferences into the config; anything else is ignored.
+ */
+function applyDisplay(config: ConfigModel, display: unknown): void {
+	if (!isObject(display)) {
+		return;
+	}
+
+	if (typeof display.authorAvatars === 'boolean') {
+		config.display.authorAvatars = display.authorAvatars;
+	}
+}
+
+/**
+ * Merges a raw stored value over DEFAULT_CONFIG, ignoring unknown keys and invalid values.
+ * Data saved by 1.0.0 (`{ templates }` only) gets the default shortcuts and display settings.
  *
  * @param stored - Raw value read from storage.
  * @returns A complete, valid config.
  */
 function mergeWithDefaults(stored: unknown): ConfigModel {
 	const config = cloneDefaultConfig();
-	if (!stored || typeof stored !== 'object') {
+	if (!isObject(stored)) {
 		return config;
 	}
 
-	const templates = (stored as { templates?: unknown }).templates;
-	if (!templates || typeof templates !== 'object') {
-		return config;
-	}
-
-	for (const type of Object.values(LinkType)) {
-		const value = (templates as Record<string, unknown>)[type];
-		if (typeof value === 'string') {
-			config.templates[type] = value;
-		}
-	}
-
+	applyTemplates(config, stored.templates);
+	applyShortcuts(config, stored.shortcuts);
+	applyDisplay(config, stored.display);
 	return config;
 }
 
@@ -63,6 +165,23 @@ async function readConfig(
 ): Promise<ConfigModel> {
 	const result = await storage.get(CONFIG_STORAGE_KEY);
 	return mergeWithDefaults(result[CONFIG_STORAGE_KEY]);
+}
+
+/**
+ * Reads the stored config, lets `change` modify it and writes it back in a single write,
+ * queued after earlier writes. Does nothing when chrome.storage is unavailable.
+ */
+function updateConfig(change: (config: ConfigModel) => void): Promise<void> {
+	return enqueueWrite(async () => {
+		const storage = getStorage();
+		if (!storage) {
+			return;
+		}
+
+		const config = await readConfig(storage);
+		change(config);
+		await storage.set({ [CONFIG_STORAGE_KEY]: config });
+	});
 }
 
 /**
@@ -106,32 +225,61 @@ export const configService = {
 	async setTemplates(
 		templates: Partial<Record<LinkType, string>>
 	): Promise<void> {
-		const storage = getStorage();
-		if (!storage) {
-			return;
-		}
-
-		const config = await readConfig(storage);
-		for (const type of Object.values(LinkType)) {
-			const value = templates[type];
-			if (typeof value === 'string') {
-				config.templates[type] = value;
-			}
-		}
-
-		await storage.set({ [CONFIG_STORAGE_KEY]: config });
+		await updateConfig((config) => applyTemplates(config, templates));
 	},
 
 	/**
-	 * Restores DEFAULT_CONFIG by removing the stored value.
+	 * Saves the binding of one shortcut (writes the full merged config).
+	 * Invalid `keys` (see normalizeShortcut) are ignored; missing fields keep their value.
+	 *
+	 * @param type - Shortcut whose binding is updated.
+	 * @param binding - New keys and/or enabled state.
+	 */
+	async setShortcut(
+		type: ShortcutType,
+		binding: Partial<ShortcutBindingModel>
+	): Promise<void> {
+		await updateConfig((config) =>
+			applyShortcuts(config, { [type]: binding })
+		);
+	},
+
+	/**
+	 * Saves display preferences (writes the full merged config).
+	 * Missing fields keep their value.
+	 *
+	 * @param display - New display preferences.
+	 */
+	async setDisplay(display: Partial<DisplayModel>): Promise<void> {
+		await updateConfig((config) => applyDisplay(config, display));
+	},
+
+	/**
+	 * Applies settings read from an imported file with a single write of the full merged
+	 * config. Settings missing from the file keep their current value.
+	 *
+	 * @param settings - Result of parseSettings.
+	 */
+	async importSettings(settings: SettingsImportModel): Promise<void> {
+		await updateConfig((config) => {
+			applyTemplates(config, settings.templates);
+			applyShortcuts(config, settings.shortcuts);
+			applyDisplay(config, settings.display);
+		});
+	},
+
+	/**
+	 * Restores DEFAULT_CONFIG (templates, shortcuts and display) by removing the stored value.
 	 */
 	async reset(): Promise<void> {
-		const storage = getStorage();
-		if (!storage) {
-			return;
-		}
+		await enqueueWrite(async () => {
+			const storage = getStorage();
+			if (!storage) {
+				return;
+			}
 
-		await storage.remove(CONFIG_STORAGE_KEY);
+			await storage.remove(CONFIG_STORAGE_KEY);
+		});
 	},
 
 	/**

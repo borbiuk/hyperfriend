@@ -20,6 +20,13 @@ const DETAIL_TITLE_TEXT_SELECTORS = [
 	'.markdown-title',
 ];
 
+/** Text of a `#123` number element next to a detail page title */
+const NUMBER_TEXT_REGEX = /^#\d+$/;
+
+/** Title text (may contain `#123` references) and our own UI, never the number element */
+const TITLE_TEXT_SELECTOR =
+	'[data-testid="issue-title"], .markdown-title, .js-issue-title, [data-hyperfriend]';
+
 /** Elements that are never part of the title text */
 const NON_TITLE_SELECTOR = '.sr-only, [aria-hidden="true"], [data-hyperfriend]';
 
@@ -102,6 +109,37 @@ export function parseListLink(
 }
 
 /**
+ * Returns the innermost `#123` element in a detail page header or right next to it
+ * (React PR header: the number is in a wrapper after the `h1`).
+ *
+ * @param header - Title header element of the page.
+ * @returns The number element, or `null` if the header shows no number.
+ */
+export function findNumberElement(header: Element): Element | null {
+	const scope = header.parentElement ?? header;
+	const sibling = header.nextElementSibling;
+
+	for (const element of scope.querySelectorAll('span')) {
+		if (
+			!(header.contains(element) || sibling?.contains(element)) ||
+			element.closest(TITLE_TEXT_SELECTOR) ||
+			!NUMBER_TEXT_REGEX.test(normalizeText(element.textContent))
+		) {
+			continue;
+		}
+
+		const innerNumber = Array.from(element.children).some((child) =>
+			NUMBER_TEXT_REGEX.test(normalizeText(child.textContent))
+		);
+		if (!innerNumber) {
+			return element;
+		}
+	}
+
+	return null;
+}
+
+/**
  * Extracts the title text from a detail page header element.
  */
 function getHeaderTitle(header: Element): string {
@@ -159,6 +197,18 @@ export function parseDetailPage(
 	const reference = parseItemUrl(window.location.href, true);
 	if (!reference) {
 		return null;
+	}
+
+	// After a soft navigation the URL changes before the header re-renders: a header showing
+	// another number still holds the previous item's title. Use the (number-checked) document
+	// title then, or fail rather than copy a wrong link.
+	const number = header ? findNumberElement(header) : null;
+	if (
+		number &&
+		Number(normalizeText(number.textContent).slice(1)) !== reference.number
+	) {
+		const title = getDocumentTitle(reference);
+		return title ? { ...reference, title } : null;
 	}
 
 	const title =

@@ -5,11 +5,11 @@
 Hyperfriend is a **browser extension for Chrome and Firefox** that adds a one-click **copy link** button to every
 Pull Request and Issue on [GitHub](https://github.com). The button copies a rich hyperlink, so a pasted link in
 Microsoft Teams, Slack and other chats shows readable text such as `PR 12: Add copy button to PR list`
-instead of a bare URL.
+instead of a bare URL. On an open Pull Request or Issue, a **keyboard shortcut** (Shift+C by default) copies the same link.
 
 Chrome Web Store and Firefox Add-ons listings are coming soon.
 
-<p align="center"><img src="design/store/screenshots/4-settings-popup-dark.jpg" alt="Pull request list with Hyperfriend copy buttons and author avatars, and the settings popup with link templates, in GitHub's dark theme" width="100%"></p>
+<p align="center"><img src="design/store/screenshots/4-popup-shortcuts-dark.jpg" alt="Hyperfriend settings popup, Shortcuts tab: copy the link with Shift+C, in the dark theme" width="100%"></p>
 
 <hr/>
 
@@ -26,15 +26,25 @@ Chrome Web Store and Firefox Add-ons listings are coming soon.
 - **Works with GitHub navigation**: buttons appear on pages that GitHub loads without a full page refresh and are never duplicated.
 - **Light and dark**: the button uses GitHub's own theme colors, so it follows the GitHub theme you use.
 
+### Keyboard shortcut
+
+- **Copy the open item**: press **Shift+C** (⇧C on Mac) on an open Pull Request or Issue to copy its link. It copies exactly what the title copy button copies (same template, same clipboard formats).
+- **Where it works**: on the Pull Request page, **Conversation tab only** (`/OWNER/REPO/pull/12`; not Files changed, Commits or Checks), and on the Issue page (`/OWNER/REPO/issues/34`). Everywhere else the key press is left to GitHub.
+- **It never gets in the way of typing**: it does nothing while the focus is in a text field (comment box, search, title editor and similar), while a dialog is open, while holding the key down or while an input method is composing text. Other GitHub shortcuts keep working.
+- **Any keyboard layout**: the shortcut uses the physical key (for example the key that is `C` on a US keyboard), so it works with Cyrillic, Greek and other layouts too.
+- **Feedback**: the title button shows the usual "Copied!" tooltip. If the button is scrolled out of view, a small "Link copied" toast appears at the bottom of the page for about 2 seconds ("Copy failed" if the copy did not work). Screen readers announce the result, and the title button carries `aria-keyshortcuts` while the shortcut is on.
+- **Change or turn it off**: in the **Shortcuts** tab of the popup (see below).
+
 ### Author avatars
 
 - **Who opened it**: in Pull Request lists a small round avatar (16 px) is shown before the author's login, like on other GitHub pages.
 - **Light on requests**: avatars load lazily from GitHub's own avatar server (`avatars.githubusercontent.com`), the same images GitHub shows. If an avatar cannot be loaded, it is simply removed.
 - **Only where it helps**: not shown in Issue lists or search results, and not added where GitHub already shows an avatar (for example Copilot rows).
+- **Optional**: turn them off with **Show author avatars** in the **General** tab of the popup. It applies right away, without reloading GitHub.
 
 ### Customizable templates
 
-Click the Hyperfriend icon in the browser toolbar to open the settings popup. It has one template for Pull Request
+Click the Hyperfriend icon in the browser toolbar to open the settings popup. Its **Templates** tab has one template for Pull Request
 links and one for Issue links. Defaults:
 
 - Pull Request: `PR {{pr_number}}: {{pr_name}}`
@@ -55,19 +65,61 @@ Notes:
 - Spaces inside the braces are allowed: `{{ pr_number }}`.
 - Unknown placeholders (including the ones of the other link type) are left as they are.
 - An empty template falls back to the default one.
-- Settings are saved in the browser sync storage, so they follow you across devices signed in to the same browser account.
+- Settings are saved in the browser sync storage, so they follow you across devices signed in to the same browser account. Templates saved by Hyperfriend 1.0.0 are kept when you update.
 
-### Sharing templates with your team
+### Customizing the shortcut
 
-Export your templates to a file and let teammates import it, so everybody pastes links in the same format.
+Open the **Shortcuts** tab of the popup. Each shortcut is a row with its name, a button showing the keys, an on/off switch and, once you changed the keys, a **Reset** button that restores the default.
 
-1. Open the Hyperfriend popup and click **Export**. The browser downloads `hyperfriend-settings.json`.
+1. Click the keys button. It reads "Press a shortcut…".
+2. Press the new combination. It is checked and saved at once. **Escape** or moving the focus away cancels, and **Tab** still moves the focus.
+3. Use the switch to turn the shortcut off. The keys are kept, so turning it on again restores your combination.
+
+Rules for a combination:
+
+- It needs at least one modifier (**Shift**, **Option / Alt**, **Control** or **Command / Win**) plus one key: a letter, digit, F-key, arrow, punctuation or editing key, or a numpad key.
+- Combinations the browser or text fields use (for example Ctrl/Cmd+C, V, X, A, Z, F, T, W, R, L) are refused: "This shortcut is used by the browser."
+- Combinations GitHub uses itself (for example Ctrl/Cmd+K for the command palette, or Shift+/ for the help) are accepted with the warning "GitHub also uses this shortcut."
+- Two enabled Hyperfriend shortcuts can't share the same keys.
+
+On Mac the keys are shown as symbols (⌃ ⌥ ⇧ ⌘); on Windows and Linux as `Ctrl`, `Alt`, `Shift` and `Win`.
+
+### Sharing settings with your team
+
+Export your settings to a file and let teammates import it, so everybody pastes links in the same format. The file holds the templates, the shortcuts and the display settings.
+
+1. Open the Hyperfriend popup, go to the **General** tab and click **Export**. The browser downloads `hyperfriend-settings.json`.
 2. Share the file (chat, repository, wiki).
-3. A teammate opens the popup, clicks **Import** and picks the file. The fields update and "Settings imported." is shown.
+3. A teammate opens the **General** tab, clicks **Import** and picks the file. The settings update and "Settings imported." is shown.
 
-In Chrome, Export and Import work right in the popup. In **Firefox** the popup closes when the download panel or the file picker opens, so **both Export and Import** open the settings page in a browser tab (`options_ui` with `open_in_tab`), where they work the same way. The settings page is also available from the extension's options in the browser's extensions manager.
+In Chrome, Export and Import work right in the popup. In **Firefox** the popup closes when the download panel or the file picker opens, so **both Export and Import** open the settings page in a browser tab (`options_ui` with `open_in_tab`, on the General tab), where they work the same way. The settings page is also available from the extension's options in the browser's extensions manager.
 
-File format (schema version 1):
+File format (schema version 2):
+
+```json
+{
+	"app": "hyperfriend",
+	"schemaVersion": 2,
+	"exportedAt": "2026-10-20T18:00:00.000Z",
+	"templates": {
+		"pull-request": "PR {{pr_number}}: {{pr_name}}",
+		"issue": "Issue {{issue_number}}: {{issue_name}}"
+	},
+	"shortcuts": {
+		"copy-link": {
+			"keys": ["Shift", "KeyC"],
+			"enabled": true
+		}
+	},
+	"display": {
+		"authorAvatars": true
+	}
+}
+```
+
+`keys` lists the modifiers in the order `Control`, `Alt`, `Shift`, `Meta`, followed by one [`KeyboardEvent.code`](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code) value of the main key (`KeyC`, `Digit1`, `F5`, `ArrowUp`, ...). A disabled shortcut keeps its `keys`.
+
+Files exported by Hyperfriend 1.0.0 use schema version 1 and contain `templates` only:
 
 ```json
 {
@@ -81,21 +133,31 @@ File format (schema version 1):
 }
 ```
 
+They still import: the templates are applied and the shortcuts and display settings keep their current values.
+
 Import rules:
 
-- The file must be up to 64 KB (larger files are rejected before they are read) and valid JSON, with `"app": "hyperfriend"` and `"schemaVersion": 1`. A higher version is rejected as "created by a newer version of Hyperfriend".
-- `templates` must be an object. Only the keys `pull-request` and `issue` are read; other keys are ignored. Values are trimmed, and each must be a single line of text (no line breaks or control characters) of at most 500 characters; otherwise the error reads `Template "<key>" must be a single line of text up to 500 characters.` At least one known template must be present.
-- A template missing from the file keeps its current value. Everything is applied with one write to the sync storage.
+- The file must be up to 64 KB (larger files are rejected before they are read) and valid JSON, with `"app": "hyperfriend"` and `"schemaVersion"` 1 or 2. A higher version is rejected as "created by a newer version of Hyperfriend".
+- `templates` must be an object. Only the keys `pull-request` and `issue` are read; other keys are ignored. Values are trimmed, and each must be a single line of text (no line breaks or control characters) of at most 500 characters; otherwise the error reads `Template "<key>" must be a single line of text up to 500 characters.` (In a version 1 file at least one known template must be present.)
+- `shortcuts` must be an object. Only the key `copy-link` is read. Its value needs `keys` that form a valid combination (at least one modifier, exactly one main key; a valid combination in another order is accepted and normalized) and a boolean `enabled`; otherwise the error reads `Shortcut "copy-link" is not valid.`
+- `display` must be an object. Only `authorAvatars` is read, and it must be `true` or `false`; otherwise the error reads `Display setting "authorAvatars" must be true or false.`
+- In a version 2 file every section is optional, but at least one setting must be present ("The file does not contain any settings.").
+- A setting missing from the file keeps its current value. Everything is applied with one write to the sync storage.
 - Problems are shown as a short message under the buttons, and nothing is changed.
 - `exportedAt` is informational only.
 
 ### Settings popup
 
+The popup has three tabs and a footer with a link to the GitHub repository. The URL hash of `options.html` can open a tab first: `#templates`, `#shortcuts` or `#general`.
+
 - **GitHub look**: built with Primer React, the design system of GitHub.
 - **Header**: the popup shows the extension icon next to the name.
-- **Live preview**: each template field is marked with a Pull Request or Issue icon, lists the available placeholders and shows the resulting link text for a sample item.
-- **Autosave**: changes are saved about 300 ms after you stop typing, with a "Saved" status.
-- **Footer**: **Reset to defaults** restores both templates, **Export** and **Import** share them as a file (see above), and a link opens the GitHub repository.
+- **Templates**: each template field is marked with a Pull Request or Issue icon, lists the available placeholders and shows the resulting link text for a sample item (live preview). Changes are saved about 300 ms after you stop typing, with a "Saved" status.
+- **Shortcuts**: change, turn off or reset the keyboard shortcut (see above). Shortcuts don't work while you type in a text field.
+- **General**:
+    - **Show author avatars** (on by default), applied immediately.
+    - **Export** and **Import** share the settings as a file (see above).
+    - **Reset all settings** restores the default templates, shortcuts and display settings after a confirmation ("Reset all settings?").
 - **Light and dark themes**: the popup follows the operating system theme.
 
 <hr/>
@@ -112,6 +174,8 @@ All pages are on `github.com`.
 | **Search results**        | `/search?type=pullrequests`, `/search?type=issues`                                                                                  | Copy button after every result title               |
 | **Pull Request page**     | `/OWNER/REPO/pull/12`, including `/files`, `/commits`, `/checks`                                                                    | Copy button right after the `#number` of the title |
 | **Issue page**            | `/OWNER/REPO/issues/34`                                                                                                             | Copy button right after the `#number` of the title |
+
+The keyboard shortcut works on the Issue page and on the main Pull Request page only (`/OWNER/REPO/pull/12`, the Conversation tab), not on the Pull Request sub-tabs `/files`, `/commits` and `/checks`, even though the copy button is shown there.
 
 Author avatars are added to the Pull Request lists only (the repository and dashboard lists); Issue lists and search results do not get them. Other pages (for example `/OWNER/REPO/issues/new`) are left untouched.
 
@@ -174,18 +238,21 @@ CI (`.github/workflows/build.yml`) runs `npm ci`, `check:versions`, both builds 
     - `assets/`: The extension icon PNGs (`logo-16.png`, `logo-32.png`, `logo-48.png`, `logo-128.png`).
 - `design/icon/`: Icon sources (SVG for each size) and `render.sh` that renders them into `public/assets/`, see [design/icon/README.md](design/icon/README.md).
 - `src/`:
-    - `content/`: Content script that adds copy buttons and author avatars on GitHub pages (plain DOM, no React).
-        - `components/`: The copy button (`copy-button.ts`) and the shared tooltip (`tooltip.ts`).
+    - `content/`: Content script that adds copy buttons, author avatars and the keyboard shortcut on GitHub pages (plain DOM, no React).
+        - `components/`: The copy button (`copy-button.ts`), the shared tooltip (`tooltip.ts`) and the toast (`toast.ts`).
         - `icons/`: Inline SVG Octicons (copy, check, x).
-        - `services/`: Page detection, link target parsing, button injection, author avatar injection, DOM observer and the config store.
-        - `styles/`: CSS of the button, tooltip and avatar (uses GitHub's Primer CSS variables).
+        - `services/`: Page detection, link target parsing, button injection, author avatar injection, the keyboard shortcut service, DOM observer and the config store.
+        - `shortcut/`: The shortcut handler interface and one handler per shortcut (`copy-link-shortcut-handler.ts`).
+        - `styles/`: CSS of the button, tooltip, toast and avatar (uses GitHub's Primer CSS variables).
         - `content.ts`: The entry of the content script.
     - `options/`: Toolbar popup (settings), a React app built with Primer React.
-        - `components/`: React components of the popup (`options-app.tsx`, `settings-section.tsx`, `template-field.tsx`, `footer-actions.tsx` with reset, export and import).
+        - `components/`: React components of the popup (`options-app.tsx` with the tabs, `templates-panel.tsx`, `shortcuts-panel.tsx` and `general-panel.tsx` for the tab contents, `template-field.tsx`, `shortcut-row.tsx`, `key-chips.tsx`, `settings-section.tsx`, `settings-actions.tsx` with export, import and reset).
+        - `constants/`: `shortcut-items.ts`, the rows of the Shortcuts tab.
         - `hooks/`: React hooks (`use-config.ts` loads the config and keeps it fresh, `use-view-mode.ts` tells popup from tab).
-        - `utils/`: Helpers (`download-text.ts` saves a file without the `downloads` permission).
+        - `styles/`: CSS of the tabs.
+        - `utils/`: Helpers (`download-text.ts` saves a file without the `downloads` permission, `options-hash.ts` reads the URL hash, `describe-shortcut.ts` spells a shortcut for screen readers).
         - `options.tsx`: The entry of the popup.
-    - `shared/`: Models, constants, services (templates, config, clipboard, settings import/export) and utils, imported via `@shared/*`.
+    - `shared/`: Models, constants, services (templates, config, clipboard, settings import/export) and utils (including the shortcut helpers), imported via `@shared/*`.
     - `types/`: Ambient type declarations (`global.d.ts` allows `*.css` imports).
 - `webpack/`: Configuration of webpack for the Chrome (`dist/`) and Firefox (`dist-firefox/`) builds.
 - `scripts/`: Maintenance scripts (`check-versions.mjs`, `tag-releases.sh` for tagging released versions).

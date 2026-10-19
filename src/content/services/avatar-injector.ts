@@ -69,6 +69,16 @@ export class AvatarInjector {
 	}
 
 	/**
+	 * Removes all injected avatars (when avatars are turned off). GitHub's own elements are
+	 * never changed, so there is nothing else to restore.
+	 */
+	public removeAll(): void {
+		document
+			.querySelectorAll(AVATAR_SELECTOR)
+			.forEach((img) => img.remove());
+	}
+
+	/**
 	 * Returns the author login: from the link's `author:` filter (the text may be a display
 	 * name such as "Jane Doe (jdoe)"), otherwise from its text.
 	 */

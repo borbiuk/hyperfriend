@@ -1,15 +1,12 @@
-import { DEFAULT_CONFIG } from '@shared/constants';
 import { ConfigModel } from '@shared/models';
-import { configService } from '@shared/services';
+import { cloneDefaultConfig, configService } from '@shared/services';
 
 /**
  * Keeps the current config in memory, so click handlers can read it synchronously
  * (the clipboard write must start without awaiting anything, to keep the user activation).
  */
 export class ConfigStore {
-	private config: ConfigModel = {
-		templates: { ...DEFAULT_CONFIG.templates },
-	};
+	private config: ConfigModel = cloneDefaultConfig();
 
 	/**
 	 * Loads the stored config and keeps it fresh.

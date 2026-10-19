@@ -1,0 +1,97 @@
+/*
+	Hyperfriend toast: a compact version of Primer's Toast (colored icon block on the left,
+	message on the right), centered at the bottom of the viewport. Colors come from GitHub's
+	Primer CSS variables with light-theme fallbacks, so it follows GitHub's light and dark themes.
+*/
+
+.hyperfriend-toast {
+	position: fixed;
+	z-index: 2147483000;
+	bottom: var(--base-size-24, 24px);
+	left: 50%;
+	display: none;
+	box-sizing: border-box;
+	max-width: calc(100vw - 2 * var(--base-size-16, 16px));
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	border-radius: var(--borderRadius-medium, 6px);
+	background-color: var(--overlay-bgColor, var(--bgColor-default, #ffffff));
+	box-shadow:
+		inset 0 0 0 1px var(--borderColor-default, #d1d9e0),
+		var(
+			--shadow-floating-large,
+			0 0 0 1px #d1d9e0,
+			0 40px 80px 0 rgba(37, 41, 46, 0.24)
+		);
+	color: var(--fgColor-default, #1f2328);
+	font: var(
+		--text-body-shorthand-medium,
+		400 14px / 1.4285 -apple-system,
+		BlinkMacSystemFont,
+		'Segoe UI',
+		'Noto Sans',
+		Helvetica,
+		Arial,
+		sans-serif
+	);
+	transform: translateX(-50%);
+	pointer-events: none;
+}
+
+.hyperfriend-toast[data-visible] {
+	display: flex;
+}
+
+.hyperfriend-toast__icon {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: var(--base-size-40, 40px);
+	color: var(--fgColor-onEmphasis, #ffffff);
+	background-color: var(--bgColor-success-emphasis, #1f883d);
+}
+
+.hyperfriend-toast[data-variant='danger'] .hyperfriend-toast__icon {
+	background-color: var(--bgColor-danger-emphasis, #cf222e);
+}
+
+.hyperfriend-toast__icon .hyperfriend-icon {
+	display: block;
+	width: 16px;
+	height: 16px;
+	fill: currentColor;
+}
+
+.hyperfriend-toast__text {
+	padding: var(--base-size-12, 12px) var(--base-size-16, 16px);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+	.hyperfriend-toast[data-visible] {
+		animation: hyperfriend-toast-appear 0.2s cubic-bezier(0.33, 1, 0.68, 1)
+			forwards;
+	}
+}
+
+@keyframes hyperfriend-toast-appear {
+	from {
+		opacity: 0;
+		transform: translate(-50%, 8px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translate(-50%, 0);
+	}
+}
+
+@media (forced-colors: active) {
+	.hyperfriend-toast {
+		outline: 1px solid transparent;
+	}
+}

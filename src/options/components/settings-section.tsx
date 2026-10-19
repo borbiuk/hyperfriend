@@ -11,7 +11,7 @@ interface SettingsSectionProps {
  */
 export function SettingsSection({ title, children }: SettingsSectionProps) {
 	return (
-		<section style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+		<section style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
 			<Text as="h2" size="medium" weight="semibold" style={{ margin: 0 }}>
 				{title}
 			</Text>

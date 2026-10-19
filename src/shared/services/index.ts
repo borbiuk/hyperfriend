@@ -2,7 +2,11 @@
 
 export { buildLinkPayload, copyLink } from './clipboard-service';
 export type { LinkPayload } from './clipboard-service';
-export { configService } from './config-service';
+export {
+	cloneConfig,
+	cloneDefaultConfig,
+	configService,
+} from './config-service';
 export {
 	parseSettings,
 	serializeSettings,

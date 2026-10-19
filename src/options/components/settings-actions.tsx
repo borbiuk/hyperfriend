@@ -1,5 +1,5 @@
 import { DownloadIcon, UploadIcon } from '@primer/octicons-react';
-import { Button, Link, Text } from '@primer/react';
+import { Button, ConfirmationDialog, Text } from '@primer/react';
 import {
 	configService,
 	parseSettings,
@@ -11,7 +11,8 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { ViewMode } from '../hooks/use-view-mode';
 import { downloadText } from '../utils/download-text';
 
-const REPOSITORY_URL = 'https://github.com/borbiuk/hyperfriend';
+/** Settings page URL the Firefox popup opens for Export and Import (General tab). */
+const SETTINGS_TAB_PATH = 'options.html#general';
 
 /** How long a success message stays visible. */
 const NOTICE_VISIBLE_MS = 4000;
@@ -24,27 +25,28 @@ interface Notice {
 	text: string;
 }
 
-interface FooterActionsProps {
+interface SettingsActionsProps {
 	/** `null` until the view is detected; transfer buttons stay disabled until then. */
 	viewMode: ViewMode | null;
 	/** Writes all pending field edits and waits for the writes. */
 	flushAll: () => Promise<void>;
 	/** Drops all pending field edits (before the settings are replaced). */
 	cancelAll: () => Promise<void>;
-	/** Re-reads the config and makes the fields show it. */
+	/** Re-reads the config and makes every tab show it. */
 	applyStored: () => Promise<void>;
 }
 
 /**
- * Footer of the popup: reset, export, import and the project link.
+ * Export, Import and "Reset all settings" (with a confirmation) plus their messages.
  */
-export function FooterActions({
+export function SettingsActions({
 	viewMode,
 	flushAll,
 	cancelAll,
 	applyStored,
-}: FooterActionsProps) {
+}: SettingsActionsProps) {
 	const [notice, setNotice] = useState<Notice | null>(null);
+	const [confirmingReset, setConfirmingReset] = useState(false);
 	const fileInput = useRef<HTMLInputElement>(null);
 	const noticeTimer = useRef<number>(0);
 
@@ -63,22 +65,32 @@ export function FooterActions({
 		}
 	};
 
-	const handleReset = async (): Promise<void> => {
+	const reset = async (): Promise<void> => {
 		show(null);
 		try {
 			// Pending saves must not overwrite the defaults afterwards.
 			await cancelAll();
 			await configService.reset();
 			await applyStored();
+			show({ kind: 'success', text: 'All settings were reset.' });
 		} catch {
 			show({ kind: 'error', text: 'Could not reset.' });
+		}
+	};
+
+	const handleResetDialogClose = (
+		gesture: 'confirm' | 'close-button' | 'cancel' | 'escape'
+	): void => {
+		setConfirmingReset(false);
+		if (gesture === 'confirm') {
+			void reset();
 		}
 	};
 
 	/**
 	 * The Firefox popup closes when the OS file picker or the download panel opens, so
 	 * the import file would never arrive and the export blob URL would die. There both
-	 * actions happen on the settings page opened in a tab.
+	 * actions happen on the settings page, opened in a tab on the General tab.
 	 *
 	 * @returns True when the settings page was opened instead (the popup is closing).
 	 */
@@ -87,7 +99,12 @@ export function FooterActions({
 			return false;
 		}
 
-		Promise.resolve(chrome.runtime.openOptionsPage())
+		Promise.resolve()
+			.then(() =>
+				chrome.tabs.create({
+					url: chrome.runtime.getURL(SETTINGS_TAB_PATH),
+				})
+			)
 			// Close the popup only on success, so a failure message stays readable.
 			.then(() => window.close())
 			.catch(() =>
@@ -148,7 +165,7 @@ export function FooterActions({
 			}
 
 			await cancelAll();
-			await configService.setTemplates(result.templates);
+			await configService.importSettings(result.settings);
 			await applyStored();
 			show({ kind: 'success', text: 'Settings imported.' });
 		} catch {
@@ -157,11 +174,8 @@ export function FooterActions({
 	};
 
 	return (
-		<footer style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
 			<div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-				<Button size="small" onClick={handleReset}>
-					Reset to defaults
-				</Button>
 				<Button
 					size="small"
 					leadingVisual={DownloadIcon}
@@ -178,6 +192,16 @@ export function FooterActions({
 				>
 					Import
 				</Button>
+				<Button
+					size="small"
+					variant="danger"
+					onClick={() => {
+						show(null);
+						setConfirmingReset(true);
+					}}
+				>
+					Reset all settings
+				</Button>
 				<input
 					ref={fileInput}
 					type="file"
@@ -186,46 +210,42 @@ export function FooterActions({
 					onChange={handleFileChange}
 				/>
 			</div>
-			<div
-				style={{
-					display: 'flex',
-					justifyContent: 'space-between',
-					alignItems: 'baseline',
-					gap: 8,
-				}}
-			>
-				<div style={{ minWidth: 0 }}>
-					{/* Live regions stay mounted, so screen readers announce the text changes. */}
-					<Text
-						size="small"
-						role="status"
-						style={{
-							color: 'var(--fgColor-success)',
-							overflowWrap: 'anywhere',
-						}}
-					>
-						{notice?.kind === 'success' ? notice.text : ''}
-					</Text>
-					<Text
-						size="small"
-						role="alert"
-						style={{
-							color: 'var(--fgColor-danger)',
-							overflowWrap: 'anywhere',
-						}}
-					>
-						{notice?.kind === 'error' ? notice.text : ''}
-					</Text>
-				</div>
-				<Link
-					href={REPOSITORY_URL}
-					target="_blank"
-					rel="noreferrer"
-					style={{ fontSize: 12, flexShrink: 0 }}
+			{/* Live regions stay mounted, so screen readers announce the text changes. */}
+			<div>
+				<Text
+					size="small"
+					role="status"
+					style={{
+						display: 'block',
+						color: 'var(--fgColor-success)',
+						overflowWrap: 'anywhere',
+					}}
 				>
-					GitHub
-				</Link>
+					{notice?.kind === 'success' ? notice.text : ''}
+				</Text>
+				<Text
+					size="small"
+					role="alert"
+					style={{
+						display: 'block',
+						color: 'var(--fgColor-danger)',
+						overflowWrap: 'anywhere',
+					}}
+				>
+					{notice?.kind === 'error' ? notice.text : ''}
+				</Text>
 			</div>
-		</footer>
+			{confirmingReset && (
+				<ConfirmationDialog
+					title="Reset all settings?"
+					onClose={handleResetDialogClose}
+					confirmButtonContent="Reset"
+					confirmButtonType="danger"
+				>
+					Templates, shortcuts and display settings return to their
+					defaults.
+				</ConfirmationDialog>
+			)}
+		</div>
 	);
 }

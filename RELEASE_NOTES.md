@@ -1,5 +1,19 @@
 # Release Notes
 
+## 2.0.0
+
+Keyboard shortcut and a tabbed settings popup.
+
+- Keyboard shortcut to copy the link of the open Pull Request or Issue, **Shift+C** by default (⇧C on Mac). It copies exactly what the title copy button copies and shows the same "Copied!" tooltip, or a "Link copied" toast at the bottom of the page when the button is scrolled out of view.
+- The shortcut works on the Pull Request page (Conversation tab only, not Files changed, Commits or Checks) and on the Issue page. It does not work while you type in a text field or while a dialog is open, and it works with any keyboard layout (it uses the physical key).
+- Change or turn off the shortcut in the new **Shortcuts** tab of the popup: click the keys, press a new combination, and it is saved at once. Combinations the browser uses (such as Ctrl+C) are refused, and a warning is shown when GitHub uses the same keys. A **Reset** button restores the default.
+- The popup now has three tabs: **Templates**, **Shortcuts** and **General**.
+- New **Show author avatars** switch in **General** (on by default). It applies right away, without reloading GitHub.
+- **Reset all settings** (with a confirmation) in **General** restores the default templates, shortcuts and display settings. It replaces the "Reset to defaults" button, which only reset the templates.
+- Export and import now include the shortcuts and display settings (settings file schema version 2). Files exported by 1.0.0 still import (templates only).
+- The title copy button announces the shortcut to screen readers (`aria-keyshortcuts`) while it is enabled; the tooltip text is unchanged.
+- Your templates from 1.0.0 are kept. The extension still needs only the `storage` permission and has no new network traffic.
+
 ## 1.0.0
 
 Initial release.

@@ -14,7 +14,7 @@
 
 ## Agent context
 
-- Rules (`.claude/rules/`) load automatically when matching files are touched: architecture, GitHub DOM selectors, shared API, popup, Firefox, npm versions, docs and CI, agent context.
+- Rules (`.claude/rules/`) load automatically when matching files are touched: architecture (with the "add a new shortcut" checklist), GitHub DOM selectors (page detection, copy button, avatars, keyboard shortcuts, toast), shared API (config schema, shortcut helpers, settings file), popup (tabs), Firefox, npm versions, docs and CI, agent context.
 - Skill `/verify` (`.claude/skills/verify/`): exact versions, both builds, ESLint, type check and `web-ext lint`.
 - Subagents (`.claude/agents/`): `code-reviewer` (read-only review), `qa-engineer` (read-only verification).
 - Plugin `modern-web-guidance` (enabled in `.claude/settings.json`) provides the official `chrome-extensions` skill for Chrome APIs.

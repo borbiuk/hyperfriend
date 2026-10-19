@@ -28,6 +28,8 @@ GitHub renders pages with React and Turbo. Its CSS class names are **hashed** (f
 
 List paths are deliberately restricted: do not widen them to `.*`, or pages such as `/issues/new` get scanned.
 
+`PageKind.PullRequest` also covers the sub-tabs (the copy button stays there). `isPullRequestConversation(location)` in the same file is true only for `/{owner}/{repo}/pull/{n}` (optional trailing slash, no sub-path): the Conversation tab, the only Pull Request page where the keyboard shortcut works.
+
 ## What the scanner looks for
 
 [button-injector.ts](../../src/content/services/button-injector.ts):
@@ -66,9 +68,25 @@ GitHub navigates without full page loads (Turbo), and React re-renders list rows
 - **Cleanup**: an avatar whose next sibling is no longer the author link of the same login is removed on the next scan; on a load error the avatar is removed and the login is not retried (no request loops).
 - It is idempotent like the button: it runs in the same scan and never touches GitHub's own elements.
 
+Avatars follow `display.authorAvatars` (config, popup tab General). The scan in `content.ts` skips avatar injection when it is `false` and calls `AvatarInjector.removeAll()` (removes every `img[data-hyperfriend="avatar"]`) so they disappear at once; turning it back on lets the next scan add them again. Config changes reach the scan through `ConfigStore` (`configService.subscribe`).
+
+## Keyboard shortcuts
+
+[shortcut-service.ts](../../src/content/services/shortcut-service.ts) registers **one `keydown` listener on `document` in the capture phase**, started after the config has loaded. Handlers live in [src/content/shortcut/](../../src/content/shortcut/): the `ShortcutHandler` interface (`type`, `isAvailable(kind, location)`, `handle(event)`) and one class per `ShortcutType`, registered in `content.ts`. The key combination is data (`config.shortcuts[type]`, read from `ConfigStore`), not part of the handler.
+
+- **Matching**: by `KeyboardEvent.code` plus the exact modifier set (`matchesShortcut`), so it works with any keyboard layout. Only enabled bindings match.
+- **Skipped** (the event is left untouched, no `preventDefault`): `event.repeat`, `event.isComposing`, `event.defaultPrevented`, a target or focused element (also inside open shadow roots) that is editable (`input`, `textarea`, `select`, `[contenteditable]` not `false`, `[role="textbox"]`, `[role="combobox"]`, `[role="searchbox"]`), an open modal dialog (`dialog[open]`, `[role="dialog"][aria-modal="true"]`, when rendered), a shortcut whose `isAvailable` is false for the current page, and any key press that matches nothing. Availability is evaluated on every key press (GitHub navigates without page loads).
+- **On a match**: `preventDefault()` + `stopPropagation()`, then `handle(event)` **synchronously** (the clipboard write must start inside the `keydown` task to keep user activation).
+- **Copy link** ([copy-link-shortcut-handler.ts](../../src/content/shortcut/copy-link-shortcut-handler.ts)): available on `PageKind.Issue` and on the Pull Request Conversation tab (`isPullRequestConversation`), not on `/files`, `/commits`, `/checks`. It reuses the detail title button (`ButtonInjector.getTitleButton()`, `CopyButton.copy()`), so the template, clipboard payload and feedback are identical to a click:
+    - Button fully visible in the viewport (and not covered, e.g. by a sticky header): the usual "Copied!" / "Copy failed" tooltip.
+    - Button out of view: `copy(false)` (the icon still changes, no tooltip) and a **toast**: "Link copied" / "Copy failed".
+    - Button not injected yet: the target comes from `ButtonInjector.resolveDetailTarget()` (title header, then `document.title`) and `copyLink` is called directly, with the toast as feedback.
+- **Toast** ([toast.ts](../../src/content/components/toast.ts), [toast.css](../../src/content/styles/toast.css)): one shared element `div.hyperfriend-toast` with **`data-hyperfriend="toast"`**, fixed at the bottom center of the viewport, Primer-like (colored icon block + text) using GitHub's CSS variables with light fallbacks, `aria-hidden` (the message is announced through the tooltip's live region), hides after about 2 s, animates only when `prefers-reduced-motion: no-preference`, hides on `turbo:visit` / `popstate` / `pagehide` and is removed on `turbo:before-cache`.
+- **`aria-keyshortcuts`**: `ButtonInjector` sets it on the **detail page title button** (value from `ShortcutService.getAriaKeyShortcuts`, e.g. `Shift+C`) while the shortcut is enabled and available on the page, and removes it otherwise; it is refreshed on every scan, so config changes apply. The tooltip text does **not** mention the shortcut (do not add a hint to it).
+
 ## Idempotent markers
 
-- The injected button has **`data-hyperfriend="copy-button"`**; avatars have **`data-hyperfriend="avatar"`**, the tooltip and live region `tooltip` and `live-region`.
+- The injected button has **`data-hyperfriend="copy-button"`**; avatars have **`data-hyperfriend="avatar"`**, the tooltip, live region and toast `tooltip`, `live-region` and `toast`.
 - **`data-hyperfriend-processed`** is set on the host that got a button: the title link in lists, the title header on detail pages.
 - Before inserting, the injector checks the real next sibling (not only a marker), because React may recreate nodes; an existing button is only updated (its label follows the current title and templates). A button left by an older instance of the script is replaced. Stale title buttons on detail pages are removed, and row buttons whose title link was replaced or moved (React may recreate only the link) are removed at the start of every scan and re-created.
 - Never remove or change GitHub's own elements. Insert next to them. The only GitHub style touched: `.search-title > a[data-hyperfriend-processed]` gets `min-width: 0` and an ellipsis so the button stays visible in search rows.
@@ -82,6 +100,6 @@ GitHub navigates without full page loads (Turbo), and React re-renders list rows
 
 ## Verifying changes
 
-- Test on: repository PR list, repository Issue list, a PR page (and its Files and Commits tabs), an Issue page, `/pulls` and `/issues` dashboards (needs sign-in), and `/search?type=pullrequests` / `type=issues`.
+- Test on: repository PR list, repository Issue list, a PR page (and its Files and Commits tabs: the button is there, the shortcut is not), an Issue page (shortcut with the title button visible and scrolled out of view, not while typing in a comment box), `/pulls` and `/issues` dashboards (needs sign-in), and `/search?type=pullrequests` / `type=issues`.
 - Switch GitHub light and dark themes; navigate between pages without reloading; check there is exactly one button per item.
 - In-browser checks with the `chrome-devtools` MCP server (`.mcp.json`): after `npm run build`, call `install_extension` with the absolute path of `dist/`, and `reload_extension` after every rebuild. Open the pages above and check `list_console_messages` for errors. Its Chrome profile is not signed in to GitHub, so the `/pulls` and `/issues` dashboards stay a manual check.

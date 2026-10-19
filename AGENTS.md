@@ -4,23 +4,25 @@ This file orients human and AI contributors to the **Hyperfriend** browser exten
 
 ## Product
 
-- **Hyperfriend** — adds a copy-link button to every GitHub Pull Request and Issue (lists and detail pages). A click copies a rich hyperlink: `text/html` `<a href="URL">TEXT</a>` and `text/plain` `TEXT — URL`.
-- **Settings** — two link templates (Pull Request, Issue) with `{{placeholders}}`, edited in the toolbar popup, stored in `chrome.storage.sync`, and shareable as a JSON file (Export / Import).
+- **Hyperfriend** — adds a copy-link button to every GitHub Pull Request and Issue (lists and detail pages). A click copies a rich hyperlink: `text/html` `<a href="URL">TEXT</a>` and `text/plain` `TEXT — URL`. The keyboard shortcut `copy-link` (default Shift+C) copies the link of the open Issue or of the open Pull Request (Conversation tab only).
+- **Settings** — two link templates (Pull Request, Issue) with `{{placeholders}}`, the keyboard shortcuts (key combination + on/off) and display settings (author avatars on/off). Edited in the toolbar popup (tabs Templates, Shortcuts, General), stored in `chrome.storage.sync` (`ConfigModel`: `templates`, `shortcuts`, `display`), and shareable as a JSON file (Export / Import, schema version 2; version 1 files with templates only still import).
 - **Build output** — `dist/` (Chrome, Load unpacked) and `dist-firefox/` (Firefox, `about:debugging`).
 - **Source manifests** — `public/manifest.json` (Chrome) and `public/manifest.firefox.json` (Firefox); copied to `manifest.json` in the matching build directory.
 - **Icon** — `public/assets/logo-{16,32,48,128}.png`, referenced by `icons` and `action.default_icon` in both manifests and included by `zip.sh`. Sources and the render script are in `design/icon/` ([README](design/icon/README.md)); regenerate with `./design/icon/render.sh`.
 
 ## Architecture (MV3)
 
-| Area           | Path                      | Role                                                                                                      |
-| -------------- | ------------------------- | --------------------------------------------------------------------------------------------------------- |
-| Content script | `src/content/content.ts`  | Runs on `https://github.com/*`; injects copy buttons and PR author avatars; limited `chrome.*` (storage). |
-| Popup          | `src/options/options.tsx` | Toolbar popup and options page (`public/options.html`): React + Primer React settings UI.                 |
-| Shared code    | `src/shared/`             | Models, constants, services, utils — reuse via **`@shared/*`** alias.                                     |
+| Area           | Path                      | Role                                                                                                                               |
+| -------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Content script | `src/content/content.ts`  | Runs on `https://github.com/*`; injects copy buttons and PR author avatars, runs keyboard shortcuts; limited `chrome.*` (storage). |
+| Popup          | `src/options/options.tsx` | Toolbar popup and options page (`public/options.html`): React + Primer React settings UI with three tabs.                          |
+| Shared code    | `src/shared/`             | Models, constants, services, utils — reuse via **`@shared/*`** alias.                                                              |
 
 Ambient type declarations live in `src/types/global.d.ts`. **There is no background script and no service worker.** Both entrypoints use `chrome.storage.sync` through `configService`.
 
-See also [extension-architecture.md](.claude/rules/extension-architecture.md) and [github-dom-selectors.md](.claude/rules/github-dom-selectors.md).
+Adding a keyboard shortcut touches five places (enum value, default in `DEFAULT_CONFIG`, handler in `src/content/shortcut/`, row in `SHORTCUT_ITEMS`, docs); the checklist is in [extension-architecture.md](.claude/rules/extension-architecture.md).
+
+See also [extension-architecture.md](.claude/rules/extension-architecture.md), [shared-api.md](.claude/rules/shared-api.md), [popup.md](.claude/rules/popup.md) and [github-dom-selectors.md](.claude/rules/github-dom-selectors.md).
 
 ## Build and manifest constraints
 

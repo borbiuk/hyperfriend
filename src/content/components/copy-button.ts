@@ -131,25 +131,41 @@ export class CopyButton {
 		this.render();
 	}
 
+	/**
+	 * Copies the link exactly like a click. Must be called synchronously from a user gesture
+	 * (click, keydown): the clipboard write starts before this method returns.
+	 *
+	 * @param showTooltip - Show "Copied!" / "Copy failed" in the tooltip and announce it;
+	 * `false` when the caller shows its own feedback (the button icon still changes).
+	 * @returns Resolves with `true` when copied, `false` when copying failed.
+	 */
+	public copy(showTooltip = true): Promise<boolean> {
+		const target = this.resolveTarget();
+		if (!target) {
+			this.showFeedback(CopyButtonState.Failed, showTooltip);
+			return Promise.resolve(false);
+		}
+
+		// Called synchronously to keep the user activation required by the Clipboard API
+		return copyLink(target, this.getConfig()).then(
+			() => {
+				this.showFeedback(CopyButtonState.Copied, showTooltip);
+				return true;
+			},
+			(error: unknown) => {
+				console.warn('[Hyperfriend] Failed to copy the link.', error);
+				this.showFeedback(CopyButtonState.Failed, showTooltip);
+				return false;
+			}
+		);
+	}
+
 	private readonly handleClick = (event: MouseEvent): void => {
 		// Rows are links / clickable containers: the button must never navigate
 		event.preventDefault();
 		event.stopPropagation();
 
-		const target = this.resolveTarget();
-		if (!target) {
-			this.showFeedback(CopyButtonState.Failed);
-			return;
-		}
-
-		// Called synchronously to keep the user activation required by the Clipboard API
-		copyLink(target, this.getConfig()).then(
-			() => this.showFeedback(CopyButtonState.Copied),
-			(error: unknown) => {
-				console.warn('[Hyperfriend] Failed to copy the link.', error);
-				this.showFeedback(CopyButtonState.Failed);
-			}
-		);
+		this.copy();
 	};
 
 	private readonly handleKey = (event: KeyboardEvent): void => {
@@ -182,15 +198,18 @@ export class CopyButton {
 	};
 
 	private showFeedback(
-		state: CopyButtonState.Copied | CopyButtonState.Failed
+		state: CopyButtonState.Copied | CopyButtonState.Failed,
+		showTooltip: boolean
 	): void {
 		window.clearTimeout(this.resetTimer);
 		this.state = state;
 		this.render();
 
-		const message = FEEDBACK_MESSAGES[state];
-		tooltip.show(this.element, message, true);
-		tooltip.announce(message);
+		if (showTooltip) {
+			const message = FEEDBACK_MESSAGES[state];
+			tooltip.show(this.element, message, true);
+			tooltip.announce(message);
+		}
 
 		this.resetTimer = window.setTimeout(() => {
 			this.state = CopyButtonState.Idle;

@@ -1,16 +1,20 @@
 /*
 	Captures the Chrome Web Store screenshots (1280 x 800 JPEG) into design/store/screenshots/.
 
-	How it works: starts headless Google Chrome with the DevTools protocol, opens real
-	github.com pages of this repository, injects the built content script (dist/content.js,
-	exactly what the extension runs) and drives hover/click to show the tooltip states.
-	The popup is rendered from dist/options.html and composited onto a page screenshot.
+	How it works: starts headless Google Chrome with the DevTools protocol.
+	- Pages (1-2): opens real github.com pages of this repository, injects the built content
+	  script (dist/content.js, exactly what the extension runs) and drives hover/click to show
+	  the tooltip states. They need open Pull Requests #1 to #3.
+	- Popup (3-5): serves the repository over a local http server and opens
+	  design/store/popup-screenshot.html, which shows the built dist/options.html on a branded
+	  background, one popup tab per screenshot.
 
 	Requirements: `npm run build` first, Google Chrome, ImageMagick (`magick`), network access.
-	Usage: node design/store/capture-screenshots.mjs
+	Usage: node design/store/capture-screenshots.mjs [pages|popup]   (both when omitted)
 */
 
 import { execFileSync, spawn } from 'node:child_process';
+import { createServer } from 'node:http';
 import {
 	mkdirSync,
 	mkdtempSync,
@@ -19,7 +23,7 @@ import {
 	writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, extname, join, normalize, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const STORE_DIR = dirname(fileURLToPath(import.meta.url));
@@ -29,6 +33,7 @@ const CHROME =
 	process.env.CHROME ||
 	'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const PORT = 9333;
+const HTTP_PORT = 9334;
 const WIDTH = 1280;
 const HEIGHT = 800;
 const SCALE = 2;
@@ -177,45 +182,66 @@ function toJpeg(source, target) {
 	console.log(`'${target}' was created.`);
 }
 
-/** Places the popup screenshot under the top-right corner, like an open toolbar popup. */
-function composite(page, popup, border, target) {
-	execFileSync('magick', [
-		page,
-		'-resize',
-		`${WIDTH}x${HEIGHT}!`,
-		'(',
-		popup,
-		'-resize',
-		'50%',
-		'-bordercolor',
-		border,
-		'-border',
-		'1',
-		'(',
-		'+clone',
-		'-background',
-		'black',
-		'-shadow',
-		'40x12+0+6',
-		')',
-		'+swap',
-		'-background',
-		'none',
-		'-layers',
-		'merge',
-		'+repage',
-		')',
-		'-gravity',
-		'northeast',
-		'-geometry',
-		'+8+8',
-		'-composite',
-		'-strip',
-		'-quality',
-		'92',
-		target,
-	]);
-	console.log(`'${target}' was created.`);
+const CONTENT_TYPES = {
+	'.html': 'text/html; charset=utf-8',
+	'.js': 'text/javascript; charset=utf-8',
+	'.css': 'text/css; charset=utf-8',
+	'.png': 'image/png',
+	'.svg': 'image/svg+xml',
+	'.json': 'application/json',
+};
+
+/** Serves the repository read-only, so the screenshot page and the popup iframe share an origin. */
+function serveRepository() {
+	const server = createServer((request, response) => {
+		const path = normalize(
+			decodeURIComponent(new URL(request.url, 'http://x').pathname)
+		);
+		const file = join(ROOT_DIR, path);
+		if (!file.startsWith(ROOT_DIR)) {
+			response.writeHead(403).end();
+			return;
+		}
+		try {
+			const body = readFileSync(file);
+			response.writeHead(200, {
+				'Content-Type':
+					CONTENT_TYPES[extname(file)] || 'application/octet-stream',
+			});
+			response.end(body);
+		} catch {
+			response.writeHead(404).end();
+		}
+	});
+	return new Promise((done) =>
+		server.listen(HTTP_PORT, '127.0.0.1', () => done(server))
+	);
+}
+
+/** Popup screenshots: one popup tab per image. */
+const POPUP_SHOTS = [
+	{ file: '3-popup-templates-light.jpg', tab: 'templates', scheme: 'light' },
+	{ file: '4-popup-shortcuts-dark.jpg', tab: 'shortcuts', scheme: 'dark' },
+	{ file: '5-popup-general-light.jpg', tab: 'general', scheme: 'light' },
+];
+
+async function capturePopup(cdp, tmp) {
+	const server = await serveRepository();
+	try {
+		for (const { file, tab, scheme } of POPUP_SHOTS) {
+			await open(
+				cdp,
+				`http://127.0.0.1:${HTTP_PORT}/design/store/popup-screenshot.html?tab=${tab}&theme=${scheme}`,
+				scheme
+			);
+			await evaluate(cdp, 'window.fitPopup()');
+			await sleep(300);
+			await capture(cdp, join(tmp, `${tab}.png`));
+			toJpeg(join(tmp, `${tab}.png`), join(OUT_DIR, file));
+		}
+	} finally {
+		server.close();
+	}
 }
 
 async function main() {
@@ -247,73 +273,12 @@ async function main() {
 			userAgent: USER_AGENT,
 		});
 
-		// 1. Pull request list (light): avatars + copy buttons, tooltip on hover.
-		await open(cdp, `${REPO}/pulls`, 'light');
-		await injectExtension(cdp);
-		await hover(
-			cdp,
-			await center(cdp, '[data-hyperfriend="copy-button"]', 1)
-		);
-		await capture(cdp, join(tmp, '1.png'));
-		toJpeg(
-			join(tmp, '1.png'),
-			join(OUT_DIR, '1-pull-request-list-light.jpg')
-		);
-
-		// 2. Pull request page (dark): "Copied!" after a click on the title button.
-		await open(cdp, `${REPO}/pull/2`, 'dark');
-		await injectExtension(cdp);
-		await click(cdp, await center(cdp, '[data-hyperfriend="copy-button"]'));
-		await capture(cdp, join(tmp, '2.png'));
-		toJpeg(
-			join(tmp, '2.png'),
-			join(OUT_DIR, '2-pull-request-page-dark.jpg')
-		);
-
-		// 3-4. Popup over the pull request list (light and dark).
-		for (const [index, scheme] of [
-			[3, 'light'],
-			[4, 'dark'],
-		]) {
-			await open(cdp, `${REPO}/pulls`, scheme);
-			await injectExtension(cdp);
-			await evaluate(cdp, 'window.scrollTo(0, 0)');
-			await capture(cdp, join(tmp, `page-${index}.png`));
-
-			await open(
-				cdp,
-				`file://${join(ROOT_DIR, 'dist/options.html')}`,
-				scheme
-			);
-			const size = await evaluate(
-				cdp,
-				`(() => {
-					const root = document.getElementById('root') || document.body;
-					const panel = [...root.querySelectorAll('*')].find((el) => Math.round(el.getBoundingClientRect().width) === 400) || root;
-					const r = panel.getBoundingClientRect();
-					return { x: Math.round(r.left), y: Math.round(r.top), w: Math.round(r.width), h: Math.ceil(r.height) };
-				})()`
-			);
-			const { data } = await cdp.send('Page.captureScreenshot', {
-				format: 'png',
-				clip: {
-					x: size.x,
-					y: size.y,
-					width: size.w,
-					height: size.h,
-					scale: 1,
-				},
-			});
-			writeFileSync(
-				join(tmp, `popup-${index}.png`),
-				Buffer.from(data, 'base64')
-			);
-			composite(
-				join(tmp, `page-${index}.png`),
-				join(tmp, `popup-${index}.png`),
-				scheme === 'dark' ? '#3d444d' : '#d1d9e0',
-				join(OUT_DIR, `${index}-settings-popup-${scheme}.jpg`)
-			);
+		const mode = process.argv[2];
+		if (mode !== 'popup') {
+			await capturePages(cdp, tmp);
+		}
+		if (mode !== 'pages') {
+			await capturePopup(cdp, tmp);
 		}
 
 		cdp.close();
@@ -322,6 +287,23 @@ async function main() {
 		await sleep(500);
 		rmSync(tmp, { recursive: true, force: true });
 	}
+}
+
+/** Pull Request screenshots: they need open demo Pull Requests #1 to #3. */
+async function capturePages(cdp, tmp) {
+	// 1. Pull request list (light): avatars + copy buttons, tooltip on hover.
+	await open(cdp, `${REPO}/pulls`, 'light');
+	await injectExtension(cdp);
+	await hover(cdp, await center(cdp, '[data-hyperfriend="copy-button"]', 1));
+	await capture(cdp, join(tmp, '1.png'));
+	toJpeg(join(tmp, '1.png'), join(OUT_DIR, '1-pull-request-list-light.jpg'));
+
+	// 2. Pull request page (dark): "Copied!" after a click on the title button.
+	await open(cdp, `${REPO}/pull/2`, 'dark');
+	await injectExtension(cdp);
+	await click(cdp, await center(cdp, '[data-hyperfriend="copy-button"]'));
+	await capture(cdp, join(tmp, '2.png'));
+	toJpeg(join(tmp, '2.png'), join(OUT_DIR, '2-pull-request-page-dark.jpg'));
 }
 
 await main();
