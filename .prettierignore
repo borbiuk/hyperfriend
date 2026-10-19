@@ -1,0 +1,6 @@
+node_modules
+dist
+dist-firefox
+package-lock.json
+*.zip
+.claude/skills/chrome-extension-docs/references/

@@ -1,0 +1,19 @@
+{
+	"manifest_version": 3,
+	"name": "Hyperfriend",
+	"version": "1.0.0",
+	"description": "Copy GitHub Pull Request and Issue links as rich hyperlinks, ready to paste into Teams, Slack and other chats.",
+	"homepage_url": "https://github.com/borbiuk/hyperfriend",
+	"permissions": ["storage"],
+	"content_scripts": [
+		{
+			"js": ["content.js"],
+			"matches": ["https://github.com/*"],
+			"run_at": "document_idle"
+		}
+	],
+	"action": {
+		"default_title": "Hyperfriend settings",
+		"default_popup": "options.html"
+	}
+}

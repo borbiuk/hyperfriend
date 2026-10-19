@@ -1,0 +1,39 @@
+<!doctype html>
+<html
+	lang="en"
+	data-color-mode="auto"
+	data-light-theme="light"
+	data-dark-theme="dark"
+>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="color-scheme" content="light dark" />
+		<title>Hyperfriend settings</title>
+		<style>
+			/* Avoids a white flash before the Primer CSS is injected by options.js */
+			html,
+			body {
+				margin: 0;
+				background-color: var(--bgColor-default, #ffffff);
+				color: var(--fgColor-default, #1f2328);
+			}
+
+			@media (prefers-color-scheme: dark) {
+				html,
+				body {
+					background-color: var(--bgColor-default, #0d1117);
+					color: var(--fgColor-default, #f0f6fc);
+				}
+			}
+
+			body {
+				width: 400px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="root"></div>
+		<script src="options.js"></script>
+	</body>
+</html>

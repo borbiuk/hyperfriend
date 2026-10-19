@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+
+# update package.json and manifest.firefox.json version from ./public/manifest.json
+. "$(dirname -- "$0")/set-version.sh"
+
+# format files
+npm run format
+
+# add changes of already tracked files (formatting, version bump)
+git add -u
+
+# create .zip files
+./zip.sh

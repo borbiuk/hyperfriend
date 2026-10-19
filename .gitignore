@@ -1,0 +1,20 @@
+# dependencies
+node_modules/
+
+# builds
+dist/
+dist-firefox/
+*.zip
+hyperfriend-build*
+
+# JetBrains IDE
+.idea
+
+# macOS
+.DS_Store
+
+# logs
+npm-debug.log
+
+# local agent settings
+.claude/settings.local.json

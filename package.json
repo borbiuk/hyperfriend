@@ -1,0 +1,72 @@
+{
+	"name": "hyperfriend",
+	"version": "1.0.0",
+	"description": "Copy GitHub Pull Request and Issue links as rich hyperlinks, ready to paste into Teams, Slack and other chats.",
+	"private": true,
+	"author": "Nazariy Borbiuk",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/borbiuk/hyperfriend"
+	},
+	"engines": {
+		"node": ">=22"
+	},
+	"scripts": {
+		"watch": "webpack --config webpack/webpack.dev.js --watch",
+		"build": "webpack --config webpack/webpack.prod.js",
+		"build:firefox": "webpack --config webpack/webpack.firefox.js",
+		"clean": "rimraf dist dist-firefox",
+		"zip": "./zip.sh",
+		"typecheck": "node node_modules/typescript7/bin/tsc --noEmit",
+		"lint": "eslint \"./**/*.{ts,tsx}\" && npm run typecheck",
+		"lint:fix": "eslint --fix \"./**/*.{ts,tsx}\"",
+		"lint:firefox": "web-ext lint --source-dir dist-firefox",
+		"format": "prettier --write \"./**/*.{ts,tsx,js,mjs,json,md,yml,css,html}\" --config ./.prettierrc.json",
+		"check:versions": "node scripts/check-versions.mjs",
+		"check:outdated": "npm outdated",
+		"prepare": "husky"
+	},
+	"dependencies": {
+		"@primer/octicons-react": "19.40.0",
+		"@primer/primitives": "11.10.0",
+		"@primer/react": "38.42.0",
+		"react": "19.3.1",
+		"react-dom": "19.3.1",
+		"react-is": "19.3.1"
+	},
+	"devDependencies": {
+		"@eslint/js": "10.0.1",
+		"@types/chrome": "0.3.5",
+		"@types/node": "26.6.5",
+		"@types/react": "19.3.0",
+		"@types/react-dom": "19.3.0",
+		"@types/react-is": "19.3.0",
+		"copy-webpack-plugin": "14.0.0",
+		"css-loader": "7.1.5",
+		"eslint": "10.13.0",
+		"eslint-config-prettier": "10.1.8",
+		"eslint-plugin-import-x": "4.17.1",
+		"eslint-plugin-react": "7.37.5",
+		"eslint-plugin-react-hooks": "7.1.1",
+		"globals": "17.13.0",
+		"husky": "9.1.7",
+		"prettier": "3.9.10",
+		"rimraf": "6.1.3",
+		"style-loader": "4.0.0",
+		"terser-webpack-plugin": "5.6.1",
+		"ts-loader": "9.6.2",
+		"typescript": "npm:@typescript/typescript6@6.0.2",
+		"typescript-eslint": "8.72.0",
+		"typescript7": "npm:typescript@7.0.2",
+		"web-ext": "10.8.0",
+		"webpack": "5.112.0",
+		"webpack-cli": "7.2.3",
+		"webpack-merge": "6.0.1"
+	},
+	"overrides": {
+		"eslint-plugin-react": {
+			"eslint": "$eslint"
+		}
+	}
+}

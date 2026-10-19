@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"target": "ES2021",
+		"lib": ["ES2021", "DOM", "DOM.Iterable"],
+		"moduleResolution": "bundler",
+		"module": "ESNext",
+		"esModuleInterop": true,
+		"isolatedModules": true,
+		"skipLibCheck": true,
+		"noEmit": true,
+		"jsx": "react-jsx",
+		"types": ["chrome", "node"],
+		"paths": {
+			"@shared/*": ["./src/shared/*"]
+		}
+	},
+	"include": ["src"]
+}

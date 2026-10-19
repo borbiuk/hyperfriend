@@ -1,0 +1,31 @@
+{
+	"manifest_version": 3,
+	"name": "Hyperfriend",
+	"version": "1.0.0",
+	"description": "Copy GitHub Pull Request and Issue links as rich hyperlinks, ready to paste into Teams, Slack and other chats.",
+	"homepage_url": "https://github.com/borbiuk/hyperfriend",
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "hyperfriend@borbiuk",
+			"strict_min_version": "140.0",
+			"data_collection_permissions": {
+				"required": ["none"]
+			}
+		},
+		"gecko_android": {
+			"strict_min_version": "142.0"
+		}
+	},
+	"permissions": ["storage"],
+	"content_scripts": [
+		{
+			"js": ["content.js"],
+			"matches": ["https://github.com/*"],
+			"run_at": "document_idle"
+		}
+	],
+	"action": {
+		"default_title": "Hyperfriend settings",
+		"default_popup": "options.html"
+	}
+}

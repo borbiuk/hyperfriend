@@ -1,0 +1,90 @@
+/*
+	Hyperfriend copy-link button.
+	Colors come from GitHub's Primer CSS variables (with light-theme fallbacks),
+	so the button follows GitHub's light and dark themes.
+*/
+
+.hyperfriend-copy-button {
+	/* Above row overlays that make whole list rows clickable */
+	position: relative;
+	z-index: 1;
+	box-sizing: border-box;
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	margin: 0 0 0 4px;
+	padding: 0;
+	border: 0;
+	border-radius: 6px;
+	background: transparent;
+	color: var(--fgColor-muted, #59636e);
+	font: inherit;
+	font-size: 0;
+	line-height: 0;
+	vertical-align: middle;
+	cursor: pointer;
+	user-select: none;
+	-webkit-user-select: none;
+	transition:
+		background-color 80ms ease-out,
+		color 80ms ease-out;
+}
+
+.hyperfriend-copy-button--title {
+	width: 28px;
+	height: 28px;
+	margin-left: 8px;
+}
+
+.hyperfriend-copy-button:hover {
+	background: var(--bgColor-neutral-muted, rgba(129, 139, 152, 0.15));
+	color: var(--fgColor-default, #1f2328);
+}
+
+.hyperfriend-copy-button:focus {
+	outline: none;
+}
+
+.hyperfriend-copy-button:focus-visible {
+	outline: 2px solid var(--focus-outlineColor, #0969da);
+	outline-offset: -2px;
+}
+
+.hyperfriend-copy-button[data-state='copied'],
+.hyperfriend-copy-button[data-state='copied']:hover {
+	color: var(--fgColor-success, #1a7f37);
+}
+
+.hyperfriend-copy-button[data-state='failed'],
+.hyperfriend-copy-button[data-state='failed']:hover {
+	color: var(--fgColor-danger, #d1242f);
+}
+
+.hyperfriend-copy-button .hyperfriend-icon {
+	display: block;
+	flex: none;
+	width: 16px;
+	height: 16px;
+	fill: currentColor;
+	pointer-events: none;
+}
+
+/*
+	Search results put the title link in a non-wrapping, clipping flex row:
+	let the link shrink (with an ellipsis), so the button after it stays visible.
+*/
+.search-title > a[data-hyperfriend-processed] {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.hyperfriend-copy-button {
+		transition: none;
+	}
+}
