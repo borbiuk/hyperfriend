@@ -1,7 +1,11 @@
+---
+paths:
+    - 'src/content/**'
+---
+
 # GitHub DOM selectors
 
 > How the content script finds Pull Requests and Issues on github.com without breaking on every GitHub release.
-> Applies to: `src/content/**`.
 
 GitHub renders pages with React and Turbo. Its CSS class names are **hashed** (for example `prc-Link-Link-9ZwDx`, `ListItems-module__...`) and change between releases. Treat the DOM as an unstable API and prefer stable signals.
 
@@ -51,9 +55,20 @@ GitHub navigates without full page loads (Turbo), and React re-renders list rows
 - Mutations on unsupported pages are ignored (cheap observer) **unless the URL changed** since the last notification, so navigating from an unsupported page to a supported one still triggers a scan.
 - A scan is cheap and **idempotent**; the initial scan runs after the config has loaded.
 
+## Author avatars
+
+[avatar-injector.ts](../../src/content/services/avatar-injector.ts) adds a small author avatar to **Pull Request list rows** (list pages only). It is not added to Issue lists or search results (their rows have no author filter link).
+
+- **Author link**: `a[data-testid="author-filter-link"]` inside the row (`li` or `[role="listitem"]`), and the row's title link `a[data-testid="listitem-title-link"]` must point to a Pull Request.
+- **Login**: taken from the `author:` filter in the link's `q` query parameter (the visible text can be a display name such as "Jane Doe (jdoe)"), otherwise from the link text. It must look like a login (`[\w-]+`, optionally `[bot]`); anything else is skipped.
+- **Skipped** when GitHub already renders an avatar in that place (`[data-component="Avatar"]`, `img.avatar`, for example Copilot rows), when the login failed to load before, or when an avatar is already there. Our avatar is also **removed** if GitHub renders its own avatar in the same row later (for example after hydration).
+- **Element**: `img[data-hyperfriend="avatar"]` with `data-login`, inserted right before the author link; `alt=""`, `aria-hidden="true"`, `loading="lazy"`, 16×16, round ([avatar.css](../../src/content/styles/avatar.css), Primer-like 1 px ring from `--avatar-borderColor`). Source: `https://avatars.githubusercontent.com/{login}?size=32` (GitHub's own CDN; do not use other hosts).
+- **Cleanup**: an avatar whose next sibling is no longer the author link of the same login is removed on the next scan; on a load error the avatar is removed and the login is not retried (no request loops).
+- It is idempotent like the button: it runs in the same scan and never touches GitHub's own elements.
+
 ## Idempotent markers
 
-- The injected button has **`data-hyperfriend="copy-button"`**.
+- The injected button has **`data-hyperfriend="copy-button"`**; avatars have **`data-hyperfriend="avatar"`**, the tooltip and live region `tooltip` and `live-region`.
 - **`data-hyperfriend-processed`** is set on the host that got a button: the title link in lists, the title header on detail pages.
 - Before inserting, the injector checks the real next sibling (not only a marker), because React may recreate nodes; an existing button is only updated (its label follows the current title and templates). A button left by an older instance of the script is replaced. Stale title buttons on detail pages are removed, and row buttons whose title link was replaced or moved (React may recreate only the link) are removed at the start of every scan and re-created.
 - Never remove or change GitHub's own elements. Insert next to them. The only GitHub style touched: `.search-title > a[data-hyperfriend-processed]` gets `min-width: 0` and an ellipsis so the button stays visible in search rows.
@@ -69,3 +84,4 @@ GitHub navigates without full page loads (Turbo), and React re-renders list rows
 
 - Test on: repository PR list, repository Issue list, a PR page (and its Files and Commits tabs), an Issue page, `/pulls` and `/issues` dashboards (needs sign-in), and `/search?type=pullrequests` / `type=issues`.
 - Switch GitHub light and dark themes; navigate between pages without reloading; check there is exactly one button per item.
+- In-browser checks with the `chrome-devtools` MCP server (`.mcp.json`): after `npm run build`, call `install_extension` with the absolute path of `dist/`, and `reload_extension` after every rebuild. Open the pages above and check `list_console_messages` for errors. Its Chrome profile is not signed in to GitHub, so the `/pulls` and `/issues` dashboards stay a manual check.

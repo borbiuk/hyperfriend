@@ -1,13 +1,17 @@
 import { ConfigModel } from '@shared/models';
 import { configService } from '@shared/services';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 /**
  * Loads the extension config and keeps it fresh when storage changes.
  *
- * @returns The current config, or `null` until the first read completes.
+ * @returns The current config (`null` until the first read completes) and a function
+ * that re-reads it from storage.
  */
-export function useConfig(): ConfigModel | null {
+export function useConfig(): {
+	config: ConfigModel | null;
+	refresh: () => Promise<void>;
+} {
 	const [config, setConfig] = useState<ConfigModel | null>(null);
 
 	useEffect(() => {
@@ -34,5 +38,9 @@ export function useConfig(): ConfigModel | null {
 		};
 	}, []);
 
-	return config;
+	const refresh = useCallback(async (): Promise<void> => {
+		setConfig(await configService.get());
+	}, []);
+
+	return { config, refresh };
 }

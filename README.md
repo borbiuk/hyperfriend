@@ -22,6 +22,12 @@ Chrome Web Store and Firefox Add-ons listings are coming soon.
 - **Works with GitHub navigation**: buttons appear on pages that GitHub loads without a full page refresh and are never duplicated.
 - **Light and dark**: the button uses GitHub's own theme colors, so it follows the GitHub theme you use.
 
+### Author avatars
+
+- **Who opened it**: in Pull Request lists a small round avatar (16 px) is shown before the author's login, like on other GitHub pages.
+- **Light on requests**: avatars load lazily from GitHub's own avatar server (`avatars.githubusercontent.com`), the same images GitHub shows. If an avatar cannot be loaded, it is simply removed.
+- **Only where it helps**: not shown in Issue lists or search results, and not added where GitHub already shows an avatar (for example Copilot rows).
+
 ### Customizable templates
 
 Click the Hyperfriend icon in the browser toolbar to open the settings popup. It has one template for Pull Request
@@ -47,11 +53,44 @@ Notes:
 - An empty template falls back to the default one.
 - Settings are saved in the browser sync storage, so they follow you across devices signed in to the same browser account.
 
+### Sharing templates with your team
+
+Export your templates to a file and let teammates import it, so everybody pastes links in the same format.
+
+1. Open the Hyperfriend popup and click **Export**. The browser downloads `hyperfriend-settings.json`.
+2. Share the file (chat, repository, wiki).
+3. A teammate opens the popup, clicks **Import** and picks the file. The fields update and "Settings imported." is shown.
+
+In Chrome, Export and Import work right in the popup. In **Firefox** the popup closes when the download panel or the file picker opens, so **both Export and Import** open the settings page in a browser tab (`options_ui` with `open_in_tab`), where they work the same way. The settings page is also available from the extension's options in the browser's extensions manager.
+
+File format (schema version 1):
+
+```json
+{
+	"app": "hyperfriend",
+	"schemaVersion": 1,
+	"exportedAt": "2026-10-19T18:00:00.000Z",
+	"templates": {
+		"pull-request": "Pull Request {{pr_number}}: {{pr_name}}",
+		"issue": "Issue {{issue_number}}: {{issue_name}}"
+	}
+}
+```
+
+Import rules:
+
+- The file must be up to 64 KB (larger files are rejected before they are read) and valid JSON, with `"app": "hyperfriend"` and `"schemaVersion": 1`. A higher version is rejected as "created by a newer version of Hyperfriend".
+- `templates` must be an object. Only the keys `pull-request` and `issue` are read; other keys are ignored. Values are trimmed, and each must be a single line of text (no line breaks or control characters) of at most 500 characters; otherwise the error reads `Template "<key>" must be a single line of text up to 500 characters.` At least one known template must be present.
+- A template missing from the file keeps its current value. Everything is applied with one write to the sync storage.
+- Problems are shown as a short message under the buttons, and nothing is changed.
+- `exportedAt` is informational only.
+
 ### Settings popup
 
 - **GitHub look**: built with Primer React, the design system of GitHub.
 - **Live preview**: each template field is marked with a Pull Request or Issue icon, lists the available placeholders and shows the resulting link text for a sample item.
-- **Autosave**: changes are saved about 300 ms after you stop typing, with a "Saved" status. **Reset to defaults** restores both templates.
+- **Autosave**: changes are saved about 300 ms after you stop typing, with a "Saved" status.
+- **Footer**: **Reset to defaults** restores both templates, **Export** and **Import** share them as a file (see above), and a link opens the GitHub repository.
 - **Light and dark themes**: the popup follows the operating system theme.
 
 <hr/>
@@ -69,7 +108,7 @@ All pages are on `github.com`.
 | **Pull Request page**     | `/OWNER/REPO/pull/12`, including `/files`, `/commits`, `/checks`                                                                    | Copy button right after the `#number` of the title |
 | **Issue page**            | `/OWNER/REPO/issues/34`                                                                                                             | Copy button right after the `#number` of the title |
 
-Other pages (for example `/OWNER/REPO/issues/new`) are left untouched.
+Author avatars are added to the Pull Request lists only (the repository and dashboard lists); Issue lists and search results do not get them. Other pages (for example `/OWNER/REPO/issues/new`) are left untouched.
 
 \* The dashboards are supported by the code but have not been verified on live GitHub pages yet (they require signing in).
 
@@ -126,25 +165,27 @@ CI (`.github/workflows/build.yml`) runs `npm ci`, `check:versions`, both builds 
 
 ### File Structure
 
-- `public/`: Contains `manifest.json` (Chrome), `manifest.firefox.json` (Firefox) and `options.html` (popup page).
+- `public/`: Contains `manifest.json` (Chrome), `manifest.firefox.json` (Firefox) and `options.html` (popup and settings page).
 - `src/`:
-    - `content/`: Content script that adds copy buttons on GitHub pages (plain DOM, no React).
-        - `components/`: The copy button (`copy-button.ts`).
+    - `content/`: Content script that adds copy buttons and author avatars on GitHub pages (plain DOM, no React).
+        - `components/`: The copy button (`copy-button.ts`) and the shared tooltip (`tooltip.ts`).
         - `icons/`: Inline SVG Octicons (copy, check, x).
-        - `services/`: Page detection, link target parsing, button injection, DOM observer and the config store.
-        - `styles/`: CSS of the button (uses GitHub's Primer CSS variables).
+        - `services/`: Page detection, link target parsing, button injection, author avatar injection, DOM observer and the config store.
+        - `styles/`: CSS of the button, tooltip and avatar (uses GitHub's Primer CSS variables).
         - `content.ts`: The entry of the content script.
     - `options/`: Toolbar popup (settings), a React app built with Primer React.
-        - `components/`: React components of the popup (`options-app.tsx`, `settings-section.tsx`, `template-field.tsx`).
-        - `hooks/`: React hooks (`use-config.ts` loads the config and keeps it fresh).
+        - `components/`: React components of the popup (`options-app.tsx`, `settings-section.tsx`, `template-field.tsx`, `footer-actions.tsx` with reset, export and import).
+        - `hooks/`: React hooks (`use-config.ts` loads the config and keeps it fresh, `use-view-mode.ts` tells popup from tab).
+        - `utils/`: Helpers (`download-text.ts` saves a file without the `downloads` permission).
         - `options.tsx`: The entry of the popup.
-    - `shared/`: Models, constants, services (templates, config, clipboard) and utils, imported via `@shared/*`.
+    - `shared/`: Models, constants, services (templates, config, clipboard, settings import/export) and utils, imported via `@shared/*`.
     - `types/`: Ambient type declarations (`global.d.ts` allows `*.css` imports).
 - `webpack/`: Configuration of webpack for the Chrome (`dist/`) and Firefox (`dist-firefox/`) builds.
 - `scripts/`: Maintenance scripts (`check-versions.mjs`, `tag-releases.sh` for tagging released versions).
 - `.github/`: Issue and pull request templates, CI workflow (build + lint on pushes and pull requests to `master`).
 - `.husky/`: Git pre-commit hook: syncs the version, formats files, stages changes of tracked files and builds both browsers into `.zip` packages (see [AGENTS.md](AGENTS.md)).
-- `.claude/`: Agent context for AI-assisted development (rules, skills, commands, agents), see [AGENTS.md](AGENTS.md).
+- `.claude/`: Agent context for AI-assisted development (rules, skills, subagents, shared settings), see [AGENTS.md](AGENTS.md).
+- `.mcp.json`: Project MCP servers for AI-assisted development (Chrome DevTools MCP).
 - `zip.sh`: A script for creating `.zip` files with builds for publishing.
 
 There is no background script or service worker: the content script talks to `chrome.storage` directly.

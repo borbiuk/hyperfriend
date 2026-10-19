@@ -11,6 +11,14 @@ const SAVE_DELAY_MS = 300;
 /** How long the "Saved" status stays visible. */
 const SAVED_VISIBLE_MS = 2000;
 
+/** Lets the parent flush or drop the field's pending save. */
+export interface FieldControls {
+	/** Writes the unsaved text now and waits until the write is finished. */
+	flush: () => Promise<void>;
+	/** Drops the unsaved text and waits for a save already in flight. */
+	cancel: () => Promise<void>;
+}
+
 interface TemplateFieldProps {
 	type: LinkType;
 	label: string;
@@ -20,13 +28,10 @@ interface TemplateFieldProps {
 	value: string;
 	/** Sample item used for the live preview. */
 	sample: LinkTargetModel;
-	/** Increments every time the settings are reset to defaults. */
-	resetEpoch: number;
-	/**
-	 * Registers a function that cancels the pending save and waits for the one in flight.
-	 * Returns an unregister function.
-	 */
-	registerCancel: (cancel: () => Promise<void>) => () => void;
+	/** Increments every time the settings are replaced from outside (reset, import). */
+	syncEpoch: number;
+	/** Registers this field's save controls with the parent. Returns an unregister function. */
+	registerField: (controls: FieldControls) => () => void;
 }
 
 /**
@@ -38,8 +43,8 @@ export function TemplateField({
 	icon: LabelIcon,
 	value,
 	sample,
-	resetEpoch,
-	registerCancel,
+	syncEpoch,
+	registerField,
 }: TemplateFieldProps) {
 	const [draft, setDraft] = useState(value);
 	const [saved, setSaved] = useState(false);
@@ -52,6 +57,9 @@ export function TemplateField({
 	const inFlight = useRef<Promise<void> | null>(null);
 	const saveTimer = useRef<number>(0);
 	const savedTimer = useRef<number>(0);
+
+	const valueRef = useRef(value);
+	valueRef.current = value;
 
 	// Follow storage updates, but never clobber what the user is typing.
 	useEffect(() => {
@@ -115,27 +123,33 @@ export function TemplateField({
 		};
 	}, [flush]);
 
-	// Lets the parent drop this field's pending save before resetting.
+	// Lets the parent flush or drop this field's pending save (export, reset, import).
 	useEffect(() => {
-		return registerCancel(async () => {
-			window.clearTimeout(saveTimer.current);
-			unsaved.current = null;
-			revision.current++;
-			pending.current = false;
-			await inFlight.current;
+		return registerField({
+			flush: async () => {
+				flush();
+				await inFlight.current;
+			},
+			cancel: async () => {
+				window.clearTimeout(saveTimer.current);
+				unsaved.current = null;
+				revision.current++;
+				pending.current = false;
+				await inFlight.current;
+			},
 		});
-	}, [registerCancel]);
+	}, [registerField, flush]);
 
-	// Show the defaults after a reset.
+	// Show the stored value after the settings were replaced from outside.
 	useEffect(() => {
-		if (resetEpoch === 0) {
+		if (syncEpoch === 0) {
 			return;
 		}
 
-		setDraft(DEFAULT_CONFIG.templates[type]);
+		setDraft(valueRef.current);
 		setSaved(false);
 		setError(null);
-	}, [resetEpoch, type]);
+	}, [syncEpoch]);
 
 	const handleChange = (next: string): void => {
 		setDraft(next);

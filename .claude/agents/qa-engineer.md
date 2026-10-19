@@ -15,12 +15,11 @@ Read-only. Use `Bash` only to run checks and inspect output (builds write to `di
 
 1. `npm run check:versions` passes; `package.json` has no `^` or `~`.
 2. `npm run build` and `npm run build:firefox` succeed. Output contains `manifest.json`, `options.html`, `content.js`, `options.js` with fixed names; no `background` / service worker; no hashed names.
-3. Manifests: both MV3, same name, version, description, permissions (`storage` only), no `host_permissions`, content script `https://github.com/*`, `action.default_popup` is `options.html`, no `icons` / `default_icon`. Firefox manifest differs only by `browser_specific_settings.gecko` (`hyperfriend@borbiuk`, `strict_min_version` `140.0`, `data_collection_permissions`). Versions equal `package.json`.
+3. Manifests: both MV3, same name, version, description, permissions (`storage` only), no `host_permissions`, content script `https://github.com/*`, `action.default_popup` is `options.html`, no `icons` / `default_icon`. Firefox manifest differs only by `browser_specific_settings` (`gecko`: `hyperfriend@borbiuk`, `strict_min_version` `140.0`, `data_collection_permissions`; `gecko_android.strict_min_version` `142.0`). Versions equal `package.json`.
 4. `npm run lint` (ESLint and TypeScript 7 type check) and `npm run lint:firefox` pass.
 5. `npm run zip` works when `jq` and `zip` exist; archives contain only `content.js`, `manifest.json`, `options.html`, `options.js` at the archive root.
-6. Code review against conventions: block `if`, `@shared/*` imports, `chrome.*` only, no React in `src/content/**`, no selectors on hashed GitHub class names, `copyLink` called synchronously in the click handler, markers `data-hyperfriend` / `data-hyperfriend-processed` used.
-7. Docs match reality: README scripts table and file structure, placeholders in the README and the popup hints, `AGENTS.md`.
+6. Docs match reality: README scripts table and file structure, placeholders in the README and the popup hints, `AGENTS.md`.
 
 ## Report format
 
-A list of findings: severity (blocker, major, minor), file and line, what is wrong, who owns the file (see the table in [AGENTS.md](../../AGENTS.md)), and the suggested fix. State clearly which checks passed. Do not fix anything yourself.
+A list of findings: severity (blocker, major, minor), file and line, what is wrong, and the suggested fix. Code-level convention checks are the `code-reviewer`'s job. State clearly which checks passed. Do not fix anything yourself.

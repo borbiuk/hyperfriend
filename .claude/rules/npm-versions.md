@@ -1,11 +1,19 @@
+---
+paths:
+    - 'package.json'
+    - 'package-lock.json'
+    - '.npmrc'
+    - 'scripts/check-versions.mjs'
+---
+
 # npm versions policy
 
-> Exact versions only. Applies to: `package.json`, `package-lock.json`, `.npmrc`, `scripts/check-versions.mjs`.
+> Exact versions only.
 
 - **Every** entry in `dependencies` and `devDependencies` is an exact version such as `19.3.1`. Never use `^`, `~`, `*`, `latest` or other ranges.
 - npm aliases are allowed with an exact version: `"typescript7": "npm:typescript@7.0.2"`.
 - `.npmrc` sets `save-exact=true` and `engine-strict=true` (Node >= 22).
-- Only the build tooling owner edits `package.json`, `package-lock.json` and `.npmrc`. Other contributors and agents report the needed dependency instead of installing it.
+- Add or update dependencies only when the task needs it, and say so explicitly; `npm install` asks for confirmation (see `.claude/settings.json`).
 
 ## Updating
 

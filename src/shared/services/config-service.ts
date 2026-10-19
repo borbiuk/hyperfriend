@@ -94,13 +94,31 @@ export const configService = {
 	 * @param template - New template text.
 	 */
 	async setTemplate(type: LinkType, template: string): Promise<void> {
+		await configService.setTemplates({ [type]: template });
+	},
+
+	/**
+	 * Saves several templates at once with a single write of the full merged config.
+	 * Link types not present in `templates` keep their current value.
+	 *
+	 * @param templates - New template text per link type.
+	 */
+	async setTemplates(
+		templates: Partial<Record<LinkType, string>>
+	): Promise<void> {
 		const storage = getStorage();
 		if (!storage) {
 			return;
 		}
 
 		const config = await readConfig(storage);
-		config.templates[type] = template;
+		for (const type of Object.values(LinkType)) {
+			const value = templates[type];
+			if (typeof value === 'string') {
+				config.templates[type] = value;
+			}
+		}
+
 		await storage.set({ [CONFIG_STORAGE_KEY]: config });
 	},
 

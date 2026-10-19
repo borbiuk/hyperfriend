@@ -1,22 +1,22 @@
 # Repository agents (Hyperfriend)
 
-This file orients human and AI contributors to the **Hyperfriend** browser extension for Chrome and Firefox (Manifest V3). Prefer **small, focused changes**; do not refactor unless asked.
+This file orients human and AI contributors to the **Hyperfriend** browser extension for Chrome and Firefox (Manifest V3). Prefer **small, focused changes**; do not refactor unless asked. Topic rules live in [`.claude/rules/`](.claude/rules/).
 
 ## Product
 
 - **Hyperfriend** — adds a copy-link button to every GitHub Pull Request and Issue (lists and detail pages). A click copies a rich hyperlink: `text/html` `<a href="URL">TEXT</a>` and `text/plain` `TEXT — URL`.
-- **Settings** — two link templates (Pull Request, Issue) with `{{placeholders}}`, edited in the toolbar popup and stored in `chrome.storage.sync`.
+- **Settings** — two link templates (Pull Request, Issue) with `{{placeholders}}`, edited in the toolbar popup, stored in `chrome.storage.sync`, and shareable as a JSON file (Export / Import).
 - **Build output** — `dist/` (Chrome, Load unpacked) and `dist-firefox/` (Firefox, `about:debugging`).
 - **Source manifests** — `public/manifest.json` (Chrome) and `public/manifest.firefox.json` (Firefox); copied to `manifest.json` in the matching build directory.
 - **Version 1.0.0 has no icon**: no `icons` or `default_icon` keys.
 
 ## Architecture (MV3)
 
-| Area           | Path                      | Role                                                                                |
-| -------------- | ------------------------- | ----------------------------------------------------------------------------------- |
-| Content script | `src/content/content.ts`  | Runs on `https://github.com/*`; injects copy buttons; limited `chrome.*` (storage). |
-| Popup          | `src/options/options.tsx` | Toolbar popup (`public/options.html`): React + Primer React settings UI.            |
-| Shared code    | `src/shared/`             | Models, constants, services, utils — reuse via **`@shared/*`** alias.               |
+| Area           | Path                      | Role                                                                                                      |
+| -------------- | ------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Content script | `src/content/content.ts`  | Runs on `https://github.com/*`; injects copy buttons and PR author avatars; limited `chrome.*` (storage). |
+| Popup          | `src/options/options.tsx` | Toolbar popup and options page (`public/options.html`): React + Primer React settings UI.                 |
+| Shared code    | `src/shared/`             | Models, constants, services, utils — reuse via **`@shared/*`** alias.                                     |
 
 Ambient type declarations live in `src/types/global.d.ts`. **There is no background script and no service worker.** Both entrypoints use `chrome.storage.sync` through `configService`.
 
@@ -57,41 +57,19 @@ The Husky pre-commit hook (`.husky/pre-commit`) runs on **every commit**:
 
 ## Documentation
 
-- Official Chrome APIs: **`developer.chrome.com`** only when citing Chrome extension behavior; use the offline mirror in the [chrome-extension-docs skill](.claude/skills/chrome-extension-docs/SKILL.md) (`.claude/skills/chrome-extension-docs/references/`). Firefox notes live in the same skill.
+- Chrome APIs: cite **`developer.chrome.com`**. Claude Code gets the official `chrome-extensions` skill from Google's `modern-web-guidance` plugin, enabled in [.claude/settings.json](.claude/settings.json). Firefox differences: [firefox.md](.claude/rules/firefox.md) and MDN.
 - Release history: [RELEASE_NOTES.md](RELEASE_NOTES.md) (`## x.y.z` headings are read by `scripts/tag-releases.sh`). Store text: [LISTING.md](LISTING.md).
 
-## Multi-agent workflow
+## AI tooling
 
-Larger tasks can be split between the subagents defined in `.claude/agents/`. The **orchestrator** is the main Claude session; it plans, spawns agents, and integrates results.
-
-| Agent              | Model  | Owns                                                                                                                                                                                                                                 |
-| ------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `build-engineer`   | sonnet | `package.json`, `package-lock.json`, `.npmrc`, `tsconfig.json`, `webpack/**`, `eslint.config.mjs`, `.prettierrc.json`, `.prettierignore`, `.gitignore`, `.husky/**`, `zip.sh`, `scripts/check-versions.mjs`, `public/manifest*.json` |
-| `devops-engineer`  | sonnet | `.github/**`, `scripts/tag-releases.sh`, `LICENSE`, `SECURITY.md`, `CODE_OF_CONDUCT.md`                                                                                                                                              |
-| `core-engineer`    | opus   | `src/shared/**`                                                                                                                                                                                                                      |
-| `dom-engineer`     | opus   | `src/content/**`                                                                                                                                                                                                                     |
-| `popup-engineer`   | sonnet | `src/options/**`, `public/options.html`                                                                                                                                                                                              |
-| `technical-writer` | sonnet | root `*.md` (except `LICENSE`, `SECURITY.md`, `CODE_OF_CONDUCT.md`), `.claude/**`                                                                                                                                                    |
-| `qa-engineer`      | sonnet | Nothing (read-only; runs builds, lint and checks, reports findings)                                                                                                                                                                  |
-| `code-reviewer`    | opus   | Nothing (read-only; reviews code and reports findings)                                                                                                                                                                               |
-
-Flow:
-
-1. **Contracts first** — the orchestrator writes the shared contracts (types, API signatures, manifest keys, DOM markers) so agents can code against them in parallel.
-2. **Wave 1: tooling** — `build-engineer` sets up package, webpack, lint, manifests and placeholder entry stubs; `devops-engineer` sets up `.github/` and repository files.
-3. **Wave 2: code** — `core-engineer` implements `src/shared/**`; `dom-engineer` and `popup-engineer` build the content script and popup against the contracts; `technical-writer` documents from the contracts.
-4. **Wave 3: sync and verify** — `technical-writer` syncs docs with the final code; `qa-engineer` runs build, lint and checks for both browsers; `code-reviewer` reviews the result. Findings go back to the owner of the file.
-5. **Integrate** — the orchestrator resolves conflicts and re-runs the checks.
-
-Rules:
-
-- **File ownership is strict** — an agent edits only files it owns. If it needs a change elsewhere (for example a new dependency), it reports it to the orchestrator instead of editing.
-- **Only the orchestrator runs git** — subagents never run `add`, `commit`, `push`, `stash`, `checkout`, `reset` or any other git command that changes state.
-- Agents report what they changed, anything they were unsure about, and what must be synced once other agents finish.
+- **Subagents** (`.claude/agents/`): `code-reviewer` reviews changes, `qa-engineer` runs builds, lint and checks. Both are read-only and report findings; the main session applies fixes and is the only one that runs git.
+- **Skill** `/verify` (`.claude/skills/verify/`) runs the full check suite.
+- **MCP** ([.mcp.json](.mcp.json)): `chrome-devtools` (Chrome DevTools MCP with extension tools) loads `dist/` into Chrome for in-browser checks; see [github-dom-selectors.md](.claude/rules/github-dom-selectors.md#verifying-changes).
+- **Permissions** ([.claude/settings.json](.claude/settings.json)): npm scripts are pre-approved, state-changing git commands and `npm install` ask first, destructive git commands are denied.
 
 ## Rules of engagement
 
 - English for code comments and technical docs in-repo (per project convention).
 - Follow the working rules in [CLAUDE.md](CLAUDE.md) (minimal scope, no speculative refactors).
 - Never add a `^` or `~` version range. Never add an icon in 1.0.0.
-- For AI-assisted work, start from Google's [Build Chrome Extensions with AI](https://developer.chrome.com/docs/extensions/ai/build_with_ai), then verify against the local docs mirror in the [chrome-extension-docs skill](.claude/skills/chrome-extension-docs/SKILL.md).
+- For AI-assisted work, see Google's [Extensions and AI](https://developer.chrome.com/docs/extensions/ai) page.

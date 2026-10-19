@@ -1,19 +1,26 @@
+---
+paths:
+    - 'src/**'
+    - 'public/**'
+    - 'webpack/**'
+    - 'tsconfig.json'
+---
+
 # Extension architecture (MV3, Chrome + Firefox)
 
 > Architecture rules for the Hyperfriend MV3 extension and its build constraints.
-> Applies to: `src/**`, `public/**`, `webpack/**`, `tsconfig.json`.
 
 - **Entry points and responsibilities**
-    - `src/content/content.ts`: content script injected into `https://github.com/*`. Adds copy buttons. Must not import React. Structure: `services/` (`page-detector`, `link-target-parser`, `button-injector`, `page-observer`, `config-store`), `components/copy-button.ts`, `icons/octicons.ts`, `styles/copy-button.css` and `styles/tooltip.css`, `components/tooltip.ts` (shared tooltip and live region). Details: [github-dom-selectors.md](github-dom-selectors.md).
-    - `src/options/options.tsx`: toolbar popup (`public/options.html`), React + Primer React, `ThemeProvider` with `colorMode="auto"` (light/dark) and the `@primer/primitives` light/dark CSS; `options.html` sets `data-color-mode="auto"` on `<html>` and a 400 px body. Labels show `GitPullRequestIcon` / `IssueOpenedIcon` (16 px, muted, `aria-hidden`) from `@primer/octicons-react`. Components: `options-app.tsx`, `settings-section.tsx`, `template-field.tsx`; hook `use-config.ts`. A new setting is a new field inside a `SettingsSection`.
+    - `src/content/content.ts`: content script injected into `https://github.com/*`. Adds copy buttons. Must not import React. Structure: `services/` (`page-detector`, `link-target-parser`, `button-injector`, `page-observer`, `config-store`), `components/copy-button.ts`, `icons/octicons.ts`, `styles/copy-button.css`, `styles/tooltip.css` and `styles/avatar.css`, `components/tooltip.ts` (shared tooltip and live region), `services/avatar-injector.ts` (author avatars in Pull Request lists). Details: [github-dom-selectors.md](github-dom-selectors.md).
+    - `src/options/options.tsx`: toolbar popup (`public/options.html`), React + Primer React, `ThemeProvider` with `colorMode="auto"` (light/dark) and the `@primer/primitives` light/dark CSS; `options.html` sets `data-color-mode="auto"` on `<html>` and a 400 px body. Labels show `GitPullRequestIcon` / `IssueOpenedIcon` (16 px, muted, `aria-hidden`) from `@primer/octicons-react`. Components: `options-app.tsx`, `settings-section.tsx`, `template-field.tsx`, `footer-actions.tsx` (reset, export, import); hooks `use-config.ts`, `use-view-mode.ts` (popup or tab); `utils/download-text.ts` (Blob + temporary `<a download>`, so no `downloads` permission). The same `options.html` is also the options page (`options_ui` with `open_in_tab: true`, in both manifests); in a tab the 400 px panel is centered. Firefox closes the popup when the download panel or the OS file picker opens, so there both Export and Import open that tab (`chrome.runtime.openOptionsPage()`). A new setting is a new field inside a `SettingsSection`.
     - `src/types/global.d.ts`: ambient declarations (`declare module '*.css';` for side-effect CSS imports).
     - `src/shared/`: models, constants, services and utils used by both entrypoints.
     - **No background script, no service worker.** Do not add one without a real need; both entrypoints read and write `chrome.storage.sync` through `configService`.
 
 - **Shared API (`@shared/*`)**
-    - `@shared/models`: `LinkType`, `LinkTargetModel`, `ConfigModel`.
+    - `@shared/models`: `LinkType`, `LinkTargetModel`, `ConfigModel`, `SettingsFileModel`.
     - `@shared/constants`: `DEFAULT_CONFIG`, `TEMPLATE_PLACEHOLDERS`, `CONFIG_STORAGE_KEY` (`hyperfriend-config`).
-    - `@shared/services`: `renderTemplate`, `configService` (`get`, `setTemplate`, `reset`, `subscribe`), `buildLinkPayload`, `copyLink`.
+    - `@shared/services`: `renderTemplate`, `configService` (`get`, `setTemplate`, `setTemplates` (one merged write), `reset`, `subscribe`), `buildLinkPayload`, `copyLink`, `serializeSettings`, `parseSettings`, `SETTINGS_FILE_NAME` (settings import/export, [shared-api.md](shared-api.md)).
     - `@shared/utils`: `escapeHtml`.
     - `copyLink` must be called synchronously inside the click handler (user activation). The content script preloads the config in `ConfigStore` and keeps it fresh with `configService.subscribe`.
     - Debounce `configService.setTemplate` while typing (about 300 ms) to respect `chrome.storage.sync` write quotas; the popup flushes a pending save on blur, `pagehide`, `visibilitychange` and unmount, and Reset cancels pending saves first.
@@ -22,7 +29,8 @@
 - **Manifests**
     - Two manifests: `public/manifest.json` (Chrome) and `public/manifest.firefox.json` (Firefox). Keep them identical except `browser_specific_settings` (`gecko` and `gecko_android`) in the Firefox one. Any change goes into both.
     - Firefox only: `browser_specific_settings.gecko` with `id` `hyperfriend@borbiuk`, `strict_min_version` `140.0` and `data_collection_permissions` `{ "required": ["none"] }` (this key needs Firefox 140+), plus `browser_specific_settings.gecko_android.strict_min_version` `142.0` (Firefox for Android).
-    - Permissions: `storage` only, no `host_permissions`. Content script `matches`: `https://github.com/*`.
+    - Permissions: `storage` only, no `host_permissions`. Content script `matches`: `https://github.com/*`. Both manifests also have `options_ui` `{ "page": "options.html", "open_in_tab": true }`.
+    - **Network**: the extension makes no requests of its own (no `fetch`, no analytics). The only traffic is the author avatar `<img>` elements it adds to GitHub pages (`https://avatars.githubusercontent.com/{login}?size=32`, GitHub's own CDN). Do not add other remote resources.
     - Version 1.0.0 has no icon: no `icons` or `default_icon` keys.
     - The version is edited only in `public/manifest.json`; the pre-commit hook syncs it to `package.json` and `manifest.firefox.json`.
 
@@ -37,4 +45,4 @@
 
 - **Browser APIs**
     - Use the `chrome.*` namespace (Firefox MV3 supports it); no `browser.*` polyfill.
-    - Verify API behavior in the [chrome-extension-docs](../skills/chrome-extension-docs/SKILL.md) skill; Firefox differences are in its `references/firefox-notes.md`.
+    - Verify Chrome API behavior with the `chrome-extensions` skill (plugin `modern-web-guidance`, enabled in `.claude/settings.json`) or on `developer.chrome.com`; Firefox differences are in [firefox.md](firefox.md) and on MDN.

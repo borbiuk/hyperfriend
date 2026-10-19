@@ -1,15 +1,14 @@
 import { GitPullRequestIcon, IssueOpenedIcon } from '@primer/octicons-react';
-import { Button, Heading, Link, Text } from '@primer/react';
+import { Heading, Text } from '@primer/react';
 import { LinkTargetModel, LinkType } from '@shared/models';
-import { configService } from '@shared/services';
 import { useCallback, useRef, useState } from 'react';
 
 import { useConfig } from '../hooks/use-config';
+import { useViewMode } from '../hooks/use-view-mode';
 
+import { FooterActions } from './footer-actions';
 import { SettingsSection } from './settings-section';
-import { TemplateField } from './template-field';
-
-const REPOSITORY_URL = 'https://github.com/borbiuk/hyperfriend';
+import { FieldControls, TemplateField } from './template-field';
 
 /** Sample items used for the live previews. */
 const SAMPLE_PULL_REQUEST: LinkTargetModel = {
@@ -34,32 +33,34 @@ const SAMPLE_ISSUE: LinkTargetModel = {
  * Root of the toolbar popup: header, settings sections and footer.
  */
 export function OptionsApp() {
-	const config = useConfig();
-	const [resetEpoch, setResetEpoch] = useState(0);
-	const [resetError, setResetError] = useState(false);
-	const cancels = useRef(new Set<() => Promise<void>>());
+	const { config, refresh } = useConfig();
+	const viewMode = useViewMode();
+	const [syncEpoch, setSyncEpoch] = useState(0);
+	const fields = useRef(new Set<FieldControls>());
 
-	const registerCancel = useCallback(
-		(cancel: () => Promise<void>): (() => void) => {
-			cancels.current.add(cancel);
+	const registerField = useCallback(
+		(controls: FieldControls): (() => void) => {
+			fields.current.add(controls);
 			return () => {
-				cancels.current.delete(cancel);
+				fields.current.delete(controls);
 			};
 		},
 		[]
 	);
 
-	const handleReset = async (): Promise<void> => {
-		setResetError(false);
-		try {
-			// Pending saves must not overwrite the defaults afterwards.
-			await Promise.all([...cancels.current].map((cancel) => cancel()));
-			await configService.reset();
-			setResetEpoch((epoch) => epoch + 1);
-		} catch {
-			setResetError(true);
-		}
-	};
+	const flushAll = useCallback(async (): Promise<void> => {
+		await Promise.all([...fields.current].map((field) => field.flush()));
+	}, []);
+
+	const cancelAll = useCallback(async (): Promise<void> => {
+		await Promise.all([...fields.current].map((field) => field.cancel()));
+	}, []);
+
+	// Both updates land in one render, so the fields see the new value with the new epoch.
+	const applyStored = useCallback(async (): Promise<void> => {
+		await refresh();
+		setSyncEpoch((epoch) => epoch + 1);
+	}, [refresh]);
 
 	return (
 		<main
@@ -68,6 +69,8 @@ export function OptionsApp() {
 				width: 400,
 				minHeight: 120,
 				padding: 16,
+				// Center the panel when the page is shown in a browser tab.
+				margin: viewMode === 'tab' ? '24px auto' : 0,
 				display: 'flex',
 				flexDirection: 'column',
 				gap: 16,
@@ -95,8 +98,8 @@ export function OptionsApp() {
 						icon={GitPullRequestIcon}
 						value={config.templates[LinkType.PullRequest]}
 						sample={SAMPLE_PULL_REQUEST}
-						resetEpoch={resetEpoch}
-						registerCancel={registerCancel}
+						syncEpoch={syncEpoch}
+						registerField={registerField}
 					/>
 					<TemplateField
 						type={LinkType.Issue}
@@ -104,40 +107,18 @@ export function OptionsApp() {
 						icon={IssueOpenedIcon}
 						value={config.templates[LinkType.Issue]}
 						sample={SAMPLE_ISSUE}
-						resetEpoch={resetEpoch}
-						registerCancel={registerCancel}
+						syncEpoch={syncEpoch}
+						registerField={registerField}
 					/>
 				</SettingsSection>
 			)}
 
-			<footer
-				style={{
-					display: 'flex',
-					justifyContent: 'space-between',
-					alignItems: 'center',
-				}}
-			>
-				<Button size="small" onClick={handleReset}>
-					Reset to defaults
-				</Button>
-				{resetError && (
-					<Text
-						size="small"
-						style={{ color: 'var(--fgColor-danger)' }}
-						role="alert"
-					>
-						Could not reset.
-					</Text>
-				)}
-				<Link
-					href={REPOSITORY_URL}
-					target="_blank"
-					rel="noreferrer"
-					style={{ fontSize: 12 }}
-				>
-					GitHub
-				</Link>
-			</footer>
+			<FooterActions
+				viewMode={viewMode}
+				flushAll={flushAll}
+				cancelAll={cancelAll}
+				applyStored={applyStored}
+			/>
 		</main>
 	);
 }
