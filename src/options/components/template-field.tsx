@@ -169,8 +169,8 @@ export function TemplateField({
 	const inputId = `template-${type}`;
 
 	return (
-		<FormControl>
-			<FormControl.Label htmlFor={inputId}>
+		<FormControl id={inputId}>
+			<FormControl.Label>
 				<span
 					style={{
 						display: 'inline-flex',
@@ -187,7 +187,6 @@ export function TemplateField({
 				</span>
 			</FormControl.Label>
 			<TextInput
-				id={inputId}
 				block
 				monospace
 				size="small"
