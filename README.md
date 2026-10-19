@@ -166,6 +166,8 @@ CI (`.github/workflows/build.yml`) runs `npm ci`, `check:versions`, both builds 
 ### File Structure
 
 - `public/`: Contains `manifest.json` (Chrome), `manifest.firefox.json` (Firefox) and `options.html` (popup and settings page).
+    - `assets/`: The extension icon PNGs (`logo-16.png`, `logo-32.png`, `logo-48.png`, `logo-128.png`).
+- `design/icon/`: Icon sources (SVG for each size) and `render.sh` that renders them into `public/assets/`, see [design/icon/README.md](design/icon/README.md).
 - `src/`:
     - `content/`: Content script that adds copy buttons and author avatars on GitHub pages (plain DOM, no React).
         - `components/`: The copy button (`copy-button.ts`) and the shared tooltip (`tooltip.ts`).
@@ -216,7 +218,7 @@ The version lives in `public/manifest.json`. The pre-commit hook copies it to `p
 
 ### Store submission notes
 
-- **Chrome Web Store**: upload the `hyperfriend-build-chrome_*.zip` created by `npm run zip`. The store needs a 128×128 icon, which is planned before publication (version 1.0.0 has no icon).
+- **Chrome Web Store**: upload the `hyperfriend-build-chrome_*.zip` created by `npm run zip`. The 128×128 icon the store requires is part of the package (`assets/logo-128.png`; see [design/icon](design/icon/README.md)).
 - **Firefox Add-ons (AMO)**: upload `hyperfriend-build-firefox_*.zip`. Because the code is bundled and minified, AMO also needs a **source archive**: the repository without `node_modules/`, `dist/` and `dist-firefox/`. Build steps for the reviewer:
     1. Use Node.js 22 or newer.
     2. Run `npm ci`.

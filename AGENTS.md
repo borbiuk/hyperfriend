@@ -8,7 +8,7 @@ This file orients human and AI contributors to the **Hyperfriend** browser exten
 - **Settings** — two link templates (Pull Request, Issue) with `{{placeholders}}`, edited in the toolbar popup, stored in `chrome.storage.sync`, and shareable as a JSON file (Export / Import).
 - **Build output** — `dist/` (Chrome, Load unpacked) and `dist-firefox/` (Firefox, `about:debugging`).
 - **Source manifests** — `public/manifest.json` (Chrome) and `public/manifest.firefox.json` (Firefox); copied to `manifest.json` in the matching build directory.
-- **Version 1.0.0 has no icon**: no `icons` or `default_icon` keys.
+- **Icon** — `public/assets/logo-{16,32,48,128}.png`, referenced by `icons` and `action.default_icon` in both manifests and included by `zip.sh`. Sources and the render script are in `design/icon/` ([README](design/icon/README.md)); regenerate with `./design/icon/render.sh`.
 
 ## Architecture (MV3)
 
@@ -71,5 +71,5 @@ The Husky pre-commit hook (`.husky/pre-commit`) runs on **every commit**:
 
 - English for code comments and technical docs in-repo (per project convention).
 - Follow the working rules in [CLAUDE.md](CLAUDE.md) (minimal scope, no speculative refactors).
-- Never add a `^` or `~` version range. Never add an icon in 1.0.0.
+- Never add a `^` or `~` version range. Edit icon SVG sources, not the PNGs, and re-run `./design/icon/render.sh`.
 - For AI-assisted work, see Google's [Extensions and AI](https://developer.chrome.com/docs/extensions/ai) page.

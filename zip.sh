@@ -2,6 +2,10 @@
 
 # Files that will be included to .zip (paths are relative to the build directory)
 include_files=(
+	"assets/logo-16.png"
+	"assets/logo-32.png"
+	"assets/logo-48.png"
+	"assets/logo-128.png"
 	"content.js"
 	"manifest.json"
 	"options.html"

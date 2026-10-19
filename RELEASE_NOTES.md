@@ -13,4 +13,5 @@ Initial release.
 - Author avatars (16 px, round) before the author login in Pull Request lists; they load from GitHub's own avatar server and are removed if they fail to load.
 - Export and import of the templates as `hyperfriend-settings.json` (schema version 1, validated on import), so a team can share one link format. In Firefox, Export and Import open the settings page in a tab because the popup closes when the download panel or the file picker opens.
 - Settings are stored in the browser sync storage; no data collection, no analytics and no servers of its own.
+- Extension icon: a contribution-graph style grid of tiles that forms the letter H, in 16, 32, 48 and 128 px.
 - Support for Chrome and Firefox (Manifest V3).
