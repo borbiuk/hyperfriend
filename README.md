@@ -1,3 +1,5 @@
+<p align="center"><img src="design/store/promo-marquee-1400x560-dark.png" alt="Hyperfriend — browser extension for GitHub: copy pull request and issue links as rich hyperlinks" width="100%"></p>
+
 # Hyperfriend
 
 Hyperfriend is a **browser extension for Chrome and Firefox** that adds a one-click **copy link** button to every
@@ -6,6 +8,8 @@ Microsoft Teams, Slack and other chats shows readable text such as `PR 12: Add c
 instead of a bare URL.
 
 Chrome Web Store and Firefox Add-ons listings are coming soon.
+
+<p align="center"><img src="design/store/screenshots/4-settings-popup-dark.jpg" alt="Pull request list with Hyperfriend copy buttons and author avatars, and the settings popup with link templates, in GitHub's dark theme" width="100%"></p>
 
 <hr/>
 
