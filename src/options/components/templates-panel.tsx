@@ -1,5 +1,7 @@
 import { GitPullRequestIcon, IssueOpenedIcon } from '@primer/octicons-react';
+import { Text } from '@primer/react';
 import { ConfigModel, LinkTargetModel, LinkType } from '@shared/models';
+import { useId } from 'react';
 
 import { FieldControls, TemplateField } from './template-field';
 
@@ -38,26 +40,40 @@ export function TemplatesPanel({
 	syncEpoch,
 	registerField,
 }: TemplatesPanelProps) {
+	const noteId = useId();
+
 	return (
-		<div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-			<TemplateField
-				type={LinkType.PullRequest}
-				label="Pull Request link template"
-				icon={GitPullRequestIcon}
-				value={config.templates[LinkType.PullRequest]}
-				sample={SAMPLE_PULL_REQUEST}
-				syncEpoch={syncEpoch}
-				registerField={registerField}
-			/>
-			<TemplateField
-				type={LinkType.Issue}
-				label="Issue link template"
-				icon={IssueOpenedIcon}
-				value={config.templates[LinkType.Issue]}
-				sample={SAMPLE_ISSUE}
-				syncEpoch={syncEpoch}
-				registerField={registerField}
-			/>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+			{/* A note for both fields, so it comes first; each input lists it in aria-describedby. */}
+			<Text
+				id={noteId}
+				size="small"
+				style={{ color: 'var(--fgColor-muted)' }}
+			>
+				Put the part that should be the link in [square brackets].
+			</Text>
+			<div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+				<TemplateField
+					type={LinkType.PullRequest}
+					label="Pull Request link template"
+					icon={GitPullRequestIcon}
+					value={config.templates[LinkType.PullRequest]}
+					sample={SAMPLE_PULL_REQUEST}
+					syncEpoch={syncEpoch}
+					registerField={registerField}
+					noteId={noteId}
+				/>
+				<TemplateField
+					type={LinkType.Issue}
+					label="Issue link template"
+					icon={IssueOpenedIcon}
+					value={config.templates[LinkType.Issue]}
+					sample={SAMPLE_ISSUE}
+					syncEpoch={syncEpoch}
+					registerField={registerField}
+					noteId={noteId}
+				/>
+			</div>
 		</div>
 	);
 }

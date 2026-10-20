@@ -1,5 +1,16 @@
 # Release Notes
 
+## 2.1.0
+
+Templates can mark which part of the text is the link.
+
+- Put the link part of a template in square brackets: only that part becomes the hyperlink, the rest is plain text. The new defaults are `[PR {{pr_number}}]: {{pr_name}}` and `[Issue {{issue_number}}]: {{issue_name}}`, which paste as the link "PR 12" followed by ": Add copy button to PR list". In Microsoft Teams the whole pasted text used to be one blue link, and Teams shortens long link text.
+- Rules: brackets are read in the template only (brackets in a title such as "[WIP] Fix" don't matter); the first `[`…`]` pair is the link and later brackets are plain text; a `[` without `]` is plain text; `\[` and `\]` are literal brackets; a bracket can't cut through a `{{placeholder}}`. Without brackets, or with an empty `[]`, the whole text is the link, exactly as before. Spaces at the edges of the bracketed part stay outside the link, and a template that renders to empty text falls back to the default.
+- The plain-text format stays `PR 12: Add copy button to PR list — URL` (no brackets).
+- The preview in the Templates tab underlines the part that will be the link, and a hint above the fields explains the square brackets.
+- Your saved templates are converted once when you update: a template equal to the old default becomes the new bracketed default, and any other template has its `[` and `]` escaped, so it copies exactly as before. Add brackets to it to mark a shorter link, or use "Reset all settings" in General to get the new defaults.
+- Settings files are now schema version 3 (templates with the bracket syntax). Files exported by 1.0.0 and 2.0.0 (versions 1 and 2) still import, and their templates are converted the same way. Version 3 files can't be imported by 2.0.0 ("created by a newer version").
+
 ## 2.0.0
 
 Keyboard shortcut and a tabbed settings popup.

@@ -13,4 +13,5 @@ export {
 	SETTINGS_FILE_NAME,
 } from './settings-transfer-service';
 export type { ParseSettingsResult } from './settings-transfer-service';
-export { renderTemplate } from './template-service';
+export { renderTemplate, renderTemplateParts } from './template-service';
+export type { TemplateParts } from './template-service';

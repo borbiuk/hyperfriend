@@ -1,5 +1,11 @@
 import { CheckIcon, Icon } from '@primer/octicons-react';
-import { FormControl, Text, TextInput, Token } from '@primer/react';
+import {
+	FormControl,
+	Text,
+	TextInput,
+	Token,
+	VisuallyHidden,
+} from '@primer/react';
 import {
 	DEFAULT_CONFIG,
 	MAX_TEMPLATE_LENGTH,
@@ -36,6 +42,8 @@ interface TemplateFieldProps {
 	syncEpoch: number;
 	/** Registers this field's save controls with the parent. Returns an unregister function. */
 	registerField: (controls: FieldControls) => () => void;
+	/** Id of a note shared by all template fields, added to the input's description. */
+	noteId?: string;
 }
 
 /**
@@ -49,6 +57,7 @@ export function TemplateField({
 	sample,
 	syncEpoch,
 	registerField,
+	noteId,
 }: TemplateFieldProps) {
 	const [draft, setDraft] = useState(value);
 	const [saved, setSaved] = useState(false);
@@ -167,11 +176,18 @@ export function TemplateField({
 		saveTimer.current = window.setTimeout(flush, SAVE_DELAY_MS);
 	};
 
+	// Same split as the pasted link: only `parts.link` is the hyperlink.
 	const preview = buildLinkPayload(sample, {
 		...DEFAULT_CONFIG,
 		templates: { ...DEFAULT_CONFIG.templates, [type]: draft },
-	}).text;
+	}).parts;
 	const inputId = `template-${type}`;
+	const placeholdersId = `${inputId}-placeholders`;
+	const errorId = `${inputId}-error`;
+	// Set explicitly (it replaces FormControl's own value) to add the shared note.
+	const describedBy = [error ? errorId : null, placeholdersId, noteId]
+		.filter(Boolean)
+		.join(' ');
 
 	return (
 		<FormControl id={inputId}>
@@ -198,6 +214,7 @@ export function TemplateField({
 				value={draft}
 				// Longer templates could be exported but not imported again.
 				maxLength={MAX_TEMPLATE_LENGTH}
+				aria-describedby={describedBy}
 				onChange={(event) => handleChange(event.target.value)}
 				onBlur={flush}
 				spellCheck={false}
@@ -205,6 +222,7 @@ export function TemplateField({
 			/>
 			<FormControl.Caption>
 				<span
+					id={placeholdersId}
 					style={{
 						display: 'flex',
 						flexWrap: 'wrap',
@@ -220,7 +238,7 @@ export function TemplateField({
 			</FormControl.Caption>
 			{error && (
 				<FormControl.Validation variant="error">
-					{error}
+					<span id={errorId}>{error}</span>
 				</FormControl.Validation>
 			)}
 			<div
@@ -234,14 +252,21 @@ export function TemplateField({
 			>
 				<Text
 					size="small"
-					style={{
-						color: 'var(--fgColor-accent)',
-						textDecoration: 'underline',
-						overflowWrap: 'anywhere',
-						minWidth: 0,
-					}}
+					style={{ overflowWrap: 'anywhere', minWidth: 0 }}
 				>
-					{preview}
+					<VisuallyHidden>Preview: </VisuallyHidden>
+					{preview.before}
+					<span
+						style={{
+							color: 'var(--fgColor-accent)',
+							textDecoration: 'underline',
+						}}
+					>
+						{preview.link}
+					</span>
+					{/* The styling alone does not tell screen reader users which part is the link. */}
+					{preview.link && <VisuallyHidden> (link)</VisuallyHidden>}
+					{preview.after}
 				</Text>
 				<Text
 					size="small"

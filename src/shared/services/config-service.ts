@@ -9,6 +9,18 @@ import {
 } from '@shared/models';
 import { normalizeShortcut } from '@shared/utils';
 
+import { convertLegacyTemplate } from './template-service';
+
+/**
+ * Key of the template format marker in the stored object (next to the ConfigModel fields,
+ * not part of ConfigModel). Every write stores TEMPLATE_FORMAT; a stored object without
+ * it (1.x / 2.0.0) holds templates without the `[link]` syntax, converted on read.
+ */
+const TEMPLATE_FORMAT_KEY = 'templateFormat';
+
+/** Template format with the `[link]` syntax (2.1.0). */
+const TEMPLATE_FORMAT = 2;
+
 let warnedUnavailable = false;
 
 /**
@@ -83,8 +95,15 @@ function isObject(value: unknown): value is Record<string, unknown> {
 
 /**
  * Copies the string templates of known link types into the config; anything else is ignored.
+ *
+ * @param legacy - The templates predate the `[link]` syntax and are converted
+ * (see convertLegacyTemplate).
  */
-function applyTemplates(config: ConfigModel, templates: unknown): void {
+function applyTemplates(
+	config: ConfigModel,
+	templates: unknown,
+	legacy = false
+): void {
 	if (!isObject(templates)) {
 		return;
 	}
@@ -92,7 +111,9 @@ function applyTemplates(config: ConfigModel, templates: unknown): void {
 	for (const type of Object.values(LinkType)) {
 		const value = templates[type];
 		if (typeof value === 'string') {
-			config.templates[type] = value;
+			config.templates[type] = legacy
+				? convertLegacyTemplate(value, type)
+				: value;
 		}
 	}
 }
@@ -141,6 +162,8 @@ function applyDisplay(config: ConfigModel, display: unknown): void {
 /**
  * Merges a raw stored value over DEFAULT_CONFIG, ignoring unknown keys and invalid values.
  * Data saved by 1.0.0 (`{ templates }` only) gets the default shortcuts and display settings.
+ * Without the TEMPLATE_FORMAT marker (1.x / 2.0.0) the templates are converted to the
+ * `[link]` syntax; nothing is written here, the next write stores them with the marker.
  *
  * @param stored - Raw value read from storage.
  * @returns A complete, valid config.
@@ -151,7 +174,9 @@ function mergeWithDefaults(stored: unknown): ConfigModel {
 		return config;
 	}
 
-	applyTemplates(config, stored.templates);
+	const format = stored[TEMPLATE_FORMAT_KEY];
+	const legacy = typeof format !== 'number' || format < TEMPLATE_FORMAT;
+	applyTemplates(config, stored.templates, legacy);
 	applyShortcuts(config, stored.shortcuts);
 	applyDisplay(config, stored.display);
 	return config;
@@ -180,7 +205,12 @@ function updateConfig(change: (config: ConfigModel) => void): Promise<void> {
 
 		const config = await readConfig(storage);
 		change(config);
-		await storage.set({ [CONFIG_STORAGE_KEY]: config });
+		await storage.set({
+			[CONFIG_STORAGE_KEY]: {
+				...config,
+				[TEMPLATE_FORMAT_KEY]: TEMPLATE_FORMAT,
+			},
+		});
 	});
 }
 

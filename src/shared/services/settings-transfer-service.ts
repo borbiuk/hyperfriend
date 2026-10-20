@@ -11,6 +11,7 @@ import {
 import { normalizeShortcut, shortcutsEqual } from '@shared/utils';
 
 import { cloneConfig } from './config-service';
+import { convertLegacyTemplate } from './template-service';
 
 /** File name used when exporting settings. */
 export const SETTINGS_FILE_NAME = 'hyperfriend-settings.json';
@@ -18,11 +19,14 @@ export const SETTINGS_FILE_NAME = 'hyperfriend-settings.json';
 /** Value of the `app` marker in a settings file. */
 const SETTINGS_APP = 'hyperfriend';
 
-/** Settings file format version written by this build (versions 1 and 2 are read). */
-const SCHEMA_VERSION = 2;
+/** Settings file format version written by this build (versions 1 to 3 are read). */
+const SCHEMA_VERSION = 3;
 
 /** Version 1 files (1.0.0) contain templates only. */
 const SCHEMA_VERSION_TEMPLATES_ONLY = 1;
+
+/** Version 2 files (2.0.0) add shortcuts and display; templates predate the `[link]` syntax. */
+const SCHEMA_VERSION_LEGACY_TEMPLATES = 2;
 
 /** Maximum accepted input size in bytes (64 KB). */
 const MAX_FILE_SIZE = 64 * 1024;
@@ -41,7 +45,7 @@ export type ParseSettingsResult =
 	{ ok: true; settings: SettingsImportModel } | { ok: false; error: string };
 
 /**
- * Serializes the config into the settings file format (schema version 2).
+ * Serializes the config into the settings file format (schema version 3).
  *
  * @param config - Current (merged) config.
  * @param now - Export time; defaults to the current time.
@@ -88,9 +92,13 @@ type SectionResult<T> = { ok: true; value: T } | { ok: false; error: string };
 /**
  * Reads the templates of known link types: each trimmed, a single line of at most
  * MAX_TEMPLATE_LENGTH characters.
+ *
+ * @param legacy - The file predates the `[link]` syntax (schema 1 and 2): valid templates
+ * are converted with convertLegacyTemplate (escaping may make them a bit longer).
  */
 function parseTemplates(
-	templates: Record<string, unknown>
+	templates: Record<string, unknown>,
+	legacy: boolean
 ): SectionResult<Partial<Record<LinkType, string>>> {
 	const value: Partial<Record<LinkType, string>> = {};
 	for (const type of Object.values(LinkType)) {
@@ -111,7 +119,7 @@ function parseTemplates(
 			};
 		}
 
-		value[type] = template;
+		value[type] = legacy ? convertLegacyTemplate(template, type) : template;
 	}
 
 	return { ok: true, value };
@@ -197,7 +205,7 @@ function parseVersion1(data: Record<string, unknown>): ParseSettingsResult {
 		return fail('The file does not contain any templates.');
 	}
 
-	const templates = parseTemplates(data.templates);
+	const templates = parseTemplates(data.templates, true);
 	if (!templates.ok) {
 		return fail(templates.error);
 	}
@@ -210,10 +218,15 @@ function parseVersion1(data: Record<string, unknown>): ParseSettingsResult {
 }
 
 /**
- * Parses a version 2 file: `templates`, `shortcuts` and `display` are each optional,
+ * Parses a version 2 or 3 file: `templates`, `shortcuts` and `display` are each optional,
  * but a present section must be an object and at least one setting must be present.
+ *
+ * @param legacy - Version 2: templates are converted to the `[link]` syntax.
  */
-function parseVersion2(data: Record<string, unknown>): ParseSettingsResult {
+function parseSections(
+	data: Record<string, unknown>,
+	legacy: boolean
+): ParseSettingsResult {
 	const settings: SettingsImportModel = {};
 	let count = 0;
 
@@ -224,7 +237,7 @@ function parseVersion2(data: Record<string, unknown>): ParseSettingsResult {
 	}
 
 	if (isObject(data.templates)) {
-		const templates = parseTemplates(data.templates);
+		const templates = parseTemplates(data.templates, legacy);
 		if (!templates.ok) {
 			return fail(templates.error);
 		}
@@ -267,7 +280,8 @@ function parseVersion2(data: Record<string, unknown>): ParseSettingsResult {
 }
 
 /**
- * Parses and validates the text of a settings file (schema version 1 or 2).
+ * Parses and validates the text of a settings file (schema version 1, 2 or 3).
+ * Templates of versions 1 and 2 are converted to the `[link]` syntax.
  * Only known link types, shortcut types and display keys are read; unknown keys are
  * ignored. Templates are trimmed, shortcut keys normalized.
  *
@@ -301,8 +315,12 @@ export function parseSettings(text: string): ParseSettingsResult {
 		return parseVersion1(data);
 	}
 
+	if (version === SCHEMA_VERSION_LEGACY_TEMPLATES) {
+		return parseSections(data, true);
+	}
+
 	if (version === SCHEMA_VERSION) {
-		return parseVersion2(data);
+		return parseSections(data, false);
 	}
 
 	return fail('This settings file has an unsupported version.');

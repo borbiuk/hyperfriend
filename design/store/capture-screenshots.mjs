@@ -43,12 +43,28 @@ const USER_AGENT =
 
 const sleep = (ms) => new Promise((done) => setTimeout(done, ms));
 
+/** Opens a new tab over the DevTools HTTP endpoint, retrying while Chrome is still starting. */
+async function waitForDevTools() {
+	for (let attempt = 0; ; attempt += 1) {
+		try {
+			return await fetch(
+				`http://127.0.0.1:${PORT}/json/new?about:blank`,
+				{
+					method: 'PUT',
+				}
+			);
+		} catch (error) {
+			if (attempt >= 50) {
+				throw error;
+			}
+			await sleep(300);
+		}
+	}
+}
+
 /** Minimal Chrome DevTools Protocol client over the built-in WebSocket. */
 async function connect() {
-	const response = await fetch(
-		`http://127.0.0.1:${PORT}/json/new?about:blank`,
-		{ method: 'PUT' }
-	);
+	const response = await waitForDevTools();
 	const { webSocketDebuggerUrl } = await response.json();
 	const socket = new WebSocket(webSocketDebuggerUrl);
 	await new Promise((done) => socket.addEventListener('open', done));
@@ -266,7 +282,6 @@ async function main() {
 	);
 
 	try {
-		await sleep(1500);
 		const cdp = await connect();
 		await cdp.send('Page.enable');
 		await cdp.send('Network.setUserAgentOverride', {

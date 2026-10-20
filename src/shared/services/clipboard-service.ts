@@ -1,16 +1,19 @@
 import { ConfigModel, LinkTargetModel } from '@shared/models';
 import { escapeHtml } from '@shared/utils';
 
-import { renderTemplate } from './template-service';
+import { renderTemplateParts, TemplateParts } from './template-service';
 
 /**
  * Clipboard contents for a link in every supported format.
  */
 export interface LinkPayload {
-	/** Rendered link text (plain, not escaped) */
+	/** Rendered text, `before + link + after` (plain, not escaped, no template brackets) */
 	text: string;
 
-	/** `<a href="URL">TEXT</a>` with escaped URL and text */
+	/** Rendered text split around the hyperlink part */
+	parts: TemplateParts;
+
+	/** `BEFORE<a href="URL">LINK</a>AFTER`, all escaped */
 	html: string;
 
 	/** `TEXT — URL` */
@@ -28,11 +31,14 @@ export function buildLinkPayload(
 	target: LinkTargetModel,
 	config: ConfigModel
 ): LinkPayload {
-	const text = renderTemplate(config.templates[target.type], target);
+	const parts = renderTemplateParts(config.templates[target.type], target);
+	const text = `${parts.before}${parts.link}${parts.after}`;
+	const anchor = `<a href="${escapeHtml(target.url)}">${escapeHtml(parts.link)}</a>`;
 
 	return {
 		text,
-		html: `<a href="${escapeHtml(target.url)}">${escapeHtml(text)}</a>`,
+		parts,
+		html: `${escapeHtml(parts.before)}${anchor}${escapeHtml(parts.after)}`,
 		plain: `${text} — ${target.url}`,
 	};
 }

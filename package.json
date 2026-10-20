@@ -1,6 +1,6 @@
 {
 	"name": "hyperfriend",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"description": "Copy GitHub Pull Request and Issue links as rich hyperlinks, ready to paste into Teams, Slack and other chats.",
 	"private": true,
 	"author": "Nazariy Borbiuk",

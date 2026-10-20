@@ -5,7 +5,7 @@
 Hyperfriend is a **browser extension for Chrome and Firefox** that adds a one-click **copy link** button to every
 Pull Request and Issue on [GitHub](https://github.com). The button copies a rich hyperlink, so a pasted link in
 Microsoft Teams, Slack and other chats shows readable text such as `PR 12: Add copy button to PR list`
-instead of a bare URL. On an open Pull Request or Issue, a **keyboard shortcut** (Shift+C by default) copies the same link.
+(with `PR 12` as the link) instead of a bare URL. On an open Pull Request or Issue, a **keyboard shortcut** (Shift+C by default) copies the same link.
 
 Chrome Web Store and Firefox Add-ons listings are coming soon.
 
@@ -19,7 +19,7 @@ Chrome Web Store and Firefox Add-ons listings are coming soon.
 
 - **Pull Requests and Issues**: a button next to the title of every item in list views and next to the title on the detail pages.
 - **Rich hyperlink**: the clipboard gets both formats at once, so every chat app picks the best one.
-    - `text/html`: `<a href="https://github.com/OWNER/REPO/pull/12">PR 12: Add copy button to PR list</a>`
+    - `text/html`: `<a href="https://github.com/OWNER/REPO/pull/12">PR 12</a>: Add copy button to PR list` (with the default template only `PR 12` is the link, see [Customizable templates](#customizable-templates))
     - `text/plain`: `PR 12: Add copy button to PR list — https://github.com/OWNER/REPO/pull/12`
 - **Looks like GitHub**: styled like GitHub's own icon buttons (Primer "invisible" icon button, 24 px in lists and 32 px in page headers), with GitHub-style tooltips ("Copy link to pull request" / "Copy link to issue"). On detail pages it sits right after the `#number` of the title.
 - **Clear feedback**: after a click the icon changes to a check mark and the tooltip shows "Copied!", or a cross and "Copy failed", for 1.5 seconds. Screen readers announce the result, and the accessible label is, for example, "Copy link to pull request #12".
@@ -47,8 +47,10 @@ Chrome Web Store and Firefox Add-ons listings are coming soon.
 Click the Hyperfriend icon in the browser toolbar to open the settings popup. Its **Templates** tab has one template for Pull Request
 links and one for Issue links. Defaults:
 
-- Pull Request: `PR {{pr_number}}: {{pr_name}}`
-- Issue: `Issue {{issue_number}}: {{issue_name}}`
+- Pull Request: `[PR {{pr_number}}]: {{pr_name}}`
+- Issue: `[Issue {{issue_number}}]: {{issue_name}}`
+
+**Square brackets mark the link.** Only the text inside `[` and `]` becomes the hyperlink; the rest is plain text. With the defaults a Pull Request pastes as the link "PR 12" followed by the plain text ": Add copy button to PR list". This keeps the link short: Microsoft Teams makes the whole pasted text one blue link and shortens long link text, so a short link such as "PR 12" stays readable.
 
 | Placeholder        | Available in  | Replaced with                  | Example                      |
 | ------------------ | ------------- | ------------------------------ | ---------------------------- |
@@ -62,10 +64,17 @@ links and one for Issue links. Defaults:
 
 Notes:
 
+- Brackets are read in the template only, before the placeholders are filled, so brackets in a title (for example `[WIP] Fix`) never matter.
+- The first `[`…`]` pair is the link; later brackets are plain text. A `[` without a closing `]` is plain text too. Write `\[` or `\]` for a literal bracket.
+- Without brackets, or with an empty `[]`, the whole text is the link, exactly as in 2.0.0 and earlier: `PR {{pr_number}}: {{pr_name}}` pastes as one link "PR 12: Add copy button to PR list".
+- Spaces at the edges of the bracketed part stay outside the link: `[ PR {{pr_number}} ]: …` links only "PR 12".
+- A bracket can't cut through a placeholder: `{{pr_[number]}}` is not a placeholder.
+- `text/plain` never contains the brackets: `PR 12: Add copy button to PR list — https://github.com/…`.
+- The live preview in the popup underlines the part that will be the link, and a hint above the fields reminds you of the square brackets.
 - Spaces inside the braces are allowed: `{{ pr_number }}`.
 - Unknown placeholders (including the ones of the other link type) are left as they are.
-- An empty template falls back to the default one.
-- Settings are saved in the browser sync storage, so they follow you across devices signed in to the same browser account. Templates saved by Hyperfriend 1.0.0 are kept when you update.
+- An empty template, or one that renders to empty text (for example `[]`), falls back to the default one.
+- Settings are saved in the browser sync storage, so they follow you across devices signed in to the same browser account. When you update from 1.x or 2.0.0, your saved templates are converted once: a template that is exactly the old default (`PR {{pr_number}}: {{pr_name}}` / `Issue {{issue_number}}: {{issue_name}}`) becomes the new bracketed default, and any other template keeps its text as it was, with its `[` and `]` escaped (`\[` and `\]`), so it copies exactly as before (the whole text is the link). Add square brackets to it yourself to mark a shorter link.
 
 ### Customizing the shortcut
 
@@ -94,16 +103,16 @@ Export your settings to a file and let teammates import it, so everybody pastes 
 
 In Chrome, Export and Import work right in the popup. In **Firefox** the popup closes when the download panel or the file picker opens, so **both Export and Import** open the settings page in a browser tab (`options_ui` with `open_in_tab`, on the General tab), where they work the same way. The settings page is also available from the extension's options in the browser's extensions manager.
 
-File format (schema version 2):
+File format (schema version 3):
 
 ```json
 {
 	"app": "hyperfriend",
-	"schemaVersion": 2,
+	"schemaVersion": 3,
 	"exportedAt": "2026-10-20T18:00:00.000Z",
 	"templates": {
-		"pull-request": "PR {{pr_number}}: {{pr_name}}",
-		"issue": "Issue {{issue_number}}: {{issue_name}}"
+		"pull-request": "[PR {{pr_number}}]: {{pr_name}}",
+		"issue": "[Issue {{issue_number}}]: {{issue_name}}"
 	},
 	"shortcuts": {
 		"copy-link": {
@@ -119,7 +128,7 @@ File format (schema version 2):
 
 `keys` lists the modifiers in the order `Control`, `Alt`, `Shift`, `Meta`, followed by one [`KeyboardEvent.code`](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code) value of the main key (`KeyC`, `Digit1`, `F5`, `ArrowUp`, ...). A disabled shortcut keeps its `keys`.
 
-Files exported by Hyperfriend 1.0.0 use schema version 1 and contain `templates` only:
+Schema version 3 is the first one with the square bracket syntax in templates. Files exported by Hyperfriend 2.0.0 use schema version 2 (the same layout, templates without brackets). Files exported by Hyperfriend 1.0.0 use schema version 1 and contain `templates` only:
 
 ```json
 {
@@ -133,15 +142,15 @@ Files exported by Hyperfriend 1.0.0 use schema version 1 and contain `templates`
 }
 ```
 
-They still import: the templates are applied and the shortcuts and display settings keep their current values.
+Version 1 and 2 files still import, and their templates are converted the same way as saved templates (the old default becomes the new default, other templates get their brackets escaped). A version 1 file applies the templates only; the shortcuts and display settings keep their current values. Hyperfriend 2.0.0 does not read version 3 files ("created by a newer version of Hyperfriend").
 
 Import rules:
 
-- The file must be up to 64 KB (larger files are rejected before they are read) and valid JSON, with `"app": "hyperfriend"` and `"schemaVersion"` 1 or 2. A higher version is rejected as "created by a newer version of Hyperfriend".
+- The file must be up to 64 KB (larger files are rejected before they are read) and valid JSON, with `"app": "hyperfriend"` and `"schemaVersion"` 1, 2 or 3. A higher version is rejected as "created by a newer version of Hyperfriend".
 - `templates` must be an object. Only the keys `pull-request` and `issue` are read; other keys are ignored. Values are trimmed, and each must be a single line of text (no line breaks or control characters) of at most 500 characters; otherwise the error reads `Template "<key>" must be a single line of text up to 500 characters.` (In a version 1 file at least one known template must be present.)
-- `shortcuts` must be an object. Only the key `copy-link` is read. Its value needs `keys` that form a valid combination (at least one modifier, exactly one main key; a valid combination in another order is accepted and normalized) and a boolean `enabled`; otherwise the error reads `Shortcut "copy-link" is not valid.`
+- `shortcuts` must be an object. Only the key `copy-link` is read. Its value needs `keys` that form a valid combination (at least one modifier, exactly one main key, not a combination the browser uses; a valid combination in another order is accepted and normalized) and a boolean `enabled`; otherwise the error reads `Shortcut "copy-link" is not valid.`
 - `display` must be an object. Only `authorAvatars` is read, and it must be `true` or `false`; otherwise the error reads `Display setting "authorAvatars" must be true or false.`
-- In a version 2 file every section is optional, but at least one setting must be present ("The file does not contain any settings.").
+- In a version 2 or 3 file every section is optional, but at least one setting must be present ("The file does not contain any settings.").
 - A setting missing from the file keeps its current value. Everything is applied with one write to the sync storage.
 - Problems are shown as a short message under the buttons, and nothing is changed.
 - `exportedAt` is informational only.

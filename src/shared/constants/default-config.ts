@@ -10,8 +10,8 @@ export const CONFIG_STORAGE_KEY = 'hyperfriend-config';
  */
 export const DEFAULT_CONFIG: ConfigModel = {
 	templates: {
-		[LinkType.PullRequest]: 'PR {{pr_number}}: {{pr_name}}',
-		[LinkType.Issue]: 'Issue {{issue_number}}: {{issue_name}}',
+		[LinkType.PullRequest]: '[PR {{pr_number}}]: {{pr_name}}',
+		[LinkType.Issue]: '[Issue {{issue_number}}]: {{issue_name}}',
 	},
 	shortcuts: {
 		[ShortcutType.CopyLink]: { keys: ['Shift', 'KeyC'], enabled: true },
@@ -19,6 +19,15 @@ export const DEFAULT_CONFIG: ConfigModel = {
 	display: {
 		authorAvatars: true,
 	},
+};
+
+/**
+ * Default templates of versions 1.x and 2.0.0, written before the `[link]` syntax existed.
+ * A stored or imported old template equal to one of these becomes the new default.
+ */
+export const LEGACY_DEFAULT_TEMPLATES: Record<LinkType, string> = {
+	[LinkType.PullRequest]: 'PR {{pr_number}}: {{pr_name}}',
+	[LinkType.Issue]: 'Issue {{issue_number}}: {{issue_name}}',
 };
 
 /**
