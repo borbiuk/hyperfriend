@@ -1,0 +1,240 @@
+{
+	"pages": {
+		"/react/react/pulls": "pull-list.html",
+		"/react/react/pull/9713": "pull.html",
+		"/react/react/pull/9713/files": "pull-files.html",
+		"/react/react/pull/9713/commits": "pull-commits.html",
+		"/react/react/issues": "issue-list.html",
+		"/react/react/issues/10": "issue.html"
+	},
+	"items": {
+		"/react/react/pulls": [
+			{
+				"number": 37934,
+				"title": "[Test] Keep Flight strings as strings from the server to the browser"
+			},
+			{
+				"number": 37932,
+				"title": "[Fiber] Fix useActionState dispatching a stale action after switching back to a previous action"
+			},
+			{
+				"number": 37931,
+				"title": "[Flight] Complete reply models by their reachable fields, not by chunk"
+			},
+			{
+				"number": 37930,
+				"title": "[Experiment] Flight Result as a ledger of Server Component expansions"
+			},
+			{
+				"number": 37929,
+				"title": "[Flight] Run the reader fuzz against the reply decoder"
+			},
+			{
+				"number": 37928,
+				"title": "[Flight] Fix two DEV writer bugs found by the reader fuzz"
+			},
+			{
+				"number": 37927,
+				"title": "[Flight] Complete models by their reachable fields, not by chunk"
+			},
+			{
+				"number": 37926,
+				"title": "[Flight] Fix three stream bugs found by the reader fuzz"
+			},
+			{
+				"number": 37925,
+				"title": "[Flight] Skip revival for models without protocol strings"
+			},
+			{
+				"number": 37923,
+				"title": "[Flight] Add reader fuzz tests"
+			},
+			{
+				"number": 37922,
+				"title": "[Fiber] Track non-extensible thenables in a side table instead of crashing"
+			},
+			{
+				"number": 37921,
+				"title": "Bump @modelcontextprotocol/sdk from 1.9.0 to 1.32.0 in /compiler"
+			},
+			{
+				"number": 37920,
+				"title": "Fix TypeError in CheckStringCoercion typeName for null-prototype objects"
+			},
+			{
+				"number": 37918,
+				"title": "Bump follow-redirects from 1.16.0 to 1.16.1 in /packages/react-devtools-cdt-mcp/fixtures/app"
+			},
+			{
+				"number": 37913,
+				"title": "Fix/catch clause destructuring"
+			},
+			{
+				"number": 37910,
+				"title": "Add a test for the Children helper warning when a Map is passed"
+			},
+			{
+				"number": 37909,
+				"title": "Warn in DEV when useMemo's first argument is not a function"
+			},
+			{
+				"number": 37908,
+				"title": "[eslint-plugin-react-hooks] Treat static primitive constants as stable in exhaustive-deps"
+			},
+			{
+				"number": 37906,
+				"title": "[DOM] Keep React's own resource links when clearing the Document on a root's first commit"
+			},
+			{
+				"number": 37903,
+				"title": "Fix state preservation when resolving lazy components"
+			},
+			{
+				"number": 37900,
+				"title": "Fix TypeError in CheckStringCoercion typeName() for null-prototype objects in DEV"
+			},
+			{
+				"number": 37898,
+				"title": "[rust-compiler] Fix Unicode diagnostic underline positions"
+			},
+			{
+				"number": 37896,
+				"title": "Bump handlebars from 4.7.7 to 4.7.10 in /fixtures/concurrent/time-slicing"
+			},
+			{
+				"number": 37895,
+				"title": "[compiler] Allow ref access in ResizeObserver / MutationObserver callbacks"
+			},
+			{
+				"number": 37894,
+				"title": "[compiler] Infer function names from assignments, object properties, and patterns in Rust port"
+			}
+		],
+		"/react/react/pull/9713": [
+			{
+				"number": 9713,
+				"title": "[#9712] fix <input type=\"number\" /> value '.98' should not be equal to '0.98'."
+			}
+		],
+		"/react/react/pull/9713/files": [
+			{
+				"number": 9713,
+				"title": "[#9712] fix <input type=\"number\" /> value '.98' should not be equal to '0.98'."
+			}
+		],
+		"/react/react/pull/9713/commits": [
+			{
+				"number": 9713,
+				"title": "[#9712] fix <input type=\"number\" /> value '.98' should not be equal to '0.98'."
+			}
+		],
+		"/react/react/issues": [
+			{
+				"number": 37933,
+				"title": "Bug: Hover highlight in interactive code example overlaps the preview content"
+			},
+			{
+				"number": 37907,
+				"title": "[Fizz] Aborting while a resumed boundary's replay walk is stalled above the resumable slot client-renders the boundary and returns null postponed state"
+			},
+			{
+				"number": 37899,
+				"title": "Bug: a component loses its state when its type changes from React.lazy to the component the lazy resolved to"
+			},
+			{
+				"number": 37897,
+				"title": "[Compiler Bug]: Rust Babel adapter misaligns diagnostic underlines after non-ASCII text"
+			},
+			{
+				"number": 37891,
+				"title": "Bug:"
+			},
+			{
+				"number": 37888,
+				"title": "[Compiler Bug]: Local copy of a module-level variable is replaced by the variable itself inside closures"
+			},
+			{
+				"number": 37886,
+				"title": "Bug:"
+			},
+			{
+				"number": 37885,
+				"title": "Bug: TypeError in ReactDOM.prefetchDNS() when called with null or prototype-less options in DEV"
+			},
+			{
+				"number": 37881,
+				"title": "Bug: TypeError in CheckStringCoercion typeName() for null-prototype objects in DEV"
+			},
+			{
+				"number": 37874,
+				"title": "[DevTools Bug]: Operation packets accumulate until the first frontend connects"
+			},
+			{
+				"number": 37866,
+				"title": "Bug: dev-only \"two <ViewTransition name> mounted at the same time\" warning is a false positive after name changes to undefined/another name"
+			},
+			{
+				"number": 37837,
+				"title": "Bug: Submitting a form before hydration fails when a field is named \"action\""
+			},
+			{
+				"number": 37833,
+				"title": "[Compiler Bug]: hoisted function declaration memoized without assigning the outer binding (undefined on cache miss)"
+			},
+			{
+				"number": 37830,
+				"title": "Transition never commits: a Flight chunk's synchronous then() pings from inside the render phase while the root is already suspended-with-delay, and the ping is dropped (React 19.2.8, Next 15.5 same-route navigation)"
+			},
+			{
+				"number": 37809,
+				"title": "Bug: error recovery is disabled when the recovery retry is only interrupted for selective hydration (regression from #37739)"
+			},
+			{
+				"number": 37805,
+				"title": "Transition never commits: a ping from a synchronously resolving Flight chunk is dropped during render (RootSuspendedWithDelay)"
+			},
+			{
+				"number": 37804,
+				"title": "Bug: react-refresh retains roots that unmount before their first render (StrictMode), same leak as #36379"
+			},
+			{
+				"number": 37802,
+				"title": "[DevTools Bug]: DOM nodes removed from a still-mounted component stay in publicInstanceToDevToolsInstanceMap until reload (8.0.0, DevTools closed)"
+			},
+			{
+				"number": 37792,
+				"title": "Bug:"
+			},
+			{
+				"number": 37790,
+				"title": "[Compiler Bug]: React Compiler breaks useFrameCallback memoization"
+			},
+			{
+				"number": 37789,
+				"title": "[Compiler]: Request for a new babel-plugin-react-compiler release — eslint-plugin-react-hooks 7.1.x bundles a newer compiler than 1.0.0, so lint passes on code the build silently skips"
+			},
+			{
+				"number": 37785,
+				"title": "areHookInputsEqual ignores extra deps when the deps array grows, returning a stale useMemo value"
+			},
+			{
+				"number": 37783,
+				"title": "Bug:"
+			},
+			{
+				"number": 37765,
+				"title": "Bug: ViewTransition breaks the root when its container is a ShadowRoot"
+			},
+			{
+				"number": 37762,
+				"title": "Bug: \"Cannot commit the same tree as before\" (#177) when a throttled Suspense reveal's commit flushes another root's passive effects that update its root synchronously"
+			}
+		],
+		"/react/react/issues/10": [
+			{
+				"number": 10,
+				"title": "Can't require() react-tools module"
+			}
+		]
+	}
+}

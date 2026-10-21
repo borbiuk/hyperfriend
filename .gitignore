@@ -19,3 +19,10 @@ npm-debug.log
 # local agent settings
 .claude/settings.local.json
 CLAUDE.local.md
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+tests/e2e/fixtures/.pages-*/

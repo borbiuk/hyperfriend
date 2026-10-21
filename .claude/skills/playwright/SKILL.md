@@ -1,0 +1,101 @@
+---
+name: playwright
+description: Writes, runs and debugs the Playwright tests of Hyperfriend (unit tests for src/shared, end-to-end tests with the real extension loaded into Chromium, and the live smoke suite), including the Chrome-specific parts — loading the unpacked build, the extension id, the popup page, clipboard and keyboard checks, GitHub page snapshots and traces. Use when adding or changing tests, when a test fails or flakes, or when the user asks to run the tests ("напиши тест", "запусти тести", "тест падає").
+argument-hint: '[unit | e2e | live | <spec file>]'
+---
+
+# Playwright tests for Hyperfriend
+
+How to work on the test suite. **What a good test looks like** (rules, severities) is the standard in [e2e-review/references/rules.md](../e2e-review/references/rules.md); follow it while writing. Project conventions are in [testing.md](../../rules/testing.md).
+
+> Check `package.json` and `playwright.config.ts` before relying on a script or project that this file does not list.
+
+With an argument, run that project (`unit`, `e2e`, `live`) or spec file and report the result; without one, follow the request.
+
+## Projects and commands
+
+| Project | What                                                                                                                                          | Command                                                                   |
+| ------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `unit`  | Pure logic from `src/shared` (`@shared/*`), no browser and no `chrome` global; a test that needs `chrome.storage.sync` builds its own fake    | `npm run test:unit`                                                       |
+| `dist`  | Setup project (`tests/setup/dist.setup.ts`): runs `npm run build` and checks `dist/manifest.json` against `package.json`; no tests of its own | runs by itself before `e2e` and `live` (a dependency)                     |
+| `e2e`   | The built extension (`dist/`) in Playwright's bundled Chromium, headless; GitHub pages come from snapshots, no network                        | `npm run test:e2e`                                                        |
+| `live`  | Smoke checks against real github.com (`react/react`); defined **only when `HYPERFRIEND_LIVE` is set**; never part of `npm test`               | `npm run test:live` (`HYPERFRIEND_LIVE=1 playwright test --project=live`) |
+
+- The npm scripts no longer build: the `dist` project does, so a plain `npx playwright test` (and the Playwright agents / MCP server) also runs on the current sources. `unit`-only runs skip the build. `--no-deps` skips it when `dist/` is already current.
+- Because `live` exists only with `HYPERFRIEND_LIVE`, a plain `npx playwright test` never reaches the network; `--project=live` without the variable fails with an unknown project.
+- `npm test` = `playwright test --project=unit --project=e2e` (the build runs through `dist`). `npm run test:snapshots` refreshes the page snapshots (network needed).
+- First time on a machine: `npx playwright install chromium` (the bundled Chromium, not Google Chrome).
+- `playwright.config.ts`: `fullyParallel`, `retries: 0` by design (flaky tests are fixed, SYNC-14), `forbidOnly` in CI, reporters `list` + `html` (`playwright-report/`, plus `github` in CI), traces kept on failure (`retain-on-failure`) in `test-results/`. Both folders are gitignored.
+- Chromium only; there is no Firefox project.
+- **CI** ([build.yml](../../../.github/workflows/build.yml), [live.yml](../../../.github/workflows/live.yml)): job `build` runs `npm run test:unit` on Node 22, 24 and 26; job `e2e` (Node 24) installs Chromium with `npx --no playwright install --with-deps chromium` and runs `npm run test:e2e`; `live.yml` runs `npm run test:live` on Mondays 06:00 UTC and on manual dispatch and never blocks a push. With `CI` set, `test.only` is forbidden and the `github` reporter annotates failures. Specs run headless on Linux there, as locally.
+- **Reading a failed CI run**: open the run, read the `list` output and the annotations; download the artifact (`playwright-report-e2e` or `playwright-report-live`, kept 14 days; it holds `playwright-report/` and `test-results/`), unzip it, then `npx playwright show-report <folder>/playwright-report` and `npx playwright show-trace <folder>/test-results/<test>/trace.zip` (these open windows: suggest them to the user). Reproduce locally with the same command as CI (`npm run test:e2e`), not with retries.
+
+Run Playwright as `npx --no playwright …` so npx never downloads a package that is not installed. Useful flags: `test <file> -g "<title>"`, `--project=e2e`, `--repeat-each=5` (flakiness), `--last-failed`. `--headed`, `--debug`, `--ui`, `show-report` and `show-trace <trace.zip>` open windows and wait: suggest them to the user instead of running them; read the failure output and `test-results/` yourself (a trace is kept for every failed test).
+
+## Workflow
+
+1. Write or change the test to the standard; arrange state through storage and fixtures.
+2. `npm run lint` (ESLint over `src/` and `tests/`, including `tests/**/*.mjs`, then the type check of `src/` and `tests/`), then run the changed specs; for a flaky test also `--repeat-each=5`.
+3. On a failure, find the cause in the output or trace and fix it. Never "fix" a race with retries, fewer workers or longer timeouts (SYNC-14); re-run until green.
+4. Review with the `e2e-reviewer` agent (`/e2e-review`), fix every Critical and Major finding, re-run, and decide the Minor ones with the user.
+
+## Loading the extension in Chromium
+
+- Extensions load only into a **persistent context** of Playwright's **bundled Chromium** (`channel: 'chromium'`, which also runs extensions headless). Branded Google Chrome and Edge ignore `--load-extension`. The fixture launches with `--disable-extensions-except=<dist>` and `--load-extension=<dist>`; the tests load `dist/`, not `src/`, and the `dist` project rebuilds it before every `e2e` / `live` run (so does `npm run build` by hand).
+- **Extension id**: Hyperfriend has no service worker, so the id cannot be read from `context.serviceWorkers()` as in the Playwright docs. Chromium derives an unpacked extension's id from its absolute path (SHA-256 of the path, first 32 hex digits mapped `0-f` → `a-p`). The `extensionId` fixture computes it (`unpackedExtensionId` in `extension.ts`) from the real path of `dist/`; the context fixture then probes `chrome-extension://<id>/manifest.json` and fails the test at once with "The extension did not load" when it cannot be fetched (stale or missing build, wrong id; read the id from `chrome://extensions`). The formula is for macOS and Linux paths.
+- **Popup**: `openOptions(hash?)` opens `chrome-extension://<id>/options.html` in a new tab (optionally `#templates`, `#shortcuts`, `#general`). The page then runs in tab mode (centered panel); the toolbar popup itself cannot be opened reliably in headless runs.
+- **Settings**: `storage.seedConfig` / `storage.getConfig` write and read `chrome.storage.sync` from an extension page with `page.evaluate`. Never set state through the popup UI unless the popup is what the test verifies.
+- **Errors**: the context fixture collects console errors and page errors that come from `chrome-extension://<id>/` and fails the test after it with the messages; when needed, `chrome://extensions` (`chrome.developerPrivate` is available on that page) shows runtime errors too.
+
+## Fixtures
+
+Import `test` and `expect` from `tests/e2e/fixtures/extension.ts` (the `live` specs too: `../e2e/fixtures/extension`), never from `@playwright/test`; `unit` specs and the setup project use `@playwright/test` directly. Every test gets a fresh Chromium profile with the extension loaded, `github.com` served from snapshots and clipboard access granted for `https://github.com`.
+
+| Fixture / option                     | What                                                                                                                                                                                                       |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `context`                            | Persistent context of the bundled Chromium with the extension from `dist/`, GitHub routing applied; honours `headless` (`--headed` and `--debug` work). Fails the test, see below                          |
+| `page`                               | The first tab of the context                                                                                                                                                                               |
+| `extensionId`                        | Computed id of the unpacked extension                                                                                                                                                                      |
+| `openOptions(hash?)`                 | Opens `options.html` (optionally `#templates`, `#shortcuts`, `#general`) in a new tab and returns the `Page`                                                                                               |
+| `storage.seedConfig(overrides)`      | Stores the default config with `overrides` merged over it, in the shape the extension writes (`toStoredConfig`, with the `templateFormat` marker); call it before navigating to GitHub                     |
+| `storage.setRawConfig(value)`        | Stores `value` as is; only for upgrade tests with data written by older versions                                                                                                                           |
+| `storage.getConfig()`                | Returns the stored config, or `undefined`                                                                                                                                                                  |
+| `readClipboard(page)`                | Returns `{ html, text }`: the raw `text/html` and `text/plain` of the clipboard, read in `page`; Chromium may wrap the HTML, so strip only that wrapper (EXT-1)                                            |
+| `writeClipboardSentinel(page, text)` | Puts a plain-text sentinel into the clipboard, so a later `readClipboard` proves whether anything was copied (AST-7, EXT-5)                                                                                |
+| option `githubRoutes`                | `{ avatars: 'ok' }` (default) or `{ avatars: 'error' }` for the avatar fallback; `'live'` skips routing (set by the `live` project). Override per file: `test.use({ githubRoutes: { avatars: 'error' } })` |
+
+The context fixture fails the test **after it ends** when the extension logged a console error or page error from `chrome-extension://<id>/`, and when a request had no snapshot or routing rule (see below). It fails before the test when the extension did not load.
+
+`tests/e2e/fixtures/github.ts` exports `REPOSITORY` (`/react/react`), `PAGES` (`pullList`, `pull`, `pullFiles`, `pullCommits`, `issueList`, `issue`: the GitHub paths that have a snapshot), `snapshotUrl(path)` (the `https://github.com…` URL of a snapshot; throws when there is none) and `snapshotItems(path)` (number and title of every item the snapshot shows: all rows of a list, the one item of a detail page). `snapshotItems` reads `pages/index.json`, written by the capture script, so it is the oracle for expected numbers and titles: never take them from the page under test (AST-7). There is no list-size constant; use `snapshotItems(PAGES.pullList).length`. Keep repository, item numbers and titles in `github.ts` and the snapshot index, not repeated in specs (DATA-10). Fixtures arrange; the spec asserts (AST-1).
+
+## GitHub pages in e2e
+
+- `context.route('**/*')` serves saved snapshots of public **`react/react`** pages (formerly `facebook/react`; it moved, all URLs use `github.com/react/react`): `PAGES.pullList`, PR `9713` (Conversation, `/files`, `/commits`), `PAGES.issueList`, issue `10`; listed in `tests/e2e/fixtures/pages/index.json` (`pages`: path to file, `items`: number and title per item). Because the URL is real, the content script (`matches: https://github.com/*`) is injected exactly as in the browser. `chrome-extension:` and `data:` requests pass.
+- Anything else is **reported and fails the test**: a github.com path without a snapshot (or with a query string) answers 404; another host is aborted, quietly only for the known static hosts (`github.githubassets.com`, `*-user-images`, `camo`, `opengraph`); `avatars.githubusercontent.com` gets a tiny PNG (or a 404 with `avatars: 'error'`). Add a snapshot or a route instead of ignoring it.
+- **Pitfall: avatars and layout.** Avatar images are lazy-loaded, and snapshots have no GitHub CSS, so the layout differs from github.com and rows sit far below the fold. Scroll a row into view (`row.scrollIntoViewIfNeeded()`) before relying on its avatar image, its load, or its removal after an error; a check made before the scroll sees no request yet.
+- Snapshots contain no scripts, embedded JSON, comment or description bodies (also in attributes and meta tags), tokens, nonces, signed channels, `clipboard-copy` values, analytics attributes or email addresses. They are excluded from Prettier (`.prettierignore`): they are saved as captured.
+- Refresh them with `npm run test:snapshots` (`tests/e2e/fixtures/capture-pages.mjs`; needs network, opens the public pages signed out, captures into a temporary folder and swaps it in only when every page succeeded; a final scan fails the run if a forbidden pattern remains) when the `live` suite shows that GitHub changed its markup, then update the selectors in `src/content` if needed. The titles in `items` change with each capture: specs must read them through `snapshotItems`. Review the diff for personal data before committing. To add a page, add it to the `PAGES` list of the script and to `PAGES` in `github.ts`.
+- SPA navigation (Turbo / React router) is simulated with `history.pushState` plus `turbo:load` / `popstate` events.
+
+## Clipboard and keyboard
+
+- The context fixture grants `clipboard-read` and `clipboard-write` for `https://github.com`; write a sentinel with `writeClipboardSentinel(page, text)` first, read with `readClipboard(page)` and assert both `text/html` and `text/plain` exactly. Chromium may wrap the HTML (for example a `<meta charset>` prefix): strip only that wrapper, then compare the whole `before<a href="…">link</a>after` exactly (EXT-1).
+- Use real key events: `page.keyboard.press('Shift+C')`. For layout tests (Ukrainian `С` on the `KeyC` key) send `Input.dispatchKeyEvent` through `page.context().newCDPSession(page)` with `key` and `code` set separately. Focus a text field first to prove the shortcut is skipped there.
+
+## Firefox
+
+Playwright cannot load extensions into Firefox. Firefox coverage stays `npm run lint:firefox` (web-ext lint) plus manual checks; the shared code is the same for both browsers. State this in reports instead of implying Firefox was tested.
+
+## AI tooling for tests
+
+- **Chrome DevTools MCP** (`chrome-devtools` in [.mcp.json](../../../.mcp.json)) loads the unpacked build into Chrome for exploration and debugging.
+- **Playwright Test Agents** (their MCP server runs on the same `playwright.config.ts`, so they never reach the network: `live` is not defined without `HYPERFRIEND_LIVE`): `planner`, `generator` and `healer` exist as [playwright-test-planner](../../agents/playwright-test-planner.md), [playwright-test-generator](../../agents/playwright-test-generator.md) and [playwright-test-healer](../../agents/playwright-test-healer.md), with the `playwright-test` MCP server in `.mcp.json` (`npx playwright run-test-mcp-server`). They are generated by `npx playwright init-agents --loop=claude --project=e2e`: regenerate them after every Playwright update, and do not hand-edit them. The command overwrites `.mcp.json`; re-add the `chrome-devtools` entry afterwards (`git diff .mcp.json`).
+    - Seed: `tests/e2e/seed.spec.ts` (the extension on the pull request list snapshot). The generated prompts show `tests/seed.spec.ts` as an example; the real path is `tests/e2e/seed.spec.ts`. Plans go to `specs/` (see [specs/README.md](../../../specs/README.md)).
+    - Their output is a draft: it must follow this skill (fixtures from `extension.ts`, snapshots, no `waitForTimeout`) and pass `/e2e-review` before it is kept.
+- The official `chrome-extensions` skill (plugin `modern-web-guidance`) is the reference for Chrome extension APIs.
+
+## References
+
+- Playwright: [Chrome extensions](https://playwright.dev/docs/chrome-extensions), [Best practices](https://playwright.dev/docs/best-practices), [Test agents](https://playwright.dev/docs/test-agents)
+- Chrome: [End-to-end testing of extensions](https://developer.chrome.com/docs/extensions/how-to/test/end-to-end-testing)
+- Lint: [eslint-plugin-playwright](https://github.com/playwright-community/eslint-plugin-playwright)

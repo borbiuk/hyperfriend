@@ -21,7 +21,8 @@ paths:
 
 ## CI and releases
 
-- [build.yml](../../.github/workflows/build.yml) runs on pushes and pull requests to `master` with Node 22, 24 and 26: `npm ci`, `check:versions`, both builds, `lint`, `lint:firefox`. Do not add `check:outdated` (new upstream releases would break CI at random).
-- Workflows use least-privilege `permissions` (`contents: read`) and reference only existing npm scripts.
+- [build.yml](../../.github/workflows/build.yml) runs on pushes and pull requests to `master`. Job `build` (Node 22, 24 and 26): `npm ci`, `check:versions`, both builds, `lint`, `lint:firefox`, `test:unit`. Job `e2e` (Node 24, 15-minute timeout): `npm ci`, `npx --no playwright install --with-deps chromium`, `npm run test:e2e`; on failure it uploads `playwright-report/` and `test-results/` as artifact `playwright-report-e2e` (14 days). Do not add `check:outdated` (new upstream releases would break CI at random).
+- [live.yml](../../.github/workflows/live.yml) runs `npm run test:live` against real github.com on a schedule (Mondays 06:00 UTC) and on `workflow_dispatch`, never on push or pull request, so it cannot block anything. A failed run uploads `playwright-report-live`; the failure notification is GitHub's own scheduled-workflow email. A failure means GitHub changed its markup: refresh the snapshots and the selectors ([testing.md](testing.md)).
+- Workflows use least-privilege `permissions` (`contents: read`) and reference only existing npm scripts. The Playwright browser is installed with `npx --no playwright install`, so it is the version of the installed `@playwright/test` package (a Playwright bump needs no workflow change). With `CI` set, `playwright.config.ts` forbids `test.only` and adds the `github` reporter.
 - `scripts/tag-releases.sh` finds the commit by the `version` in `public/manifest.json` and creates tags only locally. Test it with `DRY_RUN=1` only.
 - The whole release flow (version bump, release notes, commit and zips, push, CI, annotated tag, GitHub Release with `hyperfriend-{chrome,firefox}-x.y.z.zip`) is the `/release` skill: [release/SKILL.md](../skills/release/SKILL.md). Update it when this process changes.

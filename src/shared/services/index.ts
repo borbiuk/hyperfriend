@@ -6,6 +6,7 @@ export {
 	cloneConfig,
 	cloneDefaultConfig,
 	configService,
+	toStoredConfig,
 } from './config-service';
 export {
 	parseSettings,

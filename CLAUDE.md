@@ -15,9 +15,10 @@
 ## Agent context
 
 - Rules (`.claude/rules/`) load automatically when matching files are touched: architecture (with the "add a new shortcut" checklist), GitHub DOM selectors (page detection, copy button, avatars, keyboard shortcuts, toast), shared API (config schema, shortcut helpers, settings file), popup (tabs), Firefox, npm versions, docs and CI, agent context.
-- Skill `/verify` (`.claude/skills/verify/`): exact versions, both builds, ESLint, type check and `web-ext lint`.
+- Skill `/verify` (`.claude/skills/verify/`): exact versions, both builds, ESLint, type check, `npm run test:unit`, `npm run test:e2e` and `web-ext lint`.
 - Skill `/release` (`.claude/skills/release/`, invoked by the user only): version bump, release commit and zips, then after confirmation push, CI, tag and GitHub Release.
 - Skill `/store-assets` (`.claude/skills/store-assets/`): regenerates and checks the Chrome Web Store promo tiles and screenshots.
-- Subagents (`.claude/agents/`): `code-reviewer` (read-only review), `qa-engineer` (read-only verification).
+- Skills for tests: `/playwright` (`.claude/skills/playwright/`: writing, running and debugging the Playwright suite, Chrome extension specifics) and `/e2e-review` (`.claude/skills/e2e-review/`: the test standard and the review workflow). Tests follow [testing.md](.claude/rules/testing.md); commands: `npm test`, `npm run test:unit`, `npm run test:e2e` (a `dist` setup project builds `dist/` first), `npm run test:live` and `npm run test:snapshots` (network, on demand; CI runs `test:unit` and `test:e2e` on every push and pull request, and `test:live` weekly).
+- Subagents (`.claude/agents/`): `code-reviewer` (read-only review), `qa-engineer` (read-only verification), `e2e-reviewer` (read-only review of tests with `/e2e-review`), plus the generated Playwright agents `playwright-test-planner`, `-generator` and `-healer` (regenerate with `npx playwright init-agents --loop=claude --project=e2e` after a Playwright update; their output must pass `/e2e-review`).
 - Plugin `modern-web-guidance` (enabled in `.claude/settings.json`) provides the official `chrome-extensions` skill for Chrome APIs.
-- MCP server `chrome-devtools` (`.mcp.json`) loads the unpacked build into Chrome for in-browser checks.
+- MCP servers (`.mcp.json`): `chrome-devtools` loads the unpacked build into Chrome for in-browser checks; `playwright-test` serves the Playwright test agents. `init-agents` overwrites `.mcp.json`, so re-add `chrome-devtools` after running it.

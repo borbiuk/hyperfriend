@@ -87,6 +87,16 @@ export function cloneDefaultConfig(): ConfigModel {
 }
 
 /**
+ * Builds the object written to storage: the config plus the current template format marker.
+ *
+ * @param config - Complete config.
+ * @returns The value stored under CONFIG_STORAGE_KEY.
+ */
+export function toStoredConfig(config: ConfigModel): Record<string, unknown> {
+	return { ...config, [TEMPLATE_FORMAT_KEY]: TEMPLATE_FORMAT };
+}
+
+/**
  * Returns true for a plain (non-null, non-array) object.
  */
 function isObject(value: unknown): value is Record<string, unknown> {
@@ -205,12 +215,7 @@ function updateConfig(change: (config: ConfigModel) => void): Promise<void> {
 
 		const config = await readConfig(storage);
 		change(config);
-		await storage.set({
-			[CONFIG_STORAGE_KEY]: {
-				...config,
-				[TEMPLATE_FORMAT_KEY]: TEMPLATE_FORMAT,
-			},
-		});
+		await storage.set({ [CONFIG_STORAGE_KEY]: toStoredConfig(config) });
 	});
 }
 

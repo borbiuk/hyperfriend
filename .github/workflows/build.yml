@@ -30,3 +30,31 @@ jobs:
             - run: npm run build:firefox
             - run: npm run lint
             - run: npm run lint:firefox
+            - run: npm run test:unit
+
+    # The extension in Playwright's bundled Chromium against GitHub page snapshots (no network)
+    e2e:
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+
+        steps:
+            - uses: actions/checkout@v7
+            - name: Use Node.js 24.x
+              uses: actions/setup-node@v7
+              with:
+                  node-version: 24.x
+                  cache: npm
+            - run: npm ci
+            - name: Install Playwright Chromium
+              run: npx --no playwright install --with-deps chromium
+            - name: Run e2e tests (the dist project builds the extension first)
+              run: npm run test:e2e
+            - name: Upload the Playwright report
+              if: failure()
+              uses: actions/upload-artifact@v7
+              with:
+                  name: playwright-report-e2e
+                  path: |
+                      playwright-report/
+                      test-results/
+                  retention-days: 14

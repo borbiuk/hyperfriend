@@ -1,6 +1,7 @@
 import js from '@eslint/js';
 import prettierConfig from 'eslint-config-prettier';
 import importPlugin from 'eslint-plugin-import-x';
+import playwright from 'eslint-plugin-playwright';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
@@ -13,6 +14,8 @@ export default [
 			'**/dist/**',
 			'**/dist-firefox/**',
 			'**/webpack/**',
+			'**/test-results/**',
+			'**/playwright-report/**',
 		],
 	},
 	js.configs.recommended,
@@ -68,6 +71,61 @@ export default [
 					alphabetize: { order: 'asc', caseInsensitive: true },
 				},
 			],
+		},
+	},
+	// Tests: Node globals, type-aware check for missing awaits, Playwright rules (the review standard maps them to its rule IDs)
+	{
+		files: ['tests/**/*.ts', 'playwright.config.ts'],
+		languageOptions: {
+			globals: {
+				...globals.node,
+			},
+			parserOptions: {
+				projectService: {
+					allowDefaultProject: ['playwright.config.ts'],
+				},
+				tsconfigRootDir: import.meta.dirname,
+			},
+		},
+		rules: {
+			'@typescript-eslint/no-floating-promises': 'error',
+			// Playwright fixtures call `use()`, which is not the React hook
+			'react-hooks/rules-of-hooks': 'off',
+		},
+	},
+	{
+		files: ['tests/**/*.ts'],
+		...playwright.configs['flat/recommended'],
+		rules: {
+			...playwright.configs['flat/recommended'].rules,
+			// Rules the review standard rates Critical or Major fail the lint run
+			'playwright/no-wait-for-timeout': 'error',
+			'playwright/no-page-pause': 'error',
+			'playwright/no-focused-test': 'error',
+			'playwright/no-conditional-expect': 'error',
+			'playwright/no-conditional-in-test': 'error',
+			'playwright/no-element-handle': 'error',
+			'playwright/no-eval': 'error',
+			'playwright/no-force-option': 'error',
+			'playwright/no-wait-for-selector': 'error',
+			'playwright/no-wait-for-navigation': 'error',
+			'playwright/no-networkidle': 'error',
+			'playwright/no-skipped-test': ['error', { allowConditional: true }],
+			'playwright/no-nth-methods': 'warn',
+			'playwright/require-to-pass-timeout': 'warn',
+			'playwright/no-commented-out-tests': 'warn',
+			'playwright/prefer-to-have-count': 'error',
+			'playwright/prefer-web-first-assertions': 'error',
+		},
+	},
+	// Node scripts next to the tests (snapshot capture); their in-page callbacks use browser globals
+	{
+		files: ['tests/**/*.mjs'],
+		languageOptions: {
+			globals: {
+				...globals.node,
+				...globals.browser,
+			},
 		},
 	},
 ];

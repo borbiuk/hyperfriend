@@ -8,6 +8,10 @@
 				"--categoryExtensions",
 				"--no-usage-statistics"
 			]
+		},
+		"playwright-test": {
+			"command": "npx",
+			"args": ["playwright", "run-test-mcp-server"]
 		}
 	}
 }

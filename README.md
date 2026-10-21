@@ -224,22 +224,48 @@ Firefox 140 or newer is required (Firefox for Android: 142 or newer).
 
 ### npm scripts
 
-| Script                   | Description                                                                                  |
-| ------------------------ | -------------------------------------------------------------------------------------------- |
-| `npm run watch`          | Development build for Chrome into `dist/`, rebuilt on every change.                          |
-| `npm run build`          | Production build for Chrome into `dist/`.                                                    |
-| `npm run build:firefox`  | Production build for Firefox into `dist-firefox/`.                                           |
-| `npm run clean`          | Remove `dist/` and `dist-firefox/`.                                                          |
-| `npm run zip`            | Rebuild both browsers and create `.zip` packages for publishing (runs `zip.sh`).             |
-| `npm run typecheck`      | TypeScript 7 type check without emitting files.                                              |
-| `npm run lint`           | ESLint for `.ts` / `.tsx` files, followed by the type check.                                 |
-| `npm run lint:fix`       | ESLint with automatic fixes.                                                                 |
-| `npm run lint:firefox`   | `web-ext lint` for the Firefox build (run `npm run build:firefox` first).                    |
-| `npm run format`         | Prettier for `.ts`, `.tsx`, `.js`, `.mjs`, `.json`, `.md`, `.yml`, `.css` and `.html` files. |
-| `npm run check:versions` | Fail if any dependency in `package.json` is not pinned to an exact version.                  |
-| `npm run check:outdated` | Fail if any dependency is outdated (`npm outdated`). For local use, not run in CI.           |
+| Script                   | Description                                                                                   |
+| ------------------------ | --------------------------------------------------------------------------------------------- |
+| `npm run watch`          | Development build for Chrome into `dist/`, rebuilt on every change.                           |
+| `npm run build`          | Production build for Chrome into `dist/`.                                                     |
+| `npm run build:firefox`  | Production build for Firefox into `dist-firefox/`.                                            |
+| `npm run clean`          | Remove `dist/` and `dist-firefox/`.                                                           |
+| `npm run zip`            | Rebuild both browsers and create `.zip` packages for publishing (runs `zip.sh`).              |
+| `npm run typecheck`      | TypeScript 7 type check of `src/` and `tests/` without emitting files.                        |
+| `npm run lint`           | ESLint for `.ts` / `.tsx` files (tests included), followed by the type check.                 |
+| `npm run lint:fix`       | ESLint with automatic fixes.                                                                  |
+| `npm run lint:firefox`   | `web-ext lint` for the Firefox build (run `npm run build:firefox` first).                     |
+| `npm test`               | The `unit` and `e2e` tests; `dist/` is built first when `e2e` runs (see [Testing](#testing)). |
+| `npm run test:unit`      | Unit tests of `src/shared` (no browser, no build needed).                                     |
+| `npm run test:e2e`       | End-to-end tests of the extension in Chromium (builds `dist/` first).                         |
+| `npm run test:live`      | Smoke tests against real github.com (on demand and weekly in CI; builds `dist/` first).       |
+| `npm run test:snapshots` | Refresh the GitHub page snapshots the e2e tests use (needs network).                          |
+| `npm run format`         | Prettier for `.ts`, `.tsx`, `.js`, `.mjs`, `.json`, `.md`, `.yml`, `.css` and `.html` files.  |
+| `npm run check:versions` | Fail if any dependency in `package.json` is not pinned to an exact version.                   |
+| `npm run check:outdated` | Fail if any dependency is outdated (`npm outdated`). For local use, not run in CI.            |
 
-CI (`.github/workflows/build.yml`) runs `npm ci`, `check:versions`, both builds and both lint scripts on Node 22, 24 and 26.
+CI runs on GitHub Actions:
+
+- `.github/workflows/build.yml` runs on pushes and pull requests to `master`. Job `build` (Node 22, 24 and 26): `npm ci`, `check:versions`, both builds, both lint scripts and `npm run test:unit`. Job `e2e` (Node 24): installs Playwright's Chromium (`npx --no playwright install --with-deps chromium`) and runs `npm run test:e2e`; on failure it uploads the artifact `playwright-report-e2e` (`playwright-report/` and `test-results/`, kept 14 days).
+- `.github/workflows/live.yml` runs `npm run test:live` every Monday at 06:00 UTC and on manual dispatch (`workflow_dispatch`). It never blocks pushes; a failed run uploads `playwright-report-live` and GitHub's scheduled-workflow notification tells you that GitHub's markup probably changed.
+
+### Testing
+
+The tests use [Playwright](https://playwright.dev) and live in `tests/`. Three projects (`playwright.config.ts`):
+
+- **`unit`** (`npm run test:unit`): pure logic from `src/shared`, no browser.
+- **`e2e`** (`npm run test:e2e`): the built extension (`dist/`) loaded into Playwright's bundled Chromium, headless. GitHub pages come from saved snapshots and every other host is blocked, so the tests need no network and no GitHub account.
+- **`live`** (`npm run test:live`): a short smoke check against real `github.com/react/react`. It runs on demand and weekly in CI (`live.yml`), and is not part of `npm test`.
+
+`npm test` runs `unit` and `e2e`. A setup project (`dist`) runs `npm run build` before `e2e` and `live`, so the tests always load the current sources; `unit` does not build. The `live` project exists only when `HYPERFRIEND_LIVE` is set (`npm run test:live` does that), so a plain `npx playwright test` never reaches the network.
+
+First time on a machine, install the browser Playwright uses: `npx playwright install chromium`.
+
+The tests cover **Chromium only**: Playwright cannot load extensions into Firefox, so Firefox stays covered by `npm run lint:firefox` and manual checks. Retries are off, so a flaky test is a bug to fix; a trace is kept for every failed test in `test-results/`, and the HTML report is written to `playwright-report/` (open it with `npx playwright show-report`).
+
+**Snapshots.** The e2e tests run on saved copies of public `react/react` pages (pull request list, pull request 9713 with its Files changed and Commits tabs, issue list, issue 10) in `tests/e2e/fixtures/pages/`. Scripts, comment and description bodies, tokens, nonces and email addresses are stripped, and the capture fails if any of that remains; the snapshots are excluded from Prettier. Expected item numbers and titles are read from `pages/index.json`. When GitHub changes its markup (the `live` test fails, or the buttons no longer appear), refresh them with `npm run test:snapshots` (needs network), review the diff for personal data, and update the selectors in `src/content` if needed.
+
+How to write tests and the review standard: [.claude/skills/playwright/SKILL.md](.claude/skills/playwright/SKILL.md) and [.claude/rules/testing.md](.claude/rules/testing.md).
 
 ### File Structure
 
@@ -264,11 +290,20 @@ CI (`.github/workflows/build.yml`) runs `npm ci`, `check:versions`, both builds 
     - `shared/`: Models, constants, services (templates, config, clipboard, settings import/export) and utils (including the shortcut helpers), imported via `@shared/*`.
     - `types/`: Ambient type declarations (`global.d.ts` allows `*.css` imports).
 - `webpack/`: Configuration of webpack for the Chrome (`dist/`) and Firefox (`dist-firefox/`) builds.
+- `tests/`: Playwright tests, see [Testing](#testing).
+    - `unit/`: Unit tests of `src/shared`.
+    - `setup/`: The `dist` setup project that builds `dist/` before `e2e` and `live`.
+    - `e2e/`: End-to-end specs; `seed.spec.ts` is the seed for the Playwright test agents.
+        - `fixtures/`: The `test` / `expect` fixtures that load the extension (`extension.ts`), the GitHub routing (`github.ts`), the snapshot capture script (`capture-pages.mjs`) and the snapshots with their index (`pages/`, also the item numbers and titles the tests expect).
+    - `live/`: Smoke tests against real github.com.
+    - `tsconfig.json`: Type check config of the tests.
+- `playwright.config.ts`: Playwright projects (`unit`, `e2e`, `live`).
+- `specs/`: Test plans written by the Playwright planner agent.
 - `scripts/`: Maintenance scripts (`check-versions.mjs`, `tag-releases.sh` for tagging released versions).
-- `.github/`: Issue and pull request templates, CI workflow (build + lint on pushes and pull requests to `master`).
+- `.github/`: Issue and pull request templates, CI workflows (`build.yml`: build, lint and tests on pushes and pull requests to `master`; `live.yml`: weekly smoke test against github.com).
 - `.husky/`: Git pre-commit hook: syncs the version, formats files, stages changes of tracked files and builds both browsers into `.zip` packages (see [AGENTS.md](AGENTS.md)).
-- `.claude/`: Agent context for AI-assisted development (rules, skills, subagents, shared settings), see [AGENTS.md](AGENTS.md).
-- `.mcp.json`: Project MCP servers for AI-assisted development (Chrome DevTools MCP).
+- `.claude/`: Agent context for AI-assisted development (rules, skills, subagents, shared settings; the Playwright planner, generator and healer agents are generated), see [AGENTS.md](AGENTS.md).
+- `.mcp.json`: Project MCP servers for AI-assisted development (Chrome DevTools MCP and the Playwright test MCP server).
 - `zip.sh`: A script for creating `.zip` files with builds for publishing.
 
 There is no background script or service worker: the content script talks to `chrome.storage` directly.

@@ -1,6 +1,6 @@
 ---
 name: store-assets
-description: Regenerates the Chrome Web Store images of Hyperfriend (promo tiles and screenshots) from the current build and checks their sizes and formats. Use when the popup, the copy button, the icon or the promo text changed, before a release, or when the user asks to update store images or screenshots.
+description: Regenerates the Chrome Web Store images of Hyperfriend (promo tiles and screenshots) from the current build and checks their sizes and formats. Use when the popup, the copy button, the icon or the promo text changed, before a release, or when the user asks to update the store images, promo tiles or screenshots ("онови скріншоти", "картинки для стору").
 argument-hint: '[popup | promo | pages | all]'
 allowed-tools: Bash(npm run build) Bash(./design/store/render.sh) Bash(node design/store/capture-screenshots.mjs *) Bash(magick identify *)
 ---
@@ -20,5 +20,5 @@ Regenerate the store images for `$ARGUMENTS` (default: `popup` and `promo`). Fil
 ## Notes
 
 - Fonts load from Google Fonts, so the scripts need network access.
-- The scripts use Google Chrome headless with DevTools ports 9333 (screenshots, plus 9334 for the local file server) and need ImageMagick (`magick`).
+- Both scripts run headless Google Chrome from its macOS path (set `CHROME` to use another binary) and need ImageMagick (`magick`). `capture-screenshots.mjs` also uses ports 9333 (DevTools) and 9334 (local file server).
 - Report which images changed and which store dashboard fields need a new upload.
