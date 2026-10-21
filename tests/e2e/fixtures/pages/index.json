@@ -352,12 +352,12 @@
 				"title": "Bug:"
 			},
 			{
-				"number": 30691,
-				"title": "[React 19] No re-render after 'useActionState' action queue finishes"
-			},
-			{
 				"number": 15344,
 				"title": "useReducer's dispatch should return a promise which resolves once its action has been delivered"
+			},
+			{
+				"number": 30691,
+				"title": "[React 19] No re-render after 'useActionState' action queue finishes"
 			},
 			{
 				"number": 35399,
