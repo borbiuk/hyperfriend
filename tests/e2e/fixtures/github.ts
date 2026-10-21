@@ -13,15 +13,6 @@ export interface SnapshotItem {
 	author?: string;
 }
 
-/**
- * Known product gap: GitHub's new pull request layout (Conversation and Commits tabs) gets no title
- * button. Tests marked with it use `test.fail()` and fail on purpose until the issue is fixed.
- */
-export const NEW_PULL_REQUEST_LAYOUT_GAP = {
-	type: 'issue',
-	description: 'https://github.com/borbiuk/hyperfriend/issues/4',
-};
-
 /** pages/index.json, written by capture-pages.mjs */
 interface SnapshotIndex {
 	/** Snapshot file per GitHub path + query */
@@ -202,4 +193,20 @@ export function titleButton(page: Page, name: string): Locator {
  */
 export function elementBeforeTitleButton(page: Page, name: string): Locator {
 	return page.locator(`:has(+ [aria-label="${name}"])`);
+}
+
+/**
+ * The saved HTML of a snapshot page, for a test that serves a modified copy with `page.route`.
+ *
+ * @param pagePath - One of PAGES.
+ */
+export function snapshotHtml(pagePath: string): string {
+	const file = INDEX.pages[pagePath];
+	if (!file) {
+		throw new Error(
+			`No snapshot for ${pagePath}; add it to capture-pages.mjs`
+		);
+	}
+
+	return readFileSync(path.join(PAGES_DIR, file), 'utf8');
 }
