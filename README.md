@@ -263,7 +263,7 @@ First time on a machine, install the browser Playwright uses: `npx playwright in
 
 The tests cover **Chromium only**: Playwright cannot load extensions into Firefox, so Firefox stays covered by `npm run lint:firefox` and manual checks. Retries are off, so a flaky test is a bug to fix; a trace is kept for every failed test in `test-results/`, and the HTML report is written to `playwright-report/` (open it with `npx playwright show-report`).
 
-**Snapshots.** The e2e tests run on saved copies of public `react/react` pages (pull request list, pull request 9713 with its Files changed and Commits tabs, issue list, issue 10) in `tests/e2e/fixtures/pages/`. Scripts, comment and description bodies, tokens, nonces and email addresses are stripped, and the capture fails if any of that remains; the snapshots are excluded from Prettier. Expected item numbers and titles are read from `pages/index.json`. When GitHub changes its markup (the `live` test fails, or the buttons no longer appear), refresh them with `npm run test:snapshots` (needs network), review the diff for personal data, and update the selectors in `src/content` if needed.
+**Snapshots.** The e2e tests run on saved copies of public `react/react` pages (pull request list, pull request 9713 with its Files changed and Commits tabs, issue list, issue 10, and a pull request and an issue search) in `tests/e2e/fixtures/pages/`. Scripts, comment and description bodies, tokens, nonces and email addresses are stripped, and the capture fails if any of that remains; the snapshots are excluded from Prettier. Expected item numbers, titles and authors are read from `pages/index.json`. When GitHub changes its markup (the `live` test fails, or the buttons no longer appear), refresh them with `npm run test:snapshots` (needs network), review the diff for personal data, and update the selectors in `src/content` if needed.
 
 How to write tests and the review standard: [.claude/skills/playwright/SKILL.md](.claude/skills/playwright/SKILL.md) and [.claude/rules/testing.md](.claude/rules/testing.md).
 
@@ -291,11 +291,11 @@ How to write tests and the review standard: [.claude/skills/playwright/SKILL.md]
     - `types/`: Ambient type declarations (`global.d.ts` allows `*.css` imports).
 - `webpack/`: Configuration of webpack for the Chrome (`dist/`) and Firefox (`dist-firefox/`) builds.
 - `tests/`: Playwright tests, see [Testing](#testing).
-    - `unit/`: Unit tests of `src/shared`.
+    - `unit/`: Unit tests of `src/shared` (templates, clipboard payload, shortcuts, settings file, config).
     - `setup/`: The `dist` setup project that builds `dist/` before `e2e` and `live`.
-    - `e2e/`: End-to-end specs; `seed.spec.ts` is the seed for the Playwright test agents.
-        - `fixtures/`: The `test` / `expect` fixtures that load the extension (`extension.ts`), the GitHub routing (`github.ts`), the snapshot capture script (`capture-pages.mjs`) and the snapshots with their index (`pages/`, also the item numbers and titles the tests expect).
-    - `live/`: Smoke tests against real github.com.
+    - `e2e/`: End-to-end specs (copy button, keyboard shortcut, avatars, navigation, search, settings upgrade and the popup tabs); `seed.spec.ts` is the seed for the Playwright test agents.
+        - `fixtures/`: The `test` / `expect` fixtures that load the extension (`extension.ts`), the GitHub routing and snapshot lookups (`github.ts`), the literal default settings (`defaults.ts`), the snapshot capture script (`capture-pages.mjs`) and the snapshots with their index (`pages/`, also the item numbers and titles the tests expect).
+    - `live/`: Smoke tests against real github.com (`smoke.spec.ts`).
     - `tsconfig.json`: Type check config of the tests.
 - `playwright.config.ts`: Playwright projects (`unit`, `e2e`, `live`).
 - `specs/`: Test plans written by the Playwright planner agent.

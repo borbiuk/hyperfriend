@@ -33,8 +33,15 @@ export function unpackedExtensionId(extensionPath: string): string {
 }
 
 export interface ClipboardContent {
+	/** `text/html` as Chromium serializes it on read (wrapper removed, quotes in text not escaped) */
 	html: string;
 	text: string;
+}
+
+/** A keydown that reached `window` in the bubble phase */
+export interface KeyRecord {
+	code: string;
+	defaultPrevented: boolean;
 }
 
 export interface ExtensionStorage {
@@ -63,6 +70,18 @@ interface ExtensionFixtures {
 	readClipboard: (page: Page) => Promise<ClipboardContent>;
 	/** Puts a plain-text sentinel into the clipboard, so a later read proves whether anything was copied */
 	writeClipboardSentinel: (page: Page, text: string) => Promise<void>;
+	/**
+	 * Re-serializes an HTML fragment the way Chromium returns clipboard HTML, so an expected payload
+	 * written exactly as the extension builds it compares DOM-equal with `readClipboard` (quote
+	 * escaping in text is lost on both sides; the byte-exact payload is a unit test of buildLinkPayload).
+	 */
+	normalizeHtml: (page: Page, html: string) => Promise<string>;
+	/**
+	 * Starts recording keydown events that reach `window` in the bubble phase; returns a reader.
+	 * When the extension handles a shortcut it stops the event in the capture phase, so a recorded
+	 * `KeyC` with `defaultPrevented: false` proves the extension saw the key and left it alone.
+	 */
+	recordKeys: (page: Page) => Promise<() => Promise<KeyRecord[]>>;
 }
 
 /**
@@ -193,15 +212,28 @@ export const test = base.extend<ExtensionFixtures & ExtensionOptions>({
 	readClipboard: async ({}, use) => {
 		await use((page) =>
 			page.evaluate(async () => {
-				const [item] = await navigator.clipboard.read();
-				const read = async (type: string): Promise<string> =>
-					item.types.includes(type)
-						? (await item.getType(type)).text()
-						: '';
-				return {
-					html: await read('text/html'),
-					text: await read('text/plain'),
-				};
+				// A copy that lands between read() and getType() invalidates the item ("Clipboard data has changed"): read again
+				for (let attempt = 1; ; attempt++) {
+					try {
+						const [item] = await navigator.clipboard.read();
+						const read = async (type: string): Promise<string> =>
+							item.types.includes(type)
+								? (await item.getType(type)).text()
+								: '';
+						return {
+							html: await read('text/html'),
+							text: await read('text/plain'),
+						};
+					} catch (error) {
+						if (
+							attempt === 3 ||
+							!(error instanceof DOMException) ||
+							error.name !== 'InvalidStateError'
+						) {
+							throw error;
+						}
+					}
+				}
 			})
 		);
 	},
@@ -211,6 +243,61 @@ export const test = base.extend<ExtensionFixtures & ExtensionOptions>({
 			page.evaluate((value) => navigator.clipboard.writeText(value), text)
 		);
 	},
+
+	normalizeHtml: async ({}, use) => {
+		await use((page, html) =>
+			page.evaluate((fragment) => {
+				const template = document.createElement('template');
+				template.innerHTML = fragment;
+				return template.innerHTML;
+			}, html)
+		);
+	},
+
+	recordKeys: async ({}, use) => {
+		await use(async (page) => {
+			await page.evaluate(() => {
+				const records: { code: string; defaultPrevented: boolean }[] =
+					[];
+				Object.defineProperty(window, '__hyperfriendKeys', {
+					value: records,
+					configurable: true,
+				});
+				window.addEventListener('keydown', (event) => {
+					records.push({
+						code: event.code,
+						defaultPrevented: event.defaultPrevented,
+					});
+				});
+			});
+			return () =>
+				page.evaluate(
+					() =>
+						(
+							window as unknown as {
+								__hyperfriendKeys: KeyRecord[];
+							}
+						).__hyperfriendKeys
+				);
+		});
+	},
 });
+
+/**
+ * Waits until the content script is running on the page and gives the page (not a field) the focus.
+ * The shortcut listener starts right before the first scan, and every scan of a supported page
+ * attaches the tooltip's live region, so the live region is the readiness signal even on pages
+ * where no button is injected.
+ *
+ * @param page - GitHub page under test.
+ */
+export async function readyForShortcut(page: Page): Promise<void> {
+	await page
+		.locator('[data-hyperfriend="live-region"]')
+		.waitFor({ state: 'attached' });
+	await page.evaluate(() =>
+		(document.activeElement as HTMLElement | null)?.blur()
+	);
+}
 
 export { expect } from '@playwright/test';

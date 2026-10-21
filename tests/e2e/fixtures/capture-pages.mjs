@@ -30,7 +30,7 @@ const FIXTURES_DIR = dirname(fileURLToPath(import.meta.url));
 const PAGES_DIR = join(FIXTURES_DIR, 'pages');
 
 const LIST_LINKS =
-	'a[data-testid="listitem-title-link"], a[data-testid="issue-listitem-title-link"], a[data-testid="issue-pr-title-link"], a[id^="issue_"][id$="_link"]';
+	'a[data-testid="listitem-title-link"], a[data-testid="issue-listitem-title-link"], a[data-testid="issue-pr-title-link"], a[id^="issue_"][id$="_link"], [data-testid="results-list"] .search-title a[href]';
 
 /**
  * Pages to capture: file name (without .html), URL, and the kind of page.
@@ -66,6 +66,16 @@ const PAGES = [
 		file: 'issue',
 		url: 'https://github.com/react/react/issues/10',
 		kind: 'detail',
+	},
+	{
+		file: 'search-pulls',
+		url: 'https://github.com/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests',
+		kind: 'list',
+	},
+	{
+		file: 'search-issues',
+		url: 'https://github.com/search?q=repo%3Areact%2Freact+useActionState&type=issues',
+		kind: 'list',
 	},
 ];
 
@@ -147,12 +157,21 @@ function sanitize() {
 	}
 }
 
-/** Runs in the page: number and title of every list item, in page order. */
+/** Runs in the page: number, title and (where the row shows one) author login of every list item, in page order. */
 function readListItems(selector) {
-	return [...document.querySelectorAll(selector)].map((link) => ({
-		number: Number(new URL(link.href).pathname.split('/').pop()),
-		title: link.textContent.trim(),
-	}));
+	return [...document.querySelectorAll(selector)].map((link) => {
+		const author = link
+			.closest('li, [role="listitem"]')
+			?.querySelector('[data-testid="author-filter-link"]')
+			// Issue lists render it as a button labelled "Filter by author <login>"
+			?.textContent.trim()
+			.replace(/^Filter by author /, '');
+		return {
+			number: Number(new URL(link.href).pathname.split('/').pop()),
+			title: link.textContent.trim(),
+			...(author ? { author } : {}),
+		};
+	});
 }
 
 const browser = await chromium.launch();
@@ -168,17 +187,16 @@ const index = { pages: {}, items: {} };
 try {
 	for (const { file, url, kind } of PAGES) {
 		await page.goto(url, { waitUntil: 'domcontentloaded' });
-		const { pathname } = new URL(url);
+		const { pathname, search } = new URL(url);
+		// Search pages are told apart by their query; other pages have none
+		const key = pathname + search;
 
 		if (kind === 'list') {
 			await page
 				.locator(LIST_LINKS)
 				.first()
 				.waitFor({ state: 'attached' });
-			index.items[pathname] = await page.evaluate(
-				readListItems,
-				LIST_LINKS
-			);
+			index.items[key] = await page.evaluate(readListItems, LIST_LINKS);
 		} else {
 			await page
 				.locator('main h1')
@@ -189,7 +207,7 @@ try {
 			const title = (await page.title()).split(
 				/ (?:by \S+ )?· (?:Pull Request|Issue) #/
 			)[0];
-			index.items[pathname] = [{ number, title }];
+			index.items[key] = [{ number, title }];
 		}
 
 		await page.evaluate(sanitize);
@@ -202,7 +220,7 @@ try {
 		}
 
 		writeFileSync(join(tmpDir, `${file}.html`), html);
-		index.pages[pathname] = `${file}.html`;
+		index.pages[key] = `${file}.html`;
 		console.log(
 			`${file}.html  ${Math.round(html.length / 1024)} KB  ${url}`
 		);

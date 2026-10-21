@@ -1,7 +1,5 @@
-import { Locator, Page } from '@playwright/test';
-
 import { expect, test } from './fixtures/extension';
-import { PAGES, snapshotItems, snapshotUrl } from './fixtures/github';
+import { PAGES, rowOf, snapshotItems, snapshotUrl } from './fixtures/github';
 
 /**
  * Escapes text for use inside a RegExp.
@@ -10,18 +8,6 @@ import { PAGES, snapshotItems, snapshotUrl } from './fixtures/github';
  */
 function escapeRegExp(text: string): string {
 	return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-/**
- * The list row (`li` / listitem) that holds the title link with this exact text.
- *
- * @param page - Page with a pull request list.
- * @param title - Title of the item.
- */
-function rowOf(page: Page, title: string): Locator {
-	return page
-		.getByRole('listitem')
-		.filter({ has: page.getByRole('link', { name: title, exact: true }) });
 }
 
 // Checks of the test harness itself: extension loading, storage and clipboard helpers, snapshot routing.

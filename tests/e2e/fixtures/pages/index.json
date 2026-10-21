@@ -5,109 +5,136 @@
 		"/react/react/pull/9713/files": "pull-files.html",
 		"/react/react/pull/9713/commits": "pull-commits.html",
 		"/react/react/issues": "issue-list.html",
-		"/react/react/issues/10": "issue.html"
+		"/react/react/issues/10": "issue.html",
+		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": "search-pulls.html",
+		"/search?q=repo%3Areact%2Freact+useActionState&type=issues": "search-issues.html"
 	},
 	"items": {
 		"/react/react/pulls": [
 			{
 				"number": 37934,
-				"title": "[Test] Keep Flight strings as strings from the server to the browser"
+				"title": "[Test] Keep Flight strings as strings from the server to the browser",
+				"author": "gaearon"
 			},
 			{
 				"number": 37932,
-				"title": "[Fiber] Fix useActionState dispatching a stale action after switching back to a previous action"
+				"title": "[Fiber] Fix useActionState dispatching a stale action after switching back to a previous action",
+				"author": "koreahghg"
 			},
 			{
 				"number": 37931,
-				"title": "[Flight] Complete reply models by their reachable fields, not by chunk"
+				"title": "[Flight] Complete reply models by their reachable fields, not by chunk",
+				"author": "gaearon"
 			},
 			{
 				"number": 37930,
-				"title": "[Experiment] Flight Result as a ledger of Server Component expansions"
+				"title": "[Experiment] Flight Result as a ledger of Server Component expansions",
+				"author": "gaearon"
 			},
 			{
 				"number": 37929,
-				"title": "[Flight] Run the reader fuzz against the reply decoder"
+				"title": "[Flight] Run the reader fuzz against the reply decoder",
+				"author": "gaearon"
 			},
 			{
 				"number": 37928,
-				"title": "[Flight] Fix two DEV writer bugs found by the reader fuzz"
+				"title": "[Flight] Fix two DEV writer bugs found by the reader fuzz",
+				"author": "gaearon"
 			},
 			{
 				"number": 37927,
-				"title": "[Flight] Complete models by their reachable fields, not by chunk"
+				"title": "[Flight] Complete models by their reachable fields, not by chunk",
+				"author": "gaearon"
 			},
 			{
 				"number": 37926,
-				"title": "[Flight] Fix three stream bugs found by the reader fuzz"
+				"title": "[Flight] Fix three stream bugs found by the reader fuzz",
+				"author": "gaearon"
 			},
 			{
 				"number": 37925,
-				"title": "[Flight] Skip revival for models without protocol strings"
+				"title": "[Flight] Skip revival for models without protocol strings",
+				"author": "gaearon"
 			},
 			{
 				"number": 37923,
-				"title": "[Flight] Add reader fuzz tests"
+				"title": "[Flight] Add reader fuzz tests",
+				"author": "gaearon"
 			},
 			{
 				"number": 37922,
-				"title": "[Fiber] Track non-extensible thenables in a side table instead of crashing"
+				"title": "[Fiber] Track non-extensible thenables in a side table instead of crashing",
+				"author": "zhoubiao188"
 			},
 			{
 				"number": 37921,
-				"title": "Bump @modelcontextprotocol/sdk from 1.9.0 to 1.32.0 in /compiler"
+				"title": "Bump @modelcontextprotocol/sdk from 1.9.0 to 1.32.0 in /compiler",
+				"author": "dependabot[bot]"
 			},
 			{
 				"number": 37920,
-				"title": "Fix TypeError in CheckStringCoercion typeName for null-prototype objects"
+				"title": "Fix TypeError in CheckStringCoercion typeName for null-prototype objects",
+				"author": "Fire162"
 			},
 			{
 				"number": 37918,
-				"title": "Bump follow-redirects from 1.16.0 to 1.16.1 in /packages/react-devtools-cdt-mcp/fixtures/app"
+				"title": "Bump follow-redirects from 1.16.0 to 1.16.1 in /packages/react-devtools-cdt-mcp/fixtures/app",
+				"author": "dependabot[bot]"
 			},
 			{
 				"number": 37913,
-				"title": "Fix/catch clause destructuring"
+				"title": "Fix/catch clause destructuring",
+				"author": "radhika817"
 			},
 			{
 				"number": 37910,
-				"title": "Add a test for the Children helper warning when a Map is passed"
+				"title": "Add a test for the Children helper warning when a Map is passed",
+				"author": "skyzhao1223"
 			},
 			{
 				"number": 37909,
-				"title": "Warn in DEV when useMemo's first argument is not a function"
+				"title": "Warn in DEV when useMemo's first argument is not a function",
+				"author": "skyzhao1223"
 			},
 			{
 				"number": 37908,
-				"title": "[eslint-plugin-react-hooks] Treat static primitive constants as stable in exhaustive-deps"
+				"title": "[eslint-plugin-react-hooks] Treat static primitive constants as stable in exhaustive-deps",
+				"author": "skyzhao1223"
 			},
 			{
 				"number": 37906,
-				"title": "[DOM] Keep React's own resource links when clearing the Document on a root's first commit"
+				"title": "[DOM] Keep React's own resource links when clearing the Document on a root's first commit",
+				"author": "winkelmeyer"
 			},
 			{
 				"number": 37903,
-				"title": "Fix state preservation when resolving lazy components"
+				"title": "Fix state preservation when resolving lazy components",
+				"author": "Head-less-Reaper"
 			},
 			{
 				"number": 37900,
-				"title": "Fix TypeError in CheckStringCoercion typeName() for null-prototype objects in DEV"
+				"title": "Fix TypeError in CheckStringCoercion typeName() for null-prototype objects in DEV",
+				"author": "prasad2512"
 			},
 			{
 				"number": 37898,
-				"title": "[rust-compiler] Fix Unicode diagnostic underline positions"
+				"title": "[rust-compiler] Fix Unicode diagnostic underline positions",
+				"author": "chengchuu"
 			},
 			{
 				"number": 37896,
-				"title": "Bump handlebars from 4.7.7 to 4.7.10 in /fixtures/concurrent/time-slicing"
+				"title": "Bump handlebars from 4.7.7 to 4.7.10 in /fixtures/concurrent/time-slicing",
+				"author": "dependabot[bot]"
 			},
 			{
 				"number": 37895,
-				"title": "[compiler] Allow ref access in ResizeObserver / MutationObserver callbacks"
+				"title": "[compiler] Allow ref access in ResizeObserver / MutationObserver callbacks",
+				"author": "zhoubiao188"
 			},
 			{
 				"number": 37894,
-				"title": "[compiler] Infer function names from assignments, object properties, and patterns in Rust port"
+				"title": "[compiler] Infer function names from assignments, object properties, and patterns in Rust port",
+				"author": "RubenPari"
 			}
 		],
 		"/react/react/pull/9713": [
@@ -131,109 +158,218 @@
 		"/react/react/issues": [
 			{
 				"number": 37933,
-				"title": "Bug: Hover highlight in interactive code example overlaps the preview content"
+				"title": "Bug: Hover highlight in interactive code example overlaps the preview content",
+				"author": "Smriti-N"
 			},
 			{
 				"number": 37907,
-				"title": "[Fizz] Aborting while a resumed boundary's replay walk is stalled above the resumable slot client-renders the boundary and returns null postponed state"
+				"title": "[Fizz] Aborting while a resumed boundary's replay walk is stalled above the resumable slot client-renders the boundary and returns null postponed state",
+				"author": "zhoubiao188"
 			},
 			{
 				"number": 37899,
-				"title": "Bug: a component loses its state when its type changes from React.lazy to the component the lazy resolved to"
+				"title": "Bug: a component loses its state when its type changes from React.lazy to the component the lazy resolved to",
+				"author": "nitedani"
 			},
 			{
 				"number": 37897,
-				"title": "[Compiler Bug]: Rust Babel adapter misaligns diagnostic underlines after non-ASCII text"
+				"title": "[Compiler Bug]: Rust Babel adapter misaligns diagnostic underlines after non-ASCII text",
+				"author": "chengchuu"
 			},
 			{
 				"number": 37891,
-				"title": "Bug:"
+				"title": "Bug:",
+				"author": "zhaosjeng"
 			},
 			{
 				"number": 37888,
-				"title": "[Compiler Bug]: Local copy of a module-level variable is replaced by the variable itself inside closures"
+				"title": "[Compiler Bug]: Local copy of a module-level variable is replaced by the variable itself inside closures",
+				"author": "miltonmc"
 			},
 			{
 				"number": 37886,
-				"title": "Bug:"
+				"title": "Bug:",
+				"author": "vitormourapro-beep"
 			},
 			{
 				"number": 37885,
-				"title": "Bug: TypeError in ReactDOM.prefetchDNS() when called with null or prototype-less options in DEV"
+				"title": "Bug: TypeError in ReactDOM.prefetchDNS() when called with null or prototype-less options in DEV",
+				"author": "ShakilUrRehman21"
 			},
 			{
 				"number": 37881,
-				"title": "Bug: TypeError in CheckStringCoercion typeName() for null-prototype objects in DEV"
+				"title": "Bug: TypeError in CheckStringCoercion typeName() for null-prototype objects in DEV",
+				"author": "ShakilUrRehman21"
 			},
 			{
 				"number": 37874,
-				"title": "[DevTools Bug]: Operation packets accumulate until the first frontend connects"
+				"title": "[DevTools Bug]: Operation packets accumulate until the first frontend connects",
+				"author": "Elehiggle"
 			},
 			{
 				"number": 37866,
-				"title": "Bug: dev-only \"two <ViewTransition name> mounted at the same time\" warning is a false positive after name changes to undefined/another name"
+				"title": "Bug: dev-only \"two <ViewTransition name> mounted at the same time\" warning is a false positive after name changes to undefined/another name",
+				"author": "esershnr"
 			},
 			{
 				"number": 37837,
-				"title": "Bug: Submitting a form before hydration fails when a field is named \"action\""
+				"title": "Bug: Submitting a form before hydration fails when a field is named \"action\"",
+				"author": "christianaurichzm"
 			},
 			{
 				"number": 37833,
-				"title": "[Compiler Bug]: hoisted function declaration memoized without assigning the outer binding (undefined on cache miss)"
+				"title": "[Compiler Bug]: hoisted function declaration memoized without assigning the outer binding (undefined on cache miss)",
+				"author": "drosi94"
 			},
 			{
 				"number": 37830,
-				"title": "Transition never commits: a Flight chunk's synchronous then() pings from inside the render phase while the root is already suspended-with-delay, and the ping is dropped (React 19.2.8, Next 15.5 same-route navigation)"
+				"title": "Transition never commits: a Flight chunk's synchronous then() pings from inside the render phase while the root is already suspended-with-delay, and the ping is dropped (React 19.2.8, Next 15.5 same-route navigation)",
+				"author": "lloydhelio"
 			},
 			{
 				"number": 37809,
-				"title": "Bug: error recovery is disabled when the recovery retry is only interrupted for selective hydration (regression from #37739)"
+				"title": "Bug: error recovery is disabled when the recovery retry is only interrupted for selective hydration (regression from #37739)",
+				"author": "8tungi"
 			},
 			{
 				"number": 37805,
-				"title": "Transition never commits: a ping from a synchronously resolving Flight chunk is dropped during render (RootSuspendedWithDelay)"
+				"title": "Transition never commits: a ping from a synchronously resolving Flight chunk is dropped during render (RootSuspendedWithDelay)",
+				"author": "Minnyat"
 			},
 			{
 				"number": 37804,
-				"title": "Bug: react-refresh retains roots that unmount before their first render (StrictMode), same leak as #36379"
+				"title": "Bug: react-refresh retains roots that unmount before their first render (StrictMode), same leak as #36379",
+				"author": "amosvizer"
 			},
 			{
 				"number": 37802,
-				"title": "[DevTools Bug]: DOM nodes removed from a still-mounted component stay in publicInstanceToDevToolsInstanceMap until reload (8.0.0, DevTools closed)"
+				"title": "[DevTools Bug]: DOM nodes removed from a still-mounted component stay in publicInstanceToDevToolsInstanceMap until reload (8.0.0, DevTools closed)",
+				"author": "olinanderson"
 			},
 			{
 				"number": 37792,
-				"title": "Bug:"
+				"title": "Bug:",
+				"author": "paulintangana2-hash"
 			},
 			{
 				"number": 37790,
-				"title": "[Compiler Bug]: React Compiler breaks useFrameCallback memoization"
+				"title": "[Compiler Bug]: React Compiler breaks useFrameCallback memoization",
+				"author": "Nezz"
 			},
 			{
 				"number": 37789,
-				"title": "[Compiler]: Request for a new babel-plugin-react-compiler release — eslint-plugin-react-hooks 7.1.x bundles a newer compiler than 1.0.0, so lint passes on code the build silently skips"
+				"title": "[Compiler]: Request for a new babel-plugin-react-compiler release — eslint-plugin-react-hooks 7.1.x bundles a newer compiler than 1.0.0, so lint passes on code the build silently skips",
+				"author": "einarq"
 			},
 			{
 				"number": 37785,
-				"title": "areHookInputsEqual ignores extra deps when the deps array grows, returning a stale useMemo value"
+				"title": "areHookInputsEqual ignores extra deps when the deps array grows, returning a stale useMemo value",
+				"author": "kburym"
 			},
 			{
 				"number": 37783,
-				"title": "Bug:"
+				"title": "Bug:",
+				"author": "rayatulislami403-prog"
 			},
 			{
 				"number": 37765,
-				"title": "Bug: ViewTransition breaks the root when its container is a ShadowRoot"
+				"title": "Bug: ViewTransition breaks the root when its container is a ShadowRoot",
+				"author": "Aias"
 			},
 			{
 				"number": 37762,
-				"title": "Bug: \"Cannot commit the same tree as before\" (#177) when a throttled Suspense reveal's commit flushes another root's passive effects that update its root synchronously"
+				"title": "Bug: \"Cannot commit the same tree as before\" (#177) when a throttled Suspense reveal's commit flushes another root's passive effects that update its root synchronously",
+				"author": "FaridSafi"
 			}
 		],
 		"/react/react/issues/10": [
 			{
 				"number": 10,
 				"title": "Can't require() react-tools module"
+			}
+		],
+		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": [
+			{
+				"number": 37932,
+				"title": "[Fiber] Fix useActionState dispatching a stale action after switching back to a previous action"
+			},
+			{
+				"number": 37677,
+				"title": "[Fizz] Fix createFastHash in FIPS environments"
+			},
+			{
+				"number": 37555,
+				"title": "Fix Fizz SSR corrupting hooks state on nested renders"
+			},
+			{
+				"number": 37053,
+				"title": "[Flight] Let encodeFormAction reuse the default encoding"
+			},
+			{
+				"number": 36772,
+				"title": "Update useActionState action refresh timing"
+			},
+			{
+				"number": 36683,
+				"title": "[eslint-plugin-react-hooks] Treat useActionState dispatch as stable when isPending is destructured"
+			},
+			{
+				"number": 36557,
+				"title": "test(types): update internal TypeScript stub for React 19.2 APIs"
+			},
+			{
+				"number": 34977,
+				"title": "fix(number-input): preserve value on Enter with useActionState (#33667)"
+			},
+			{
+				"number": 36468,
+				"title": "[FlightReply] Don't drop FormData entries in `decodeReplyFromBusboy`"
+			},
+			{
+				"number": 35790,
+				"title": "[errors] s/form state/action state"
+			}
+		],
+		"/search?q=repo%3Areact%2Freact+useActionState&type=issues": [
+			{
+				"number": 37676,
+				"title": "Bug: createFastHash errors in FIPS environments"
+			},
+			{
+				"number": 30580,
+				"title": "[React 19] Controlled `<select>` component is subject to automatic form reset"
+			},
+			{
+				"number": 29034,
+				"title": "[React 19] allow opting out of automatic form reset when Form Actions are used"
+			},
+			{
+				"number": 37044,
+				"title": "[Flight] Let encodeFormAction reuse the default encoding"
+			},
+			{
+				"number": 36996,
+				"title": "Bug:"
+			},
+			{
+				"number": 15344,
+				"title": "useReducer's dispatch should return a promise which resolves once its action has been delivered"
+			},
+			{
+				"number": 30691,
+				"title": "[React 19] No re-render after 'useActionState' action queue finishes"
+			},
+			{
+				"number": 35399,
+				"title": "Bug: resolveLazy catching promises causes race condition with short-lived Suspense-wrapped components"
+			},
+			{
+				"number": 33556,
+				"title": "Bug: \"Rendered more hooks than ...\" throws when it shouldn't with multiple suspends"
+			},
+			{
+				"number": 35242,
+				"title": "Bug: `useActionState`'s second argument is not optional in the React types"
 			}
 		]
 	}

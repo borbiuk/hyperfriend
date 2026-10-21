@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
-import { BrowserContext } from '@playwright/test';
+import { BrowserContext, Locator, Page } from '@playwright/test';
 
 const PAGES_DIR = path.join(__dirname, 'pages');
 
@@ -9,13 +9,24 @@ const PAGES_DIR = path.join(__dirname, 'pages');
 export interface SnapshotItem {
 	number: number;
 	title: string;
+	/** Login in the row's author filter link (list rows that show one) */
+	author?: string;
 }
+
+/**
+ * Known product gap: GitHub's new pull request layout (Conversation and Commits tabs) gets no title
+ * button. Tests marked with it use `test.fail()` and fail on purpose until the issue is fixed.
+ */
+export const NEW_PULL_REQUEST_LAYOUT_GAP = {
+	type: 'issue',
+	description: 'https://github.com/borbiuk/hyperfriend/issues/4',
+};
 
 /** pages/index.json, written by capture-pages.mjs */
 interface SnapshotIndex {
-	/** Snapshot file per GitHub path */
+	/** Snapshot file per GitHub path + query */
 	pages: Record<string, string>;
-	/** Items per GitHub path: every row of a list page, the single item of a detail page */
+	/** Items per GitHub path + query: every row of a list page, the single item of a detail page */
 	items: Record<string, SnapshotItem[]>;
 }
 
@@ -26,7 +37,7 @@ const INDEX: SnapshotIndex = JSON.parse(
 /** Repository the snapshots and the live tests use */
 export const REPOSITORY = '/react/react';
 
-/** GitHub paths that have a snapshot */
+/** GitHub paths (with the query for search pages) that have a snapshot */
 export const PAGES = {
 	pullList: `${REPOSITORY}/pulls`,
 	pull: `${REPOSITORY}/pull/9713`,
@@ -34,7 +45,13 @@ export const PAGES = {
 	pullCommits: `${REPOSITORY}/pull/9713/commits`,
 	issueList: `${REPOSITORY}/issues`,
 	issue: `${REPOSITORY}/issues/10`,
+	searchPulls:
+		'/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests',
+	searchIssues: '/search?q=repo%3Areact%2Freact+useActionState&type=issues',
 } as const;
+
+/** Static github.com paths snapshots reference (illustrations, favicons); aborted without a report */
+const STATIC_GITHUB_PATH = /^\/(images|assets|favicons?)\//;
 
 /** Hosts whose static resources (stylesheets, images, fonts) snapshots reference; aborted without a report */
 const STATIC_HOSTS = new Set([
@@ -80,8 +97,13 @@ export async function routeGitHub(
 		}
 
 		if (url.hostname === 'github.com') {
-			const file = INDEX.pages[url.pathname];
-			if (!file || url.search) {
+			if (STATIC_GITHUB_PATH.test(url.pathname)) {
+				await route.abort('blockedbyclient');
+				return;
+			}
+
+			const file = INDEX.pages[url.pathname + url.search];
+			if (!file) {
 				unplanned.push(url.href);
 				await route.fulfill({ status: 404, body: '' });
 				return;
@@ -148,4 +170,36 @@ export function snapshotItems(pagePath: string): SnapshotItem[] {
 	}
 
 	return items;
+}
+
+/**
+ * The list row (listitem) holding the title link with this exact text.
+ *
+ * @param page - Page with a pull request or issue list.
+ * @param title - Title of the item.
+ */
+export function rowOf(page: Page, title: string): Locator {
+	return page
+		.getByRole('listitem')
+		.filter({ has: page.getByRole('link', { name: title, exact: true }) });
+}
+
+/**
+ * The title button of a pull request or issue page, by its accessible name.
+ *
+ * @param page - Detail page.
+ * @param name - Accessible name, e.g. `Copy link to issue #10`.
+ */
+export function titleButton(page: Page, name: string): Locator {
+	return page.getByRole('button', { name, exact: true });
+}
+
+/**
+ * The element right before the title button: the `#number` in the header.
+ *
+ * @param page - Detail page.
+ * @param name - Accessible name of the title button.
+ */
+export function elementBeforeTitleButton(page: Page, name: string): Locator {
+	return page.locator(`:has(+ [aria-label="${name}"])`);
 }
