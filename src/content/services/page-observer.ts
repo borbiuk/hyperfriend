@@ -64,6 +64,13 @@ export class PageObserver {
 		this.onChange();
 	}
 
+	/**
+	 * Requests a rescan through the same debounce as DOM changes.
+	 */
+	public requestScan(): void {
+		this.schedule();
+	}
+
 	private readonly schedule = (): void => {
 		const now = performance.now();
 		this.firstRequestAt ??= now;

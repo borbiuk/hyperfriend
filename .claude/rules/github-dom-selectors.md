@@ -56,6 +56,7 @@ GitHub navigates without full page loads (Turbo), and React re-renders list rows
 - Also rescans on `turbo:load`, `turbo:render`, `popstate` and, where available (Chromium), the Navigation API `navigatesuccess` event.
 - Mutations on unsupported pages are ignored (cheap observer) **unless the URL changed** since the last notification, so navigating from an unsupported page to a supported one still triggers a scan.
 - A scan is cheap and **idempotent**; the initial scan runs after the config has loaded.
+- **Wait for hydration** ([hydration-guard.ts](../../src/content/services/hydration-guard.ts)): nothing is injected into a server-rendered React root (`react-app` / `react-partial` with `data-ssr="true"`) until GitHub marks it with class `loaded`. A node added before hydration makes React's hydration fail, React renders the whole root again on the client and our button disappears for a moment (a click in that gap does nothing). The guard asks the page observer for a (debounced) rescan when the class appears, or after 10 s if it never does. Every injector checks `hydration.isPending(element)` before changing anything inside a React root. Page snapshots keep `class="loaded"`; the issue page spec removes it to test the wait.
 
 ## Author avatars
 

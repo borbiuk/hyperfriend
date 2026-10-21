@@ -3,9 +3,12 @@ import { LinkType } from '@shared/models';
 import { expect, readyForShortcut, test } from './fixtures/extension';
 import {
 	firstPlainItem,
+	HYDRATED_RESCAN_TIMEOUT_MS,
+	markHydrated,
 	PAGES,
 	REPOSITORY,
 	rowOf,
+	serveUnhydrated,
 	snapshotItems,
 	snapshotUrl,
 } from './fixtures/github';
@@ -36,6 +39,34 @@ test('should give every pull request row exactly one copy button named after its
 			})
 		).toHaveCount(1);
 	}
+});
+
+test('should add row buttons and avatars only after GitHub has hydrated the list', async ({
+	page,
+}) => {
+	await serveUnhydrated(page, PAGES.pullList);
+	const buttons = page.locator('[data-hyperfriend="copy-button"]');
+	const avatars = page.locator('img[data-hyperfriend="avatar"]');
+
+	await page.goto(snapshotUrl(PAGES.pullList));
+	await readyForShortcut(page);
+	// Checked after the first scan, so the absence is real; with no rows to inject, the scan must
+	// not fall back to other pull request links either
+	await expect(buttons).toHaveCount(0);
+	await expect(avatars).toHaveCount(0);
+
+	await markHydrated(page);
+
+	await expect(buttons).toHaveCount(PULL_REQUESTS.length, {
+		timeout: HYDRATED_RESCAN_TIMEOUT_MS,
+	});
+	await expect(
+		rowOf(page, FIRST.title).getByRole('button', {
+			name: FIRST_BUTTON,
+			exact: true,
+		})
+	).toHaveCount(1);
+	await expect(avatars).not.toHaveCount(0);
 });
 
 test('should copy the rich link of a pull request from its row', async ({

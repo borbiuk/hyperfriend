@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
-import { BrowserContext, Locator, Page } from '@playwright/test';
+import { BrowserContext, expect, Locator, Page } from '@playwright/test';
 
 const PAGES_DIR = path.join(__dirname, 'pages');
 
@@ -229,4 +229,42 @@ export function firstPlainItem(pagePath: string): SnapshotItem {
 	}
 
 	return item;
+}
+
+/** Well under the hydration guard's fallback (MAX_WAIT_MS, 10 s), so only the class change can inject */
+export const HYDRATED_RESCAN_TIMEOUT_MS = 2000;
+
+/**
+ * Serves a snapshot page as it is before React hydrates it: GitHub marks a hydrated root with
+ * class "loaded", so the class is removed from the repository's React root.
+ *
+ * @param page - Page of the test; call before `goto`.
+ * @param pagePath - One of PAGES with a `react-app` root.
+ */
+export async function serveUnhydrated(
+	page: Page,
+	pagePath: string
+): Promise<void> {
+	const original = snapshotHtml(pagePath);
+	const html = original.replace(
+		/(<react-app app-name="repo"[^>]*) class="loaded"/,
+		'$1'
+	);
+	expect(html, 'precondition: the repo root is not loaded').not.toBe(
+		original
+	);
+	await page.route(snapshotUrl(pagePath), (route) =>
+		route.fulfill({ contentType: 'text/html; charset=utf-8', body: html })
+	);
+}
+
+/**
+ * Marks the repository's React root as hydrated, as GitHub does after React rendered it.
+ *
+ * @param page - Page served with serveUnhydrated.
+ */
+export async function markHydrated(page: Page): Promise<void> {
+	await page
+		.locator('react-app[app-name="repo"]')
+		.evaluate((root) => root.classList.add('loaded'));
 }

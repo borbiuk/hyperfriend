@@ -9,6 +9,7 @@ import {
 import { tooltip } from '../components/tooltip';
 
 import { ConfigStore } from './config-store';
+import { HydrationGuard } from './hydration-guard';
 import {
 	findNumberElement,
 	normalizeText,
@@ -87,11 +88,13 @@ const INLINE_OFFSET_PROPERTY = '--hyperfriend-inline-offset';
 export class ButtonInjector {
 	/**
 	 * @param configStore - Source of the current config.
+	 * @param hydration - Keeps buttons out of React roots that are not hydrated yet.
 	 * @param getKeyShortcuts - Returns the `aria-keyshortcuts` value of the title button
 	 * (the copy link shortcut on this page), or `null` when no shortcut applies.
 	 */
 	constructor(
 		private readonly configStore: ConfigStore,
+		private readonly hydration: HydrationGuard,
 		private readonly getKeyShortcuts: () => string | null = () => null
 	) {}
 
@@ -164,6 +167,11 @@ export class ButtonInjector {
 		}
 
 		for (const anchor of anchors) {
+			// Filtered here, not in findListLinks: rows waiting for hydration must not trigger the fallback
+			if (this.hydration.isPending(anchor)) {
+				continue;
+			}
+
 			const reference = this.getListReference(anchor);
 			const resolver: TargetResolver = () => parseListLink(anchor);
 
@@ -179,7 +187,7 @@ export class ButtonInjector {
 
 	private scanDetail(): void {
 		const header = this.findDetailHeader();
-		if (!header) {
+		if (!header || this.hydration.isPending(header)) {
 			return;
 		}
 

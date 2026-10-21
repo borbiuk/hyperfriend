@@ -8,6 +8,7 @@ import { ShortcutType } from '@shared/models';
 import { AvatarInjector } from './services/avatar-injector';
 import { ButtonInjector } from './services/button-injector';
 import { ConfigStore } from './services/config-store';
+import { HydrationGuard } from './services/hydration-guard';
 import { detectPageKind, PageKind } from './services/page-detector';
 import { PageObserver } from './services/page-observer';
 import { ShortcutService } from './services/shortcut-service';
@@ -30,8 +31,14 @@ const configStore = new ConfigStore();
 /** Runs keyboard shortcuts; one handler per shortcut type */
 const shortcutService = new ShortcutService(configStore);
 
+/** Re-runs the injectors after SPA navigation and DOM changes */
+const pageObserver = new PageObserver();
+
+/** Defers the injectors until GitHub's server-rendered React roots are hydrated, then rescans */
+const hydrationGuard = new HydrationGuard(() => pageObserver.requestScan());
+
 /** Finds titles and injects the copy buttons (the title button announces the copy link shortcut) */
-const buttonInjector = new ButtonInjector(configStore, () =>
+const buttonInjector = new ButtonInjector(configStore, hydrationGuard, () =>
 	shortcutService.getAriaKeyShortcuts(ShortcutType.CopyLink)
 );
 
@@ -40,10 +47,7 @@ shortcutService.register(
 );
 
 /** Shows author avatars in Pull Request list rows */
-const avatarInjector = new AvatarInjector();
-
-/** Re-runs the injectors after SPA navigation and DOM changes */
-const pageObserver = new PageObserver();
+const avatarInjector = new AvatarInjector(hydrationGuard);
 
 const scan = (): void => {
 	buttonInjector.scan();

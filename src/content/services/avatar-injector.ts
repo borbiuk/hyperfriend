@@ -1,5 +1,6 @@
 import { LinkType } from '@shared/models';
 
+import { HydrationGuard } from './hydration-guard';
 import { normalizeText, parseListLink } from './link-target-parser';
 
 /** Author login link of a list row (React list views; search results have no such link) */
@@ -29,6 +30,11 @@ export class AvatarInjector {
 	private readonly failed = new Set<string>();
 
 	/**
+	 * @param hydration - Keeps avatars out of React roots that are not hydrated yet.
+	 */
+	constructor(private readonly hydration: HydrationGuard) {}
+
+	/**
 	 * Removes stale avatars and adds missing ones. Call on list pages only.
 	 */
 	public scan(): void {
@@ -56,6 +62,7 @@ export class AvatarInjector {
 			if (
 				!login ||
 				this.failed.has(login) ||
+				this.hydration.isPending(link) ||
 				!title ||
 				parseListLink(title)?.type !== LinkType.PullRequest ||
 				link.previousElementSibling?.matches(AVATAR_SELECTOR) ||

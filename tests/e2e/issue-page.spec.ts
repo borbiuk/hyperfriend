@@ -3,8 +3,11 @@ import { Page } from '@playwright/test';
 import { expect, readyForShortcut, test } from './fixtures/extension';
 import {
 	elementBeforeTitleButton,
+	HYDRATED_RESCAN_TIMEOUT_MS,
+	markHydrated,
 	PAGES,
 	REPOSITORY,
+	serveUnhydrated,
 	snapshotItems,
 	snapshotUrl,
 	titleButton,
@@ -61,6 +64,27 @@ test('should add the copy button right after the issue number', async ({
 	await page.goto(snapshotUrl(PAGES.issue));
 
 	await expect(titleButton(page, BUTTON_NAME)).toHaveCount(1);
+	await expect(elementBeforeTitleButton(page, BUTTON_NAME)).toHaveText(
+		`#${NUMBER}`
+	);
+});
+
+test('should add the copy button only after GitHub has hydrated the page', async ({
+	page,
+}) => {
+	// A button added to server-rendered markup before hydration makes React render the whole app
+	// again, which removes the button
+	await serveUnhydrated(page, PAGES.issue);
+	await page.goto(snapshotUrl(PAGES.issue));
+	await readyForShortcut(page);
+	// Checked after the first scan, so the absence is real
+	await expect(titleButton(page, BUTTON_NAME)).toHaveCount(0);
+
+	await markHydrated(page);
+
+	await expect(titleButton(page, BUTTON_NAME)).toHaveCount(1, {
+		timeout: HYDRATED_RESCAN_TIMEOUT_MS,
+	});
 	await expect(elementBeforeTitleButton(page, BUTTON_NAME)).toHaveText(
 		`#${NUMBER}`
 	);
