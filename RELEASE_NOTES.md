@@ -1,5 +1,12 @@
 # Release Notes
 
+## 2.1.1
+
+Fix for GitHub's new pull request page.
+
+- The copy button is back next to the pull request title on the Conversation and Commits tabs of GitHub's new pull request layout. GitHub moved the title into a new header there, so 2.1.0 added no button and Shift+C confirmed the copy with the bottom toast instead of "Copied!" on the button ([#4](https://github.com/borbiuk/hyperfriend/issues/4)).
+- The button sits right after the pull request number, outside the heading, and announces the Shift+C shortcut to screen readers again.
+
 ## 2.1.0
 
 Templates can mark which part of the text is the link.
