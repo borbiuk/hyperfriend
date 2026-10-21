@@ -3,9 +3,9 @@ import { Page } from '@playwright/test';
 import { expect, readyForShortcut, test } from './fixtures/extension';
 import {
 	elementBeforeTitleButton,
-	NEW_PULL_REQUEST_LAYOUT_GAP,
 	PAGES,
 	REPOSITORY,
+	snapshotHtml,
 	snapshotItems,
 	snapshotUrl,
 	titleButton,
@@ -44,70 +44,71 @@ async function navigateInPage(page: Page, path: string): Promise<void> {
 }
 
 test.describe('Conversation tab', () => {
-	test(
-		'should copy the link with Shift+C and confirm it on the title button',
-		{ annotation: NEW_PULL_REQUEST_LAYOUT_GAP },
-		async ({
-			page,
-			readClipboard,
-			writeClipboardSentinel,
-			normalizeHtml,
-		}) => {
-			test.fail();
-			await page.goto(snapshotUrl(PAGES.pull));
-			const button = titleButton(page, BUTTON_NAME);
-			await expect(button).toHaveAttribute(
-				'aria-keyshortcuts',
-				'Shift+C'
+	test('should copy the link with Shift+C and confirm it on the title button', async ({
+		page,
+		readClipboard,
+		writeClipboardSentinel,
+		normalizeHtml,
+	}) => {
+		await page.goto(snapshotUrl(PAGES.pull));
+		const button = titleButton(page, BUTTON_NAME);
+		await expect(button).toHaveAttribute('aria-keyshortcuts', 'Shift+C');
+		// Snapshots have no GitHub CSS, so the header starts below the fold; the tooltip needs the button in view
+		await button.scrollIntoViewIfNeeded();
+		await readyForShortcut(page);
+		await writeClipboardSentinel(page, 'sentinel: conversation button');
+
+		await page.keyboard.press('Shift+C');
+
+		await expect
+			.poll(() => readClipboard(page))
+			.toEqual({ html: await normalizeHtml(page, HTML), text: TEXT });
+		await expect(page.locator('[data-hyperfriend="tooltip"]')).toHaveText(
+			'Copied!'
+		);
+		await expect(
+			page.locator('[data-hyperfriend="live-region"]')
+		).toHaveText('Copied!');
+	});
+
+	test('should copy the link with Shift+C and show the toast when the title has no button', async ({
+		page,
+		readClipboard,
+		writeClipboardSentinel,
+		normalizeHtml,
+	}) => {
+		await test.step('setup: serve the page with a header layout the content script does not know', async () => {
+			// Without a title button the shortcut builds the link from the URL and the document title
+			const html = snapshotHtml(PAGES.pull).replace(
+				'data-component="Heading"',
+				'data-component="UnknownHeading"'
 			);
-			// Snapshots have no GitHub CSS, so the header starts below the fold; the tooltip needs the button in view
-			await button.scrollIntoViewIfNeeded();
-			await readyForShortcut(page);
-			await writeClipboardSentinel(page, 'sentinel: conversation button');
-
-			await page.keyboard.press('Shift+C');
-
-			await expect
-				.poll(() => readClipboard(page))
-				.toEqual({ html: await normalizeHtml(page, HTML), text: TEXT });
-			await expect(
-				page.locator('[data-hyperfriend="tooltip"]')
-			).toHaveText('Copied!');
-			await expect(
-				page.locator('[data-hyperfriend="live-region"]')
-			).toHaveText('Copied!');
-		}
-	);
-
-	test(
-		'should copy the link with Shift+C and show the toast while the title has no button',
-		// Today this is the state of every Conversation page; once the gap is fixed, remove the button before the key press
-		{ annotation: NEW_PULL_REQUEST_LAYOUT_GAP },
-		async ({
-			page,
-			readClipboard,
-			writeClipboardSentinel,
-			normalizeHtml,
-		}) => {
-			await page.goto(snapshotUrl(PAGES.pull));
-			await readyForShortcut(page);
-			// Checked after the first scan, so the absence is real
-			await expect(titleButton(page, BUTTON_NAME)).toHaveCount(0);
-			await writeClipboardSentinel(page, 'sentinel: conversation toast');
-
-			await page.keyboard.press('Shift+C');
-
-			await expect
-				.poll(() => readClipboard(page))
-				.toEqual({ html: await normalizeHtml(page, HTML), text: TEXT });
-			await expect(page.locator('[data-hyperfriend="toast"]')).toHaveText(
-				'Link copied'
+			await page.route(snapshotUrl(PAGES.pull), (route) =>
+				route.fulfill({
+					contentType: 'text/html; charset=utf-8',
+					body: html,
+				})
 			);
-			await expect(
-				page.locator('[data-hyperfriend="live-region"]')
-			).toHaveText('Link copied');
-		}
-	);
+		});
+
+		await page.goto(snapshotUrl(PAGES.pull));
+		await readyForShortcut(page);
+		// Checked after the first scan, so the absence is real
+		await expect(titleButton(page, BUTTON_NAME)).toHaveCount(0);
+		await writeClipboardSentinel(page, 'sentinel: conversation toast');
+
+		await page.keyboard.press('Shift+C');
+
+		await expect
+			.poll(() => readClipboard(page))
+			.toEqual({ html: await normalizeHtml(page, HTML), text: TEXT });
+		await expect(page.locator('[data-hyperfriend="toast"]')).toHaveText(
+			'Link copied'
+		);
+		await expect(
+			page.locator('[data-hyperfriend="live-region"]')
+		).toHaveText('Link copied');
+	});
 
 	test('should copy with Shift+C on a non-Latin keyboard layout', async ({
 		page,
@@ -176,42 +177,71 @@ test.describe('Conversation tab', () => {
 		});
 	});
 
-	test(
-		'should add the copy button right after the pull request number',
-		{ annotation: NEW_PULL_REQUEST_LAYOUT_GAP },
-		async ({ page }) => {
-			test.fail();
-			await page.goto(snapshotUrl(PAGES.pull));
+	test('should add the copy button right after the pull request number, outside the heading', async ({
+		page,
+	}) => {
+		await page.goto(snapshotUrl(PAGES.pull));
 
-			await expect(titleButton(page, BUTTON_NAME)).toHaveCount(1);
-			await expect(
-				elementBeforeTitleButton(page, BUTTON_NAME)
-			).toHaveText(`#${NUMBER}`);
-		}
-	);
+		await expect(titleButton(page, BUTTON_NAME)).toHaveCount(1);
+		await expect(elementBeforeTitleButton(page, BUTTON_NAME)).toHaveText(
+			`#${NUMBER}`
+		);
+		// Inside the h1 the button label would become part of the heading's accessible name
+		await expect(
+			page.locator('h1 [data-hyperfriend="copy-button"]')
+		).toHaveCount(0);
+	});
 
-	test(
-		'should show the "Link copied" toast when the title button is out of view',
-		{ annotation: NEW_PULL_REQUEST_LAYOUT_GAP },
-		async ({ page }) => {
-			test.fail();
-			await page.goto(snapshotUrl(PAGES.pull));
-			const button = titleButton(page, BUTTON_NAME);
-			await expect(button).toHaveCount(1);
-			await readyForShortcut(page);
-			await page.mouse.wheel(0, 3000);
-			await expect(button).not.toBeInViewport();
+	test('should refuse to copy while the URL already names another pull request but the header still shows this one', async ({
+		page,
+		readClipboard,
+		writeClipboardSentinel,
+	}) => {
+		await page.goto(snapshotUrl(PAGES.pull));
+		await expect(titleButton(page, BUTTON_NAME)).toHaveCount(1);
+		await writeClipboardSentinel(page, 'sentinel: header not updated');
 
-			await page.keyboard.press('Shift+C');
-
-			await expect(page.locator('[data-hyperfriend="toast"]')).toHaveText(
-				'Link copied'
+		await test.step('setup: the URL changes to another pull request before the header re-renders', async () => {
+			await navigateInPage(page, `${REPOSITORY}/pull/${NUMBER + 1}`);
+			await expect(page).toHaveURL(
+				`https://github.com${REPOSITORY}/pull/${NUMBER + 1}`
 			);
-			await expect(
-				page.locator('[data-hyperfriend="live-region"]')
-			).toHaveText('Link copied');
-		}
-	);
+		});
+
+		// The button keeps its place; its name may already have changed with the rescan
+		await page.locator('[data-hyperfriend="copy-button"]').click();
+
+		await expect(page.locator('[data-hyperfriend="tooltip"]')).toHaveText(
+			'Copy failed'
+		);
+		await expect(
+			page.locator('[data-hyperfriend="live-region"]')
+		).toHaveText('Copy failed');
+		expect(await readClipboard(page)).toEqual({
+			html: '',
+			text: 'sentinel: header not updated',
+		});
+	});
+
+	test('should show the "Link copied" toast when the title button is out of view', async ({
+		page,
+	}) => {
+		await page.goto(snapshotUrl(PAGES.pull));
+		const button = titleButton(page, BUTTON_NAME);
+		await expect(button).toHaveCount(1);
+		await readyForShortcut(page);
+		await page.mouse.wheel(0, 3000);
+		await expect(button).not.toBeInViewport();
+
+		await page.keyboard.press('Shift+C');
+
+		await expect(page.locator('[data-hyperfriend="toast"]')).toHaveText(
+			'Link copied'
+		);
+		await expect(
+			page.locator('[data-hyperfriend="live-region"]')
+		).toHaveText('Link copied');
+	});
 });
 
 test.describe('Files changed tab', () => {
@@ -271,19 +301,16 @@ test.describe('Files changed tab', () => {
 });
 
 test.describe('Commits tab', () => {
-	test(
-		'should add the copy button right after the pull request number',
-		{ annotation: NEW_PULL_REQUEST_LAYOUT_GAP },
-		async ({ page }) => {
-			test.fail();
-			await page.goto(snapshotUrl(PAGES.pullCommits));
+	test('should add the copy button right after the pull request number', async ({
+		page,
+	}) => {
+		await page.goto(snapshotUrl(PAGES.pullCommits));
 
-			await expect(titleButton(page, BUTTON_NAME)).toHaveCount(1);
-			await expect(
-				elementBeforeTitleButton(page, BUTTON_NAME)
-			).toHaveText(`#${NUMBER}`);
-		}
-	);
+		await expect(titleButton(page, BUTTON_NAME)).toHaveCount(1);
+		await expect(elementBeforeTitleButton(page, BUTTON_NAME)).toHaveText(
+			`#${NUMBER}`
+		);
+	});
 
 	test('should leave Shift+C to the page', async ({
 		page,

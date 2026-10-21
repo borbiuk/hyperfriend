@@ -3,7 +3,6 @@ import { Locator } from '@playwright/test';
 import { expect, test } from '../e2e/fixtures/extension';
 import {
 	elementBeforeTitleButton,
-	NEW_PULL_REQUEST_LAYOUT_GAP,
 	PAGES,
 	REPOSITORY,
 	snapshotItems,
@@ -95,18 +94,12 @@ test('should copy the exact rich link of issue 10', async ({
 	);
 });
 
-test(
-	'should add the copy button to the pull request Conversation tab',
-	{ annotation: NEW_PULL_REQUEST_LAYOUT_GAP },
-	async ({ page }) => {
-		test.fail();
-		await page.goto(`https://github.com${PAGES.pull}`);
+test('should add the copy button to the pull request Conversation tab', async ({
+	page,
+}) => {
+	await page.goto(`https://github.com${PAGES.pull}`);
 
-		await expect(
-			titleButton(
-				page,
-				`Copy link to pull request #${PULL_REQUEST.number}`
-			)
-		).toHaveCount(1);
-	}
-);
+	await expect(
+		titleButton(page, `Copy link to pull request #${PULL_REQUEST.number}`)
+	).toHaveCount(1);
+});

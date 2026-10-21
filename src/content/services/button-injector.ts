@@ -53,6 +53,9 @@ const EXCLUDED_CONTAINER_SELECTOR = [
 /** Detail page title headers, most specific first */
 const DETAIL_HEADER_SELECTORS = [
 	'h1[data-component="PH_Title"]',
+	// New pull request layout (Conversation and Commits tabs): the title text inside a Primer heading
+	// (resolved to its h1 by findDetailHeader; no :has(), which older Chrome versions reject)
+	'h1[data-component="Heading"] > .markdown-title',
 	'[data-testid="issue-title"]',
 	'.gh-header-title',
 	'bdi.js-issue-title',
@@ -187,6 +190,7 @@ export class ButtonInjector {
 
 		// The button follows the `#123` number, centered on its line:
 		// - React PR header: the number is in an inline-flex wrapper next to the h1 (outside the heading);
+		// - new PR layout: the number is in a suffix span right after the h1 (outside the heading);
 		// - Issue page: the number is in an inline-flex wrapper inside the h1, together with GitHub's
 		//   "Edit issue title" button (signed in); ours goes last, after it, using the wrapper's gap;
 		// - classic header: the number is a plain span inside the h1; ours goes right after it.
