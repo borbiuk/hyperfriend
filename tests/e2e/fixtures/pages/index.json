@@ -122,11 +122,6 @@
 				"author": "prasad2512"
 			},
 			{
-				"number": 37898,
-				"title": "[rust-compiler] Fix Unicode diagnostic underline positions",
-				"author": "chengchuu"
-			},
-			{
 				"number": 37896,
 				"title": "Bump handlebars from 4.7.7 to 4.7.10 in /fixtures/concurrent/time-slicing",
 				"author": "dependabot[bot]"
@@ -135,6 +130,11 @@
 				"number": 37895,
 				"title": "[compiler] Allow ref access in ResizeObserver / MutationObserver callbacks",
 				"author": "zhoubiao188"
+			},
+			{
+				"number": 37894,
+				"title": "[compiler] Infer function names from assignments, object properties, and patterns in Rust port",
+				"author": "RubenPari"
 			}
 		],
 		"/react/react/pull/9713": [
@@ -170,11 +170,6 @@
 				"number": 37899,
 				"title": "Bug: a component loses its state when its type changes from React.lazy to the component the lazy resolved to",
 				"author": "nitedani"
-			},
-			{
-				"number": 37897,
-				"title": "[Compiler Bug]: Rust Babel adapter misaligns diagnostic underlines after non-ASCII text",
-				"author": "chengchuu"
 			},
 			{
 				"number": 37891,
@@ -280,6 +275,11 @@
 				"number": 37762,
 				"title": "Bug: \"Cannot commit the same tree as before\" (#177) when a throttled Suspense reveal's commit flushes another root's passive effects that update its root synchronously",
 				"author": "FaridSafi"
+			},
+			{
+				"number": 37761,
+				"title": "[Compiler Bug]: purity reports impure calls in functions that only run from event handlers (closure created inside .map(), or closure referencing a later-declared const)",
+				"author": "outof-place"
 			}
 		],
 		"/react/react/issues/10": [
