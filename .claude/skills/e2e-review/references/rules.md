@@ -24,14 +24,14 @@ Format: **ID — rule** · default severity, then what to look for and the fix.
 
 ## Test environment (facts the rules rely on)
 
-Where things live: `playwright.config.ts`, `tests/unit/**`, `tests/setup/dist.setup.ts`, `tests/e2e/fixtures/{extension.ts,github.ts,defaults.ts,capture-pages.mjs}`, `tests/e2e/fixtures/pages/*.html` with `index.json`, `tests/e2e/*.spec.ts` (`seed.spec.ts` is the seed of the Playwright test agents), `tests/live/**`, `tests/tsconfig.json`. CI: `npm run test:unit` in job `build` and job `e2e` (Node 24) in `build.yml`, and `live.yml` (weekly and manual).
+Where things live: `playwright.config.ts`, `tests/unit/**`, `tests/setup/dist.setup.ts`, `tests/e2e/fixtures/{extension.ts,github.ts,defaults.ts,capture-pages.mjs}`, `tests/e2e/fixtures/pages/*.html` with `index.json`, `tests/e2e/*.spec.ts` (`seed.spec.ts` is the seed of the Playwright test agents), `tests/live/**`, `tests/tsconfig.json`. CI: `npm run test:unit` in job `build` and job `e2e` (Node 24) in `build.yml`, and `markup.yml` (daily and manual: refreshes the snapshots, runs e2e and live).
 
 - **`unit`**: Node, no browser. Pure logic from `src/shared` imported through `@shared/*`; there is no `chrome` global, so a test that needs `chrome.storage.sync` builds a per-test fake.
 - **`e2e`**: the built extension from `dist/` in Playwright's bundled Chromium (`channel: 'chromium'`, headless unless `--headed`) via `launchPersistentContext` with `--disable-extensions-except` / `--load-extension`. The `dist` setup project runs `npm run build` before it.
     - The extension id is computed from the absolute `dist/` path (there is no service worker to read it from).
     - `context.route('**/*')` serves script-stripped snapshots of public `react/react` pages (formerly `facebook/react`): pull request list, PR 9713 (Conversation, Files changed, Commits), issue list, issue 10, a pull request and an issue search page (looked up by path + query); avatar images get a tiny PNG (or a 404 with `avatars: 'error'`). A GitHub path without a snapshot gets a 404 and every other host is aborted (static asset hosts and static github.com paths such as `/images/`, `/assets/`, `/favicons/` quietly); both are reported and fail the test. Item numbers, titles and authors are in `pages/index.json` (`snapshotItems`); the literal default settings for expected stored values are `DEFAULT_STORED_CONFIG` in `defaults.ts`. A known product gap is a `test.fail()` test with an `issue` annotation linking the GitHub issue (SCN-6).
     - Clipboard permissions are granted and the clipboard is read for real. Settings are seeded with `storage.seedConfig` in `chrome.storage.sync` from an extension page. The popup is tested as `chrome-extension://<id>/options.html`.
-- **`live`**: real github.com (`react/react`), anonymous, on demand (`npm run test:live`, which sets `HYPERFRIEND_LIVE`; the project does not exist without it); a weekly GitHub Actions run (`live.yml`, Mondays 06:00 UTC, plus manual dispatch). Never blocks CI.
+- **`live`**: real github.com (`react/react`), anonymous, on demand (`npm run test:live`, which sets `HYPERFRIEND_LIVE`; the project does not exist without it); also run daily by `markup.yml` after the snapshot refresh (05:00 UTC, plus manual dispatch). Never part of push or pull request CI.
 - **Firefox is not covered**: Playwright cannot load extensions into Firefox. Firefox stays `npm run lint:firefox` plus manual checks (EXT-8).
 - **The oracle** (what correct behaviour is) lives in [github-dom-selectors.md](../../../rules/github-dom-selectors.md) (pages, buttons, shortcut, toast, avatars, SPA rescans), [shared-api.md](../../../rules/shared-api.md) (payload, templates, config, shortcuts, settings file) and [popup.md](../../../rules/popup.md).
 
@@ -197,7 +197,7 @@ There is no backend. "Data" is the extension's settings in `chrome.storage.sync`
 
 **DATA-10 — Constants come from one place.** · Major
 
-- Repository, item numbers, titles and snapshot files are fixture constants (`github.ts`: `REPOSITORY`, `PAGES`, `snapshotUrl`, `snapshotItems`); the extension id is computed (EXT-7); the `dist/` path comes from `extension.ts`. Expected payloads are built from those constants in the test. A `https://github.com/react/react/...` literal repeated across specs is a finding; the URL inside one exact expected payload is not.
+- Repository, item numbers, titles and snapshot files are fixture constants (`github.ts`: `REPOSITORY`, `PAGES`, `snapshotUrl`, `snapshotItems`, `firstPlainItem`); the extension id is computed (EXT-7); the `dist/` path comes from `extension.ts`. Expected payloads are built from those constants in the test. A `https://github.com/react/react/...` literal repeated across specs is a finding; the URL inside one exact expected payload is not.
 
 ---
 
@@ -344,8 +344,8 @@ There is no backend. "Data" is the extension's settings in `chrome.storage.sync`
 
 - Every `playwright.config.ts` change (projects, retries, workers, timeouts, `use`) has its own justification.
 - `@playwright/test` and `eslint-plugin-playwright` are exact versions ([npm-versions.md](../../../rules/npm-versions.md)); a Playwright bump goes in its own PR, and CI installs the browser from that same package (`npx --no playwright install --with-deps chromium`).
-- Regenerated snapshots come from the capture script in their own commit, with the source URLs and the capture date in the PR. Hand edits to a snapshot are named and minimal.
-- The `live` workflow runs only on a schedule or manual dispatch, with `permissions: contents: read`.
+- Regenerated snapshots come from the capture script in their own commit: the daily `markup.yml` commit as `github-actions[bot]`, or a manual one with the source URLs and the capture date in the PR. Hand edits to a snapshot are named and minimal.
+- The `markup.yml` workflow runs only on a schedule or manual dispatch (never on push or pull request) and has only the permissions it needs (`contents: write` for the snapshot commit, `issues: write` for the drift issue); `build.yml` stays `contents: read`.
 
 **PR-4 — Traceability.** · Minor
 
@@ -416,7 +416,7 @@ There is no backend. "Data" is the extension's settings in `chrome.storage.sync`
 
 **EXT-10 — `live` is a smoke test, not a copy of e2e.** · Major
 
-- Read-only and anonymous; a few tests: the button appears on a real PR list and PR page, and a copy gives the exact payload for a pinned, long-closed item whose title is stable. A failure means "GitHub changed its markup": refresh the snapshots and the selectors. Never part of the default test run or of push and PR CI.
+- Read-only and anonymous; a few tests: the button appears on a real PR list and PR page, and a copy gives the exact payload for a pinned, long-closed item whose title is stable. A failure (or an e2e failure on freshly captured snapshots) means "GitHub changed its markup": `markup.yml` opens a `markup-drift` issue; fix the selectors and the tests. Never part of the default test run or of push and PR CI.
 
 ---
 

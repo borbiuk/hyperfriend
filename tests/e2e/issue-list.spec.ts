@@ -1,5 +1,6 @@
 import { expect, readyForShortcut, test } from './fixtures/extension';
 import {
+	firstPlainItem,
 	PAGES,
 	REPOSITORY,
 	rowOf,
@@ -15,8 +16,8 @@ const ISSUES = snapshotItems(PAGES.issueList);
 /** Titles repeat on this list (several rows are titled "Bug:"), so rows are counted per title */
 const TITLES = [...new Set(ISSUES.map((issue) => issue.title))];
 
-/** First row of the snapshot; its title has no HTML special characters, so the payload literal stays readable */
-const FIRST = ISSUES[0];
+/** First row whose title has no HTML special characters, so the payload literal stays readable */
+const FIRST = firstPlainItem(PAGES.issueList);
 const FIRST_URL = `https://github.com${REPOSITORY}/issues/${FIRST.number}`;
 const FIRST_BUTTON = `Copy link to issue #${FIRST.number}`;
 
@@ -51,9 +52,6 @@ test('should copy the rich link of an issue from its row', async ({
 	writeClipboardSentinel,
 	normalizeHtml,
 }) => {
-	expect(FIRST.title, 'precondition: no HTML special characters').not.toMatch(
-		/[&<>"']/
-	);
 	await page.goto(snapshotUrl(PAGES.issueList));
 	await writeClipboardSentinel(page, 'sentinel: issue list copy');
 

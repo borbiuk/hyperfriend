@@ -113,6 +113,9 @@ function sanitize() {
 			'meta[name="visitor-hmac"]',
 			'meta[name="hovercard-subject-tag"]',
 			'meta[name="google-site-verification"]',
+			// Per-request server details that change on every load
+			'meta[name^="voltron"]',
+			'meta[name="ui-target"]',
 			// Description meta tags repeat the pull request / issue body
 			'meta[name="description"]',
 			'meta[name="twitter:description"]',
@@ -120,7 +123,7 @@ function sanitize() {
 		].join(', ')
 	);
 	remove(
-		'input[name="authenticity_token"], input[name="timestamp"], input[name="timestamp_secret"]'
+		'input[name="authenticity_token"], input[name="timestamp"], input[name="timestamp_secret"], input[name="partial_last_updated"]'
 	);
 	// Comment, review and description bodies belong to their authors and are not used by the tests
 	document
@@ -155,6 +158,47 @@ function sanitize() {
 	for (let node = walker.nextNode(); node; node = walker.nextNode()) {
 		node.textContent = noEmail(node.textContent);
 	}
+	// GitHub generates random ids (UUIDs, label-xxxxxx) for elements and the for / aria-* attributes
+	// that point to them on every render; number them in document order so unchanged pages give
+	// unchanged files
+	const uuid =
+		/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|\blabel-[0-9a-f]{6}\b/g;
+	const stableIds = new Map();
+	const stable = (text) =>
+		text.replace(uuid, (match) => {
+			if (!stableIds.has(match)) {
+				stableIds.set(match, `id-${stableIds.size + 1}`);
+			}
+			return stableIds.get(match);
+		});
+	document.querySelectorAll('*').forEach((el) => {
+		for (const { name, value } of [...el.attributes]) {
+			if (stable(value) !== value) {
+				el.setAttribute(name, stable(value));
+			}
+		}
+	});
+}
+
+/**
+ * Waits until the page stops changing (React finishes rendering lists, counters and hovercards),
+ * so two captures of an unchanged page give the same file.
+ *
+ * @param {import('@playwright/test').Page} page - Page being captured.
+ */
+async function waitForStableDom(page) {
+	let previous = '';
+	for (let attempt = 0; attempt < 30; attempt++) {
+		const current = await page.evaluate(
+			() => document.documentElement.outerHTML
+		);
+		if (current === previous) {
+			return;
+		}
+		previous = current;
+		await page.waitForTimeout(500);
+	}
+	throw new Error(`${page.url()} kept changing for 15 s`);
 }
 
 /** Runs in the page: number, title and (where the row shows one) author login of every list item, in page order. */
@@ -210,6 +254,7 @@ try {
 			index.items[key] = [{ number, title }];
 		}
 
+		await waitForStableDom(page);
 		await page.evaluate(sanitize);
 		const html = `<!DOCTYPE html>\n${await page.evaluate(() => document.documentElement.outerHTML)}\n`;
 		const leak = FORBIDDEN.find((pattern) => pattern.test(html));

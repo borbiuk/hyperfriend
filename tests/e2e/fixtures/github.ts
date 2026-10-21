@@ -210,3 +210,23 @@ export function snapshotHtml(pagePath: string): string {
 
 	return readFileSync(path.join(PAGES_DIR, file), 'utf8');
 }
+
+/**
+ * The first item whose title has no HTML special characters, so a spec can write the expected
+ * payload as plain text. The lists change with every snapshot refresh, so the item is picked from
+ * the data instead of being fixed.
+ *
+ * @param pagePath - One of PAGES (a list or search page).
+ */
+export function firstPlainItem(pagePath: string): SnapshotItem {
+	const item = snapshotItems(pagePath).find(
+		({ title }) => !/[&<>"']/.test(title)
+	);
+	if (!item) {
+		throw new Error(
+			`Every item of ${pagePath} has HTML special characters in its title`
+		);
+	}
+
+	return item;
+}

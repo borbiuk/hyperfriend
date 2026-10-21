@@ -12,9 +12,44 @@
 	"items": {
 		"/react/react/pulls": [
 			{
-				"number": 37934,
-				"title": "[Test] Keep Flight strings as strings from the server to the browser",
+				"number": 37944,
+				"title": "[Flight] Write rows as strings to object-mode Node destinations",
 				"author": "gaearon"
+			},
+			{
+				"number": 37941,
+				"title": "[Flight] Complete reply models by their reachable fields, not by chunk",
+				"author": "gaearon"
+			},
+			{
+				"number": 37940,
+				"title": "[Flight] Run the reader fuzz against the reply decoder",
+				"author": "gaearon"
+			},
+			{
+				"number": 37939,
+				"title": "[Flight] Fix two DEV writer bugs found by the reader fuzz",
+				"author": "gaearon"
+			},
+			{
+				"number": 37938,
+				"title": "[Flight] Complete models by their reachable fields, not by chunk",
+				"author": "gaearon"
+			},
+			{
+				"number": 37937,
+				"title": "[Flight] Fix three stream bugs found by the reader fuzz",
+				"author": "gaearon"
+			},
+			{
+				"number": 37936,
+				"title": "[Flight] Add reader fuzz tests",
+				"author": "gaearon"
+			},
+			{
+				"number": 37935,
+				"title": "[Fizz] Keep the leading newline of <pre> content that is not a single string",
+				"author": "spokodev"
 			},
 			{
 				"number": 37932,
@@ -22,43 +57,13 @@
 				"author": "koreahghg"
 			},
 			{
-				"number": 37931,
-				"title": "[Flight] Complete reply models by their reachable fields, not by chunk",
-				"author": "gaearon"
-			},
-			{
 				"number": 37930,
 				"title": "[Experiment] Flight Result as a ledger of Server Component expansions",
 				"author": "gaearon"
 			},
 			{
-				"number": 37929,
-				"title": "[Flight] Run the reader fuzz against the reply decoder",
-				"author": "gaearon"
-			},
-			{
-				"number": 37928,
-				"title": "[Flight] Fix two DEV writer bugs found by the reader fuzz",
-				"author": "gaearon"
-			},
-			{
-				"number": 37927,
-				"title": "[Flight] Complete models by their reachable fields, not by chunk",
-				"author": "gaearon"
-			},
-			{
-				"number": 37926,
-				"title": "[Flight] Fix three stream bugs found by the reader fuzz",
-				"author": "gaearon"
-			},
-			{
 				"number": 37925,
 				"title": "[Flight] Skip revival for models without protocol strings",
-				"author": "gaearon"
-			},
-			{
-				"number": 37923,
-				"title": "[Flight] Add reader fuzz tests",
 				"author": "gaearon"
 			},
 			{
@@ -130,11 +135,6 @@
 				"number": 37895,
 				"title": "[compiler] Allow ref access in ResizeObserver / MutationObserver callbacks",
 				"author": "zhoubiao188"
-			},
-			{
-				"number": 37894,
-				"title": "[compiler] Infer function names from assignments, object properties, and patterns in Rust port",
-				"author": "RubenPari"
 			}
 		],
 		"/react/react/pull/9713": [
@@ -298,12 +298,12 @@
 				"title": "[Fizz] Fix createFastHash in FIPS environments"
 			},
 			{
-				"number": 37555,
-				"title": "Fix Fizz SSR corrupting hooks state on nested renders"
-			},
-			{
 				"number": 37053,
 				"title": "[Flight] Let encodeFormAction reuse the default encoding"
+			},
+			{
+				"number": 37555,
+				"title": "Fix Fizz SSR corrupting hooks state on nested renders"
 			},
 			{
 				"number": 36772,
@@ -340,24 +340,24 @@
 				"title": "[React 19] Controlled `<select>` component is subject to automatic form reset"
 			},
 			{
-				"number": 29034,
-				"title": "[React 19] allow opting out of automatic form reset when Form Actions are used"
-			},
-			{
 				"number": 37044,
 				"title": "[Flight] Let encodeFormAction reuse the default encoding"
+			},
+			{
+				"number": 29034,
+				"title": "[React 19] allow opting out of automatic form reset when Form Actions are used"
 			},
 			{
 				"number": 36996,
 				"title": "Bug:"
 			},
 			{
-				"number": 15344,
-				"title": "useReducer's dispatch should return a promise which resolves once its action has been delivered"
-			},
-			{
 				"number": 30691,
 				"title": "[React 19] No re-render after 'useActionState' action queue finishes"
+			},
+			{
+				"number": 15344,
+				"title": "useReducer's dispatch should return a promise which resolves once its action has been delivered"
 			},
 			{
 				"number": 35399,

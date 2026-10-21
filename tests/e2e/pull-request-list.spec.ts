@@ -2,6 +2,7 @@ import { LinkType } from '@shared/models';
 
 import { expect, readyForShortcut, test } from './fixtures/extension';
 import {
+	firstPlainItem,
 	PAGES,
 	REPOSITORY,
 	rowOf,
@@ -14,8 +15,8 @@ import {
 
 const PULL_REQUESTS = snapshotItems(PAGES.pullList);
 
-/** First row of the snapshot; its title has no HTML special characters, so the payload literal stays readable */
-const FIRST = PULL_REQUESTS[0];
+/** First row whose title has no HTML special characters, so the payload literal stays readable */
+const FIRST = firstPlainItem(PAGES.pullList);
 const FIRST_URL = `https://github.com${REPOSITORY}/pull/${FIRST.number}`;
 const FIRST_BUTTON = `Copy link to pull request #${FIRST.number}`;
 
@@ -43,9 +44,6 @@ test('should copy the rich link of a pull request from its row', async ({
 	writeClipboardSentinel,
 	normalizeHtml,
 }) => {
-	expect(FIRST.title, 'precondition: no HTML special characters').not.toMatch(
-		/[&<>"']/
-	);
 	await page.goto(snapshotUrl(PAGES.pullList));
 	await writeClipboardSentinel(page, 'sentinel: list copy');
 

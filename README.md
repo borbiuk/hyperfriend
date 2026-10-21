@@ -224,30 +224,30 @@ Firefox 140 or newer is required (Firefox for Android: 142 or newer).
 
 ### npm scripts
 
-| Script                   | Description                                                                                   |
-| ------------------------ | --------------------------------------------------------------------------------------------- |
-| `npm run watch`          | Development build for Chrome into `dist/`, rebuilt on every change.                           |
-| `npm run build`          | Production build for Chrome into `dist/`.                                                     |
-| `npm run build:firefox`  | Production build for Firefox into `dist-firefox/`.                                            |
-| `npm run clean`          | Remove `dist/` and `dist-firefox/`.                                                           |
-| `npm run zip`            | Rebuild both browsers and create `.zip` packages for publishing (runs `zip.sh`).              |
-| `npm run typecheck`      | TypeScript 7 type check of `src/` and `tests/` without emitting files.                        |
-| `npm run lint`           | ESLint for `.ts` / `.tsx` files (tests included), followed by the type check.                 |
-| `npm run lint:fix`       | ESLint with automatic fixes.                                                                  |
-| `npm run lint:firefox`   | `web-ext lint` for the Firefox build (run `npm run build:firefox` first).                     |
-| `npm test`               | The `unit` and `e2e` tests; `dist/` is built first when `e2e` runs (see [Testing](#testing)). |
-| `npm run test:unit`      | Unit tests of `src/shared` (no browser, no build needed).                                     |
-| `npm run test:e2e`       | End-to-end tests of the extension in Chromium (builds `dist/` first).                         |
-| `npm run test:live`      | Smoke tests against real github.com (on demand and weekly in CI; builds `dist/` first).       |
-| `npm run test:snapshots` | Refresh the GitHub page snapshots the e2e tests use (needs network).                          |
-| `npm run format`         | Prettier for `.ts`, `.tsx`, `.js`, `.mjs`, `.json`, `.md`, `.yml`, `.css` and `.html` files.  |
-| `npm run check:versions` | Fail if any dependency in `package.json` is not pinned to an exact version.                   |
-| `npm run check:outdated` | Fail if any dependency is outdated (`npm outdated`). For local use, not run in CI.            |
+| Script                   | Description                                                                                          |
+| ------------------------ | ---------------------------------------------------------------------------------------------------- |
+| `npm run watch`          | Development build for Chrome into `dist/`, rebuilt on every change.                                  |
+| `npm run build`          | Production build for Chrome into `dist/`.                                                            |
+| `npm run build:firefox`  | Production build for Firefox into `dist-firefox/`.                                                   |
+| `npm run clean`          | Remove `dist/` and `dist-firefox/`.                                                                  |
+| `npm run zip`            | Rebuild both browsers and create `.zip` packages for publishing (runs `zip.sh`).                     |
+| `npm run typecheck`      | TypeScript 7 type check of `src/` and `tests/` without emitting files.                               |
+| `npm run lint`           | ESLint for `.ts` / `.tsx` files (tests included), followed by the type check.                        |
+| `npm run lint:fix`       | ESLint with automatic fixes.                                                                         |
+| `npm run lint:firefox`   | `web-ext lint` for the Firefox build (run `npm run build:firefox` first).                            |
+| `npm test`               | The `unit` and `e2e` tests; `dist/` is built first when `e2e` runs (see [Testing](#testing)).        |
+| `npm run test:unit`      | Unit tests of `src/shared` (no browser, no build needed).                                            |
+| `npm run test:e2e`       | End-to-end tests of the extension in Chromium (builds `dist/` first).                                |
+| `npm run test:live`      | Smoke tests against real github.com (on demand and in the daily markup check; builds `dist/` first). |
+| `npm run test:snapshots` | Refresh the GitHub page snapshots the e2e tests use (needs network).                                 |
+| `npm run format`         | Prettier for `.ts`, `.tsx`, `.js`, `.mjs`, `.json`, `.md`, `.yml`, `.css` and `.html` files.         |
+| `npm run check:versions` | Fail if any dependency in `package.json` is not pinned to an exact version.                          |
+| `npm run check:outdated` | Fail if any dependency is outdated (`npm outdated`). For local use, not run in CI.                   |
 
 CI runs on GitHub Actions:
 
 - `.github/workflows/build.yml` runs on pushes and pull requests to `master`. Job `build` (Node 22, 24 and 26): `npm ci`, `check:versions`, both builds, both lint scripts and `npm run test:unit`. Job `e2e` (Node 24): installs Playwright's Chromium (`npx --no playwright install --with-deps chromium`) and runs `npm run test:e2e`; on failure it uploads the artifact `playwright-report-e2e` (`playwright-report/` and `test-results/`, kept 14 days).
-- `.github/workflows/live.yml` runs `npm run test:live` every Monday at 06:00 UTC and on manual dispatch (`workflow_dispatch`). It never blocks pushes; a failed run uploads `playwright-report-live` and GitHub's scheduled-workflow notification tells you that GitHub's markup probably changed.
+- `.github/workflows/markup.yml` (workflow `github-markup`) checks every day at 05:00 UTC (and on manual dispatch) that the tests still pass on GitHub's current markup. It captures fresh snapshots with `npm run test:snapshots`; when they changed it commits them to `master` as `github-actions[bot]` ("Refresh GitHub page snapshots"; that push does not start `build.yml`, so the workflow runs the tests itself): `npm run test:e2e` on the fresh snapshots, then `npm run test:live`. On any failure it uploads `playwright-report-markup` (14 days) and opens one issue labelled `markup-drift` ("Tests fail on the current GitHub markup"); while that issue is open, later failures are added to it as comments. Close it after fixing the selectors in `src/content` and the tests. No AI agents are involved. Because the snapshots are committed before the tests run, after a markup change `master` holds snapshots the tests fail on, and every push to `master` and every pull request stays red in `build.yml` until the selectors or tests are fixed. That is intended.
 
 ### Testing
 
@@ -255,7 +255,7 @@ The tests use [Playwright](https://playwright.dev) and live in `tests/`. Three p
 
 - **`unit`** (`npm run test:unit`): pure logic from `src/shared`, no browser.
 - **`e2e`** (`npm run test:e2e`): the built extension (`dist/`) loaded into Playwright's bundled Chromium, headless. GitHub pages come from saved snapshots and every other host is blocked, so the tests need no network and no GitHub account.
-- **`live`** (`npm run test:live`): a short smoke check against real `github.com/react/react`. It runs on demand and weekly in CI (`live.yml`), and is not part of `npm test`.
+- **`live`** (`npm run test:live`): a short smoke check against real `github.com/react/react`. It runs on demand and in the daily markup check in CI (`markup.yml`), and is not part of `npm test`.
 
 `npm test` runs `unit` and `e2e`. A setup project (`dist`) runs `npm run build` before `e2e` and `live`, so the tests always load the current sources; `unit` does not build. The `live` project exists only when `HYPERFRIEND_LIVE` is set (`npm run test:live` does that), so a plain `npx playwright test` never reaches the network.
 
@@ -263,7 +263,7 @@ First time on a machine, install the browser Playwright uses: `npx playwright in
 
 The tests cover **Chromium only**: Playwright cannot load extensions into Firefox, so Firefox stays covered by `npm run lint:firefox` and manual checks. Retries are off, so a flaky test is a bug to fix; a trace is kept for every failed test in `test-results/`, and the HTML report is written to `playwright-report/` (open it with `npx playwright show-report`).
 
-**Snapshots.** The e2e tests run on saved copies of public `react/react` pages (pull request list, pull request 9713 with its Files changed and Commits tabs, issue list, issue 10, and a pull request and an issue search) in `tests/e2e/fixtures/pages/`. Scripts, comment and description bodies, tokens, nonces and email addresses are stripped, and the capture fails if any of that remains; the snapshots are excluded from Prettier. Expected item numbers, titles and authors are read from `pages/index.json`. When GitHub changes its markup (the `live` test fails, or the buttons no longer appear), refresh them with `npm run test:snapshots` (needs network), review the diff for personal data, and update the selectors in `src/content` if needed.
+**Snapshots.** The e2e tests run on saved copies of public `react/react` pages (pull request list, pull request 9713 with its Files changed and Commits tabs, issue list, issue 10, and a pull request and an issue search) in `tests/e2e/fixtures/pages/`. Scripts, comment and description bodies, tokens, nonces and email addresses are stripped, and the capture fails if any of that remains; the snapshots are excluded from Prettier. Expected item numbers, titles and authors are read from `pages/index.json`. They are refreshed automatically every day by `markup.yml`, and by hand with `npm run test:snapshots` (needs network; review the diff for personal data). The capture waits until the page is stable and numbers GitHub's random ids in document order, so an unchanged page gives an unchanged file. Specs pick their data from the snapshot instead of fixed rows, so a refresh changes titles but not the tests. When a refresh makes tests fail, GitHub changed its markup: update the selectors in `src/content` and the tests.
 
 How to write tests and the review standard: [.claude/skills/playwright/SKILL.md](.claude/skills/playwright/SKILL.md) and [.claude/rules/testing.md](.claude/rules/testing.md).
 
@@ -300,7 +300,7 @@ How to write tests and the review standard: [.claude/skills/playwright/SKILL.md]
 - `playwright.config.ts`: Playwright projects (`unit`, `e2e`, `live`).
 - `specs/`: Test plans written by the Playwright planner agent.
 - `scripts/`: Maintenance scripts (`check-versions.mjs`, `tag-releases.sh` for tagging released versions).
-- `.github/`: Issue and pull request templates, CI workflows (`build.yml`: build, lint and tests on pushes and pull requests to `master`; `live.yml`: weekly smoke test against github.com).
+- `.github/`: Issue and pull request templates, CI workflows (`build.yml`: build, lint and tests on pushes and pull requests to `master`; `markup.yml`: daily snapshot refresh and check against github.com).
 - `.husky/`: Git pre-commit hook: syncs the version, formats files, stages changes of tracked files and builds both browsers into `.zip` packages (see [AGENTS.md](AGENTS.md)).
 - `.claude/`: Agent context for AI-assisted development (rules, skills, subagents, shared settings; the Playwright planner, generator and healer agents are generated), see [AGENTS.md](AGENTS.md).
 - `.mcp.json`: Project MCP servers for AI-assisted development (Chrome DevTools MCP and the Playwright test MCP server).

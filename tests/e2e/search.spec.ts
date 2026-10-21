@@ -2,6 +2,7 @@ import { Locator, Page } from '@playwright/test';
 
 import { expect, readyForShortcut, test } from './fixtures/extension';
 import {
+	firstPlainItem,
 	PAGES,
 	REPOSITORY,
 	snapshotItems,
@@ -41,8 +42,8 @@ const SEARCHES = [
 
 for (const search of SEARCHES) {
 	const RESULTS = snapshotItems(search.page);
-	/** First result; its title has no HTML special characters, so the payload literal stays readable */
-	const FIRST = RESULTS[0];
+	/** First result whose title has no HTML special characters, so the payload literal stays readable */
+	const FIRST = firstPlainItem(search.page);
 	const FIRST_URL = `https://github.com${REPOSITORY}/${search.path}/${FIRST.number}`;
 
 	test.describe(`${search.kind} search`, () => {
@@ -71,10 +72,6 @@ for (const search of SEARCHES) {
 			writeClipboardSentinel,
 			normalizeHtml,
 		}) => {
-			expect(
-				FIRST.title,
-				'precondition: no HTML special characters'
-			).not.toMatch(/[&<>"']/);
 			await page.goto(snapshotUrl(search.page));
 			await writeClipboardSentinel(
 				page,

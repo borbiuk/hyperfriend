@@ -4,10 +4,10 @@ import { LinkType } from '@shared/models';
 import { DEFAULT_STORED_CONFIG } from './fixtures/defaults';
 import { expect, test } from './fixtures/extension';
 import {
+	firstPlainItem,
 	PAGES,
 	REPOSITORY,
 	rowOf,
-	snapshotItems,
 	snapshotUrl,
 } from './fixtures/github';
 
@@ -122,11 +122,8 @@ test('should copy with the template saved in the popup on a GitHub page opened a
 	writeClipboardSentinel,
 	normalizeHtml,
 }) => {
-	const [first] = snapshotItems(PAGES.pullList);
+	const first = firstPlainItem(PAGES.pullList);
 	const url = `https://github.com${REPOSITORY}/pull/${first.number}`;
-	expect(first.title, 'precondition: no HTML special characters').not.toMatch(
-		/[&<>"']/
-	);
 
 	await test.step('setup: save a custom template in the popup', async () => {
 		const options = await openOptions();
