@@ -33,5 +33,6 @@ paths:
 ## Keeping things in sync
 
 - When an npm script, manifest key, placeholder or shared API changes, update `README.md`, `AGENTS.md`, the matching rule in `.claude/rules/` and `.claude/skills/verify/SKILL.md` if the checks changed.
+- When the release steps, the zip names or the store image files change, update `.claude/skills/release/SKILL.md`, `.claude/skills/store-assets/SKILL.md` and the checklist in `.claude/agents/qa-engineer.md`.
 - When a shortcut, popup tab, setting or settings file field is added, follow the checklist in `extension-architecture.md` and update `README.md`, `LISTING.md` and `RELEASE_NOTES.md` too.
 - After moving or renaming files, check that every relative link in `CLAUDE.md`, `AGENTS.md` and `.claude/**/*.md` still resolves.

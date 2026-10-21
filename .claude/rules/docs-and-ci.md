@@ -24,3 +24,4 @@ paths:
 - [build.yml](../../.github/workflows/build.yml) runs on pushes and pull requests to `master` with Node 22, 24 and 26: `npm ci`, `check:versions`, both builds, `lint`, `lint:firefox`. Do not add `check:outdated` (new upstream releases would break CI at random).
 - Workflows use least-privilege `permissions` (`contents: read`) and reference only existing npm scripts.
 - `scripts/tag-releases.sh` finds the commit by the `version` in `public/manifest.json` and creates tags only locally. Test it with `DRY_RUN=1` only.
+- The whole release flow (version bump, release notes, commit and zips, push, CI, annotated tag, GitHub Release with `hyperfriend-{chrome,firefox}-x.y.z.zip`) is the `/release` skill: [release/SKILL.md](../skills/release/SKILL.md). Update it when this process changes.

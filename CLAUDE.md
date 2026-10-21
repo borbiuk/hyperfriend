@@ -16,6 +16,8 @@
 
 - Rules (`.claude/rules/`) load automatically when matching files are touched: architecture (with the "add a new shortcut" checklist), GitHub DOM selectors (page detection, copy button, avatars, keyboard shortcuts, toast), shared API (config schema, shortcut helpers, settings file), popup (tabs), Firefox, npm versions, docs and CI, agent context.
 - Skill `/verify` (`.claude/skills/verify/`): exact versions, both builds, ESLint, type check and `web-ext lint`.
+- Skill `/release` (`.claude/skills/release/`, invoked by the user only): version bump, release commit and zips, then after confirmation push, CI, tag and GitHub Release.
+- Skill `/store-assets` (`.claude/skills/store-assets/`): regenerates and checks the Chrome Web Store promo tiles and screenshots.
 - Subagents (`.claude/agents/`): `code-reviewer` (read-only review), `qa-engineer` (read-only verification).
 - Plugin `modern-web-guidance` (enabled in `.claude/settings.json`) provides the official `chrome-extensions` skill for Chrome APIs.
 - MCP server `chrome-devtools` (`.mcp.json`) loads the unpacked build into Chrome for in-browser checks.

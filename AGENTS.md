@@ -65,7 +65,7 @@ The Husky pre-commit hook (`.husky/pre-commit`) runs on **every commit**:
 ## AI tooling
 
 - **Subagents** (`.claude/agents/`): `code-reviewer` reviews changes, `qa-engineer` runs builds, lint and checks. Both are read-only and report findings; the main session applies fixes and is the only one that runs git.
-- **Skill** `/verify` (`.claude/skills/verify/`) runs the full check suite.
+- **Skills**: `/verify` (`.claude/skills/verify/`) runs the full check suite; `/release` (`.claude/skills/release/`) prepares and publishes a release (version, commit, push, CI, tag, GitHub Release with the zips); `/store-assets` (`.claude/skills/store-assets/`) regenerates the store images.
 - **MCP** ([.mcp.json](.mcp.json)): `chrome-devtools` (Chrome DevTools MCP with extension tools) loads `dist/` into Chrome for in-browser checks; see [github-dom-selectors.md](.claude/rules/github-dom-selectors.md#verifying-changes).
 - **Permissions** ([.claude/settings.json](.claude/settings.json)): npm scripts are pre-approved, state-changing git commands and `npm install` ask first, destructive git commands are denied.
 

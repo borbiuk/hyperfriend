@@ -1,6 +1,6 @@
 # Store assets
 
-Images for the Chrome Web Store listing (the store text is in [LISTING.md](../../LISTING.md)). The icon is described in [design/icon](../icon/README.md).
+Images for the Chrome Web Store listing (the store text is in [LISTING.md](../../LISTING.md)). The icon is described in [design/icon](../icon/README.md). In Claude Code, the `/store-assets` skill runs the steps below and checks the results.
 
 ## Files
 
