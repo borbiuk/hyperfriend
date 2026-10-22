@@ -48,6 +48,31 @@ const DETAILED_ISSUE: LinkTargetModel = {
 	milestone: 'v15',
 };
 
+/** Discussion with every detail the page can show */
+const DISCUSSION: LinkTargetModel = {
+	type: LinkType.Discussion,
+	owner: 'vercel',
+	repo: 'next.js',
+	number: 10640,
+	title: 'Companies / Sites using Next.js',
+	url: 'https://github.com/vercel/next.js/discussions/10640',
+	author: 'timneutkens',
+	category: 'Show and tell',
+};
+
+/** Workflow run with every detail the page can show; `number` is the run number, the URL has the run id */
+const WORKFLOW_RUN: LinkTargetModel = {
+	type: LinkType.WorkflowRun,
+	owner: 'react',
+	repo: 'react',
+	number: 20481,
+	title: '[compiler] Allow ref access',
+	url: 'https://github.com/react/react/actions/runs/39798109963',
+	workflow: '(Shared) Lint',
+	branch: 'zhoubiao188:scan-2026-10-19',
+	status: 'completed successfully',
+};
+
 /** Pull request whose title has brackets, to prove they are plain text */
 const BRACKET_PULL_REQUEST: LinkTargetModel = {
 	...PULL_REQUEST,
@@ -75,6 +100,82 @@ interface PartsCase {
 }
 
 const PLACEHOLDER_CASES: PartsCase[] = [
+	{
+		title: 'should fill every discussion placeholder',
+		template:
+			'{{discussion_number}} {{discussion_name}} {{owner}}/{{repo}} {{ref}} {{author}} {{category}} {{url}}',
+		target: DISCUSSION,
+		expected: {
+			before: '',
+			link: '10640 Companies / Sites using Next.js vercel/next.js vercel/next.js#10640 timneutkens Show and tell https://github.com/vercel/next.js/discussions/10640',
+			after: '',
+		},
+	},
+	{
+		title: 'should fill every workflow run placeholder',
+		template:
+			'{{run_number}} {{run_name}} {{workflow}} {{branch}} {{status}} {{owner}}/{{repo}} {{url}}',
+		target: WORKFLOW_RUN,
+		expected: {
+			before: '',
+			link: '20481 [compiler] Allow ref access (Shared) Lint zhoubiao188:scan-2026-10-19 completed successfully react/react https://github.com/react/react/actions/runs/39798109963',
+			after: '',
+		},
+	},
+	{
+		title: 'should fill the aliases "{{number}}: {{title}}" for a workflow run with the run number',
+		template: '{{number}}: {{title}}',
+		target: WORKFLOW_RUN,
+		expected: {
+			before: '',
+			link: '20481: [compiler] Allow ref access',
+			after: '',
+		},
+	},
+	{
+		title: 'should keep "{{ref}}" of a workflow run as typed, since a run is no numbered item',
+		template: '{{ref}} {{run_number}}',
+		target: WORKFLOW_RUN,
+		expected: { before: '', link: '{{ref}} 20481', after: '' },
+	},
+	{
+		title: 'should keep the pull request details of a discussion as typed',
+		template: '{{labels}} {{state}} {{discussion_number}}',
+		target: DISCUSSION,
+		expected: { before: '', link: '{{labels}} {{state}} 10640', after: '' },
+	},
+	{
+		title: 'should render the details a page did not show as empty text for a discussion',
+		template: '{{discussion_number}} [{{author}}{{category}}]',
+		target: { ...DISCUSSION, author: undefined, category: undefined },
+		expected: { before: '', link: '10640', after: '' },
+	},
+	{
+		title: 'should render the details a page did not show as empty text for a workflow run',
+		template: '{{run_number}} [{{branch}}{{status}}] {{workflow}}',
+		target: { ...WORKFLOW_RUN, branch: undefined, status: undefined },
+		expected: { before: '', link: '20481  (Shared) Lint', after: '' },
+	},
+	{
+		title: 'should use the default discussion template for an empty template',
+		template: '',
+		target: DISCUSSION,
+		expected: {
+			before: '',
+			link: 'Discussion 10640',
+			after: ': Companies / Sites using Next.js',
+		},
+	},
+	{
+		title: 'should use the default workflow run template for an empty template',
+		template: '',
+		target: WORKFLOW_RUN,
+		expected: {
+			before: '',
+			link: '(Shared) Lint #20481',
+			after: ': [compiler] Allow ref access',
+		},
+	},
 	{
 		title: 'should fill "{{ref}}" with owner, repo and number for a pull request',
 		template: '{{ref}}',

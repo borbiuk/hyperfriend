@@ -87,6 +87,55 @@ test('should build the default issue payload from the issue template', () => {
 	});
 });
 
+test('should build the default discussion payload from the discussion template', () => {
+	const discussion: LinkTargetModel = {
+		type: LinkType.Discussion,
+		owner: 'vercel',
+		repo: 'next.js',
+		number: 10640,
+		title: 'Sites using <Next.js>',
+		url: 'https://github.com/vercel/next.js/discussions/10640',
+	};
+
+	expect(buildLinkPayload(discussion, DEFAULT_CONFIG)).toEqual({
+		text: 'Discussion 10640: Sites using <Next.js>',
+		parts: {
+			before: '',
+			link: 'Discussion 10640',
+			after: ': Sites using <Next.js>',
+		},
+		html: '<a href="https://github.com/vercel/next.js/discussions/10640">Discussion 10640</a>: Sites using &lt;Next.js&gt;',
+		plain: 'Discussion 10640: Sites using <Next.js> — https://github.com/vercel/next.js/discussions/10640',
+		markdown:
+			'[Discussion 10640](https://github.com/vercel/next.js/discussions/10640): Sites using <Next.js>',
+	});
+});
+
+test('should build the default workflow run payload with the workflow and the run number', () => {
+	const run: LinkTargetModel = {
+		type: LinkType.WorkflowRun,
+		owner: 'react',
+		repo: 'react',
+		number: 20481,
+		title: 'Fix <lint>',
+		url: 'https://github.com/react/react/actions/runs/39798109963',
+		workflow: '(Shared) Lint',
+	};
+
+	expect(buildLinkPayload(run, DEFAULT_CONFIG)).toEqual({
+		text: '(Shared) Lint #20481: Fix <lint>',
+		parts: {
+			before: '',
+			link: '(Shared) Lint #20481',
+			after: ': Fix <lint>',
+		},
+		html: '<a href="https://github.com/react/react/actions/runs/39798109963">(Shared) Lint #20481</a>: Fix &lt;lint&gt;',
+		plain: '(Shared) Lint #20481: Fix <lint> — https://github.com/react/react/actions/runs/39798109963',
+		markdown:
+			'[(Shared) Lint #20481](https://github.com/react/react/actions/runs/39798109963): Fix <lint>',
+	});
+});
+
 test('should build the payload from a custom template with text on both sides of the link', () => {
 	const config = withPullRequestTemplate(
 		'{{owner}}/{{repo}}#[{{pr_number}}] {{pr_name}}'

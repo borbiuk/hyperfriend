@@ -66,6 +66,8 @@ export function serializeSettings(
 		templates: {
 			[LinkType.PullRequest]: config.templates[LinkType.PullRequest],
 			[LinkType.Issue]: config.templates[LinkType.Issue],
+			[LinkType.Discussion]: config.templates[LinkType.Discussion],
+			[LinkType.WorkflowRun]: config.templates[LinkType.WorkflowRun],
 		},
 		format: config.format,
 		shortcuts: cloneConfig(config).shortcuts,

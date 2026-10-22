@@ -3,9 +3,9 @@
 # Hyperfriend
 
 Hyperfriend is a **browser extension for Chrome and Firefox** that adds a one-click **copy link** button to every
-Pull Request and Issue on [GitHub](https://github.com). The button copies a rich hyperlink, so a pasted link in
+Pull Request, Issue, Discussion and workflow run on [GitHub](https://github.com). The button copies a rich hyperlink, so a pasted link in
 Microsoft Teams, Slack and other chats shows readable text such as `PR 12: Add copy button to PR list`
-(with `PR 12` as the link) instead of a bare URL. On an open Pull Request or Issue, a **keyboard shortcut** (Shift+C by default) copies the same link.
+(with `PR 12` as the link) instead of a bare URL. On an open Pull Request, Issue, Discussion or workflow run, a **keyboard shortcut** (Shift+C by default) copies the same link.
 
 Chrome Web Store and Firefox Add-ons listings are coming soon.
 
@@ -17,7 +17,7 @@ Chrome Web Store and Firefox Add-ons listings are coming soon.
 
 ### Copy button
 
-- **Pull Requests and Issues**: a button next to the title of every item in list views and next to the title on the detail pages.
+- **Pull Requests, Issues, Discussions and workflow runs**: a button next to the title of every item in list views and next to the title on the detail pages. A workflow run is linked as `WORKFLOW #RUN_NUMBER` (for example `CI #20481`) with the run's name as the text after it.
 - **Rich hyperlink** (the default copy format): the clipboard gets both formats at once, so every chat app picks the best one.
     - `text/html`: `<a href="https://github.com/OWNER/REPO/pull/12">PR 12</a>: Add copy button to PR list` (with the default template only `PR 12` is the link, see [Customizable templates](#customizable-templates))
     - `text/plain`: `PR 12: Add copy button to PR list — https://github.com/OWNER/REPO/pull/12`
@@ -29,8 +29,8 @@ Chrome Web Store and Firefox Add-ons listings are coming soon.
 
 ### Keyboard shortcut
 
-- **Copy the open item**: press **Shift+C** (⇧C on Mac) on an open Pull Request or Issue to copy its link. It copies exactly what the title copy button copies (same template, same clipboard formats).
-- **Where it works**: on the Pull Request page, **Conversation tab only** (`/OWNER/REPO/pull/12`; not Files changed, Commits or Checks), and on the Issue page (`/OWNER/REPO/issues/34`). Everywhere else the key press is left to GitHub.
+- **Copy the open item**: press **Shift+C** (⇧C on Mac) on an open Pull Request, Issue, Discussion or workflow run to copy its link. It copies exactly what the title copy button copies (same template, same clipboard formats).
+- **Where it works**: on the Pull Request page, **Conversation tab only** (`/OWNER/REPO/pull/12`; not Files changed, Commits or Checks), on the Issue page (`/OWNER/REPO/issues/34`), on the Discussion page (`/OWNER/REPO/discussions/5`) and on the workflow run page (`/OWNER/REPO/actions/runs/123`; not its job and attempt pages). Everywhere else the key press is left to GitHub.
 - **It never gets in the way of typing**: it does nothing while the focus is in a text field (comment box, search, title editor and similar), while a dialog is open, while holding the key down or while an input method is composing text. Other GitHub shortcuts keep working.
 - **Any keyboard layout**: the shortcut uses the physical key (for example the key that is `C` on a US keyboard), so it works with Cyrillic, Greek and other layouts too.
 - **Feedback**: the title button shows the usual "Copied!" tooltip. If the button is scrolled out of view, a small "Link copied" toast appears at the bottom of the page for about 2 seconds ("Copy failed" if the copy did not work). Screen readers announce the result, and the title button carries `aria-keyshortcuts` while the shortcut is on.
@@ -46,32 +46,42 @@ Chrome Web Store and Firefox Add-ons listings are coming soon.
 ### Customizable templates
 
 Click the Hyperfriend icon in the browser toolbar to open the settings popup. Its **Templates** tab has one template for Pull Request
-links and one for Issue links. Defaults:
+links and one for Issue links; the templates for Discussion and workflow run links are under **Discussions and workflow runs**. Defaults:
 
 - Pull Request: `[PR {{pr_number}}]: {{pr_name}}`
 - Issue: `[Issue {{issue_number}}]: {{issue_name}}`
+- Discussion: `[Discussion {{discussion_number}}]: {{discussion_name}}`
+- Workflow run: `[{{workflow}} #{{run_number}}]: {{run_name}}`
 
 **Square brackets mark the link.** Only the text inside `[` and `]` becomes the hyperlink; the rest is plain text. With the defaults a Pull Request pastes as the link "PR 12" followed by the plain text ": Add copy button to PR list". This keeps the link short: Microsoft Teams makes the whole pasted text one blue link and shortens long link text, so a short link such as "PR 12" stays readable.
 
-| Placeholder        | Available in  | Replaced with                                                 | Example                      |
-| ------------------ | ------------- | ------------------------------------------------------------- | ---------------------------- |
-| `{{pr_number}}`    | Pull Requests | Pull Request number                                           | `12`                         |
-| `{{pr_name}}`      | Pull Requests | Pull Request title                                            | `Add copy button to PR list` |
-| `{{issue_number}}` | Issues        | Issue number                                                  | `34`                         |
-| `{{issue_name}}`   | Issues        | Issue title                                                   | `Button is not shown`        |
-| `{{owner}}`        | Both          | Repository owner                                              | `borbiuk`                    |
-| `{{repo}}`         | Both          | Repository name                                               | `hyperfriend`                |
-| `{{url}}`          | Both          | Canonical Pull Request / Issue                                | `https://github.com/…`       |
-| `{{ref}}`          | Both          | Short reference `owner/repo#number`                           | `borbiuk/hyperfriend#12`     |
-| `{{author}}`       | Both          | Login of the author                                           | `borbiuk`                    |
-| `{{state}}`        | Both          | `open`, `closed`, `merged` or `draft`                         | `merged`                     |
-| `{{labels}}`       | Both          | Label names, separated by a comma and a space                 | `bug, ui`                    |
-| `{{assignees}}`    | Both          | Assignee logins, separated by a comma and a space             | `borbiuk, octocat`           |
-| `{{milestone}}`    | Both          | Milestone title                                               | `v2 release`                 |
-| `{{base_branch}}`  | Pull Requests | Target branch, as the page shows it                           | `master`                     |
-| `{{head_branch}}`  | Pull Requests | Source branch, as the page shows it (`owner:branch` in forks) | `copy-button`                |
+| Placeholder             | Available in  | Replaced with                                                     | Example                      |
+| ----------------------- | ------------- | ----------------------------------------------------------------- | ---------------------------- |
+| `{{pr_number}}`         | Pull Requests | Pull Request number                                               | `12`                         |
+| `{{pr_name}}`           | Pull Requests | Pull Request title                                                | `Add copy button to PR list` |
+| `{{issue_number}}`      | Issues        | Issue number                                                      | `34`                         |
+| `{{issue_name}}`        | Issues        | Issue title                                                       | `Button is not shown`        |
+| `{{owner}}`             | Both          | Repository owner                                                  | `borbiuk`                    |
+| `{{repo}}`              | Both          | Repository name                                                   | `hyperfriend`                |
+| `{{url}}`               | Both          | Canonical Pull Request / Issue                                    | `https://github.com/…`       |
+| `{{ref}}`               | Both          | Short reference `owner/repo#number`                               | `borbiuk/hyperfriend#12`     |
+| `{{author}}`            | Both          | Login of the author                                               | `borbiuk`                    |
+| `{{state}}`             | Both          | `open`, `closed`, `merged` or `draft`                             | `merged`                     |
+| `{{labels}}`            | Both          | Label names, separated by a comma and a space                     | `bug, ui`                    |
+| `{{assignees}}`         | Both          | Assignee logins, separated by a comma and a space                 | `borbiuk, octocat`           |
+| `{{milestone}}`         | Both          | Milestone title                                                   | `v2 release`                 |
+| `{{base_branch}}`       | Pull Requests | Target branch, as the page shows it                               | `master`                     |
+| `{{head_branch}}`       | Pull Requests | Source branch, as the page shows it (`owner:branch` in forks)     | `copy-button`                |
+| `{{discussion_number}}` | Discussions   | Discussion number                                                 | `5`                          |
+| `{{discussion_name}}`   | Discussions   | Discussion title                                                  | `Ideas for new placeholders` |
+| `{{category}}`          | Discussions   | Discussion category                                               | `Ideas`                      |
+| `{{run_number}}`        | Workflow runs | Run number shown as `#20481` (not the run id of the URL)          | `42`                         |
+| `{{run_name}}`          | Workflow runs | Name of the run (commit message, pull request title, ...)         | `Add copy button to PR list` |
+| `{{workflow}}`          | Workflow runs | Workflow name                                                     | `CI`                         |
+| `{{branch}}`            | Workflow runs | Branch of the run, as the page shows it (`owner:branch` in forks) | `main`                       |
+| `{{status}}`            | Workflow runs | Status in the words of the page                                   | `completed successfully`     |
 
-Where the data comes from: the number, title, owner, repo, `{{url}}` and `{{ref}}` are always known. The other placeholders are read from the page you copy on. A **list row** shows the author, the state and the labels (search results show none of them); a **Pull Request or Issue page** shows all of them (the branches on Pull Requests only). A placeholder whose data the page does not show is replaced with nothing, so `{{labels}}` is empty when the item has no labels or the row shows none.
+Where the data comes from: the number, title, owner, repo, `{{url}}` and, for Pull Requests, Issues and Discussions, `{{ref}}` are always known. For a Discussion `{{ref}}` and `{{author}}` are available as for the others; `{{labels}}`, `{{state}}` and the other Pull Request and Issue details are not (they stay as typed). A workflow run has no `{{ref}}`, because a run is not a numbered item of the repository. The other placeholders are read from the page you copy on. A **list row** shows the author, the state and the labels of a Pull Request or Issue, the author and the category of a Discussion, and the workflow, the status and the branch of a workflow run (search results show none of them); a **Pull Request or Issue page** shows all of them (the branches on Pull Requests only). A placeholder whose data the page does not show is replaced with nothing, so `{{labels}}` is empty when the item has no labels or the row shows none.
 
 Notes:
 
@@ -123,7 +133,9 @@ File format (schema version 4):
 	"exportedAt": "2026-10-20T18:00:00.000Z",
 	"templates": {
 		"pull-request": "[PR {{pr_number}}]: {{pr_name}}",
-		"issue": "[Issue {{issue_number}}]: {{issue_name}}"
+		"issue": "[Issue {{issue_number}}]: {{issue_name}}",
+		"discussion": "[Discussion {{discussion_number}}]: {{discussion_name}}",
+		"workflow-run": "[{{workflow}} #{{run_number}}]: {{run_name}}"
 	},
 	"format": "rich",
 	"shortcuts": {
@@ -159,7 +171,7 @@ Version 1, 2 and 3 files still import. The templates of version 1 and 2 files ar
 Import rules:
 
 - The file must be up to 64 KB (larger files are rejected before they are read) and valid JSON, with `"app": "hyperfriend"` and `"schemaVersion"` 1, 2, 3 or 4. A higher version is rejected as "created by a newer version of Hyperfriend".
-- `templates` must be an object. Only the keys `pull-request` and `issue` are read; other keys are ignored. Values are trimmed, and each must be a single line of text (no line breaks or control characters) of at most 500 characters; otherwise the error reads `Template "<key>" must be a single line of text up to 500 characters.` (In a version 1 file at least one known template must be present.)
+- `templates` must be an object. Only the keys `pull-request`, `issue`, `discussion` and `workflow-run` are read; other keys are ignored, and a template missing from the file keeps its current value (files exported by 2.3.0 and older have no `discussion` and `workflow-run`; 2.3.0 and older ignore them in newer files). Values are trimmed, and each must be a single line of text (no line breaks or control characters) of at most 500 characters; otherwise the error reads `Template "<key>" must be a single line of text up to 500 characters.` (In a version 1 file at least one known template must be present.)
 - `format` (version 4 only) must be `"rich"` or `"markdown"`; otherwise the error reads `Format must be "rich" or "markdown".`
 - `shortcuts` must be an object. Only the key `copy-link` is read. Its value needs `keys` that form a valid combination (at least one modifier, exactly one main key, not a combination the browser uses; a valid combination in another order is accepted and normalized) and a boolean `enabled`; otherwise the error reads `Shortcut "copy-link" is not valid.`
 - `display` must be an object. Only `authorAvatars` is read, and it must be `true` or `false`; otherwise the error reads `Display setting "authorAvatars" must be true or false.`
@@ -174,7 +186,7 @@ The popup has three tabs and a footer with a link to the GitHub repository. The 
 
 - **GitHub look**: built with Primer React, the design system of GitHub.
 - **Header**: the popup shows the extension icon next to the name.
-- **Templates**: each template field is marked with a Pull Request or Issue icon, lists the available placeholders and shows the resulting link text for a sample item (live preview). Changes are saved about 300 ms after you stop typing, with a "Saved" status.
+- **Templates**: each template field is marked with a Pull Request, Issue, Discussion or workflow run icon (the last two sit in a disclosure that is closed at first, so the popup stays short), lists the available placeholders and shows the resulting link text for a sample item (live preview). Changes are saved about 300 ms after you stop typing, with a "Saved" status.
 - **Shortcuts**: change, turn off or reset the keyboard shortcut (see above). Shortcuts don't work while you type in a text field.
 - **General**:
     - **Copy format**: **Rich link** (default) or **Markdown**, saved at once. The Templates preview shows what is pasted in the chosen format.
@@ -189,16 +201,20 @@ The popup has three tabs and a footer with a link to the GitHub repository. The 
 
 All pages are on `github.com`.
 
-| Page Type                 | URL                                                                                                                                 | What you get                                       |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| **Repository PR list**    | `/OWNER/REPO/pulls`, filters `/pulls/assigned/USER`, `/created_by/USER`, `/mentioned/USER`, `/review-requested/USER`, `/pulls/USER` | Copy button after every item title                 |
-| **Repository Issue list** | `/OWNER/REPO/issues`, filters `/issues/assigned/USER`, `/created_by/USER`, `/mentioned/USER`, `/review-requested/USER`              | Copy button after every item title                 |
-| **Dashboards**            | `/pulls`, `/issues` and their `assigned`, `created`, `mentioned`, `review-requested`, `recent-activity` tabs \*                     | Copy button after every item title                 |
-| **Search results**        | `/search?type=pullrequests`, `/search?type=issues`                                                                                  | Copy button after every result title               |
-| **Pull Request page**     | `/OWNER/REPO/pull/12`, including `/files`, `/commits`, `/checks`                                                                    | Copy button right after the `#number` of the title |
-| **Issue page**            | `/OWNER/REPO/issues/34`                                                                                                             | Copy button right after the `#number` of the title |
+| Page Type                 | URL                                                                                                                                 | What you get                                                   |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| **Repository PR list**    | `/OWNER/REPO/pulls`, filters `/pulls/assigned/USER`, `/created_by/USER`, `/mentioned/USER`, `/review-requested/USER`, `/pulls/USER` | Copy button after every item title                             |
+| **Repository Issue list** | `/OWNER/REPO/issues`, filters `/issues/assigned/USER`, `/created_by/USER`, `/mentioned/USER`, `/review-requested/USER`              | Copy button after every item title                             |
+| **Dashboards**            | `/pulls`, `/issues` and their `assigned`, `created`, `mentioned`, `review-requested`, `recent-activity` tabs \*                     | Copy button after every item title                             |
+| **Search results**        | `/search?type=pullrequests`, `/search?type=issues`                                                                                  | Copy button after every result title                           |
+| **Pull Request page**     | `/OWNER/REPO/pull/12`, including `/files`, `/commits`, `/checks`                                                                    | Copy button right after the `#number` of the title             |
+| **Issue page**            | `/OWNER/REPO/issues/34`                                                                                                             | Copy button right after the `#number` of the title             |
+| **Discussion list**       | `/OWNER/REPO/discussions`, `/discussions/categories/SLUG`                                                                           | Copy button after every discussion title (also the pinned one) |
+| **Discussion page**       | `/OWNER/REPO/discussions/5`                                                                                                         | Copy button right after the `#number` of the title             |
+| **Workflow run list**     | `/OWNER/REPO/actions`, `/actions/workflows/FILE.yml`                                                                                | Copy button after every run title                              |
+| **Workflow run page**     | `/OWNER/REPO/actions/runs/123`, including its job and attempt pages                                                                 | Copy button right after the `#run number` of the title         |
 
-The keyboard shortcut works on the Issue page and on the main Pull Request page only (`/OWNER/REPO/pull/12`, the Conversation tab), not on the Pull Request sub-tabs `/files`, `/commits` and `/checks`, even though the copy button is shown there.
+The keyboard shortcut works on the Issue page, the Discussion page, the workflow run summary page (`/OWNER/REPO/actions/runs/123`, not its job and attempt pages) and on the main Pull Request page only (`/OWNER/REPO/pull/12`, the Conversation tab), not on the Pull Request sub-tabs `/files`, `/commits` and `/checks`, even though the copy button is shown there.
 
 Author avatars are added to the Pull Request lists only (the repository and dashboard lists); Issue lists and search results do not get them. Other pages (for example `/OWNER/REPO/issues/new`) are left untouched.
 
@@ -277,7 +293,7 @@ First time on a machine, install the browser Playwright uses: `npx playwright in
 
 The tests cover **Chromium only**: Playwright cannot load extensions into Firefox, so Firefox stays covered by `npm run lint:firefox` and manual checks. Retries are off, so a flaky test is a bug to fix; a trace is kept for every failed test in `test-results/`, and the HTML report is written to `playwright-report/` (open it with `npx playwright show-report`).
 
-**Snapshots.** The e2e tests run on saved copies of public `react/react` pages (pull request list, pull request 9713 with its Files changed and Commits tabs, issue list, issue 10, and a pull request and an issue search) in `tests/e2e/fixtures/pages/`. Scripts, comment and description bodies, tokens, nonces and email addresses are stripped, and the capture fails if any of that remains; the snapshots are excluded from Prettier. Expected item numbers, titles and authors are read from `pages/index.json`. They are refreshed automatically every day by `markup.yml`, and by hand with `npm run test:snapshots` (needs network; review the diff for personal data). The capture waits until the page is stable and numbers GitHub's random ids in document order, so an unchanged page gives an unchanged file. Specs pick their data from the snapshot instead of fixed rows, so a refresh changes titles but not the tests. When a refresh makes tests fail, GitHub changed its markup: update the selectors in `src/content` and the tests.
+**Snapshots.** The e2e tests run on saved copies of public pages: `react/react` (pull request list, pull request 9713 with its Files changed and Commits tabs, issue list, issue 10, a pull request and an issue search, the workflow run list and the first finished run of that list at capture time) and `vercel/next.js` (the discussion list and the pinned discussion 10640) in `tests/e2e/fixtures/pages/`. Scripts, comment and description bodies, tokens, nonces and email addresses are stripped, and the capture fails if any of that remains; the snapshots are excluded from Prettier. Expected item numbers, titles and authors are read from `pages/index.json`. They are refreshed automatically every day by `markup.yml`, and by hand with `npm run test:snapshots` (needs network; review the diff for personal data). The capture waits until the page is stable and numbers GitHub's random ids in document order, so an unchanged page gives an unchanged file. Specs pick their data from the snapshot instead of fixed rows, so a refresh changes titles but not the tests. When a refresh makes tests fail, GitHub changed its markup: update the selectors in `src/content` and the tests.
 
 How to write tests and the review standard: [.claude/skills/playwright/SKILL.md](.claude/skills/playwright/SKILL.md) and [.claude/rules/testing.md](.claude/rules/testing.md).
 

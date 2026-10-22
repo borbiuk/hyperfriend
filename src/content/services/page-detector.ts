@@ -2,7 +2,7 @@
  * Kind of GitHub page the content script supports.
  */
 export enum PageKind {
-	/** Pull Request / Issue lists: repo lists, global dashboards and search results */
+	/** Pull Request / Issue / Discussion / workflow run lists: repo lists, global dashboards and search results */
 	List = 'list',
 
 	/** A single Pull Request, including its sub-tabs (`/files`, `/commits`, `/checks`) */
@@ -10,6 +10,12 @@ export enum PageKind {
 
 	/** A single Issue */
 	Issue = 'issue',
+
+	/** A single Discussion */
+	Discussion = 'discussion',
+
+	/** A single GitHub Actions workflow run, including its sub-pages (`/job/{id}`, `/attempts/{n}`) */
+	WorkflowRun = 'workflow-run',
 
 	/** Any other page; nothing is injected */
 	Unsupported = 'unsupported',
@@ -23,6 +29,29 @@ const PULL_REQUEST_CONVERSATION_REGEX = /^\/[^/]+\/[^/]+\/pull\/\d+\/?$/;
 
 /** `/{owner}/{repo}/issues/{n}` */
 const ISSUE_PAGE_REGEX = /^\/[^/]+\/[^/]+\/issues\/\d+\/?$/;
+
+/** `/{owner}/{repo}/discussions/{n}` */
+/** Organization discussions (`/orgs/{org}/discussions/{n}`) are not supported: they have no repository */
+const DISCUSSION_PAGE_REGEX = /^\/(?!orgs\/)[^/]+\/[^/]+\/discussions\/\d+\/?$/;
+
+/** `/{owner}/{repo}/actions/runs/{id}` with an optional sub-path (`/job/{id}`, `/attempts/{n}`, ...) */
+const WORKFLOW_RUN_PAGE_REGEX = /^\/[^/]+\/[^/]+\/actions\/runs\/\d+(?:\/.*)?$/;
+
+/** `/{owner}/{repo}/actions/runs/{id}`, also of one attempt (`/attempts/{n}`): the run summary, not a job page */
+const WORKFLOW_RUN_SUMMARY_REGEX =
+	/^\/[^/]+\/[^/]+\/actions\/runs\/\d+(?:\/attempts\/\d+)?\/?$/;
+
+/**
+ * Repository Discussion and Actions lists: `/{owner}/{repo}/discussions` (and a category,
+ * `/discussions/categories/{slug}`), `/{owner}/{repo}/actions` and one workflow's runs,
+ * `/actions/workflows/{file}`. Other paths below them (`/discussions/new`, `/actions/caches`, ...) are not lists.
+ */
+const DISCUSSION_AND_ACTIONS_LIST_REGEXES = [
+	/^\/(?!orgs\/)[^/]+\/[^/]+\/discussions\/?$/,
+	/^\/(?!orgs\/)[^/]+\/[^/]+\/discussions\/categories\/[^/]+\/?$/,
+	/^\/[^/]+\/[^/]+\/actions\/?$/,
+	/^\/[^/]+\/[^/]+\/actions\/workflows\/[^/]+\/?$/,
+];
 
 /**
  * Repository lists: `/{owner}/{repo}/pulls`, `/{owner}/{repo}/issues`, their filter sub-paths
@@ -61,9 +90,20 @@ export function detectPageKind(
 		return PageKind.Issue;
 	}
 
+	if (DISCUSSION_PAGE_REGEX.test(pathname)) {
+		return PageKind.Discussion;
+	}
+
+	if (WORKFLOW_RUN_PAGE_REGEX.test(pathname)) {
+		return PageKind.WorkflowRun;
+	}
+
 	if (
 		GLOBAL_LIST_REGEX.test(pathname) ||
-		REPO_LIST_REGEXES.some((regex) => regex.test(pathname))
+		REPO_LIST_REGEXES.some((regex) => regex.test(pathname)) ||
+		DISCUSSION_AND_ACTIONS_LIST_REGEXES.some((regex) =>
+			regex.test(pathname)
+		)
 	) {
 		return PageKind.List;
 	}
@@ -88,4 +128,31 @@ export function isPullRequestConversation(
 	location: Location | URL = window.location
 ): boolean {
 	return PULL_REQUEST_CONVERSATION_REGEX.test(location.pathname);
+}
+
+/**
+ * Returns whether the page is the summary of a workflow run (or of one attempt), not one of its
+ * other sub-pages (`/job/{id}`, ...).
+ *
+ * @param location - Location to inspect (defaults to the current page).
+ */
+export function isWorkflowRunSummary(
+	location: Location | URL = window.location
+): boolean {
+	return WORKFLOW_RUN_SUMMARY_REGEX.test(location.pathname);
+}
+
+/**
+ * Returns whether the page is a repository Discussion or Actions list. Their rows are found by
+ * their own selectors only: the link fallback for Pull Request and Issue lists would match the
+ * pull request links in the rows of a run list.
+ *
+ * @param location - Location to inspect (defaults to the current page).
+ */
+export function isDiscussionOrActionsList(
+	location: Location | URL = window.location
+): boolean {
+	return DISCUSSION_AND_ACTIONS_LIST_REGEXES.some((regex) =>
+		regex.test(location.pathname)
+	);
 }

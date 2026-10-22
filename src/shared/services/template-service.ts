@@ -9,7 +9,8 @@ const LIST_SEPARATOR = ', ';
 
 /**
  * Builds the placeholder values available for the given target.
- * Besides the advertised placeholders, the generic aliases `number` and `title` work for every type.
+ * Besides the advertised placeholders, the generic aliases `number` and `title` work for every type
+ * (for a workflow run `number` is the run number).
  * A placeholder whose data the page did not show is empty.
  */
 function getPlaceholderValues(target: LinkTargetModel): Record<string, string> {
@@ -20,13 +21,32 @@ function getPlaceholderValues(target: LinkTargetModel): Record<string, string> {
 		owner: target.owner,
 		repo: target.repo,
 		url: target.url,
-		ref: `${target.owner}/${target.repo}#${number}`,
-		author: target.author ?? '',
-		state: target.state ?? '',
-		labels: (target.labels ?? []).join(LIST_SEPARATOR),
-		assignees: (target.assignees ?? []).join(LIST_SEPARATOR),
-		milestone: target.milestone ?? '',
 	};
+
+	if (target.type === LinkType.WorkflowRun) {
+		values.run_number = number;
+		values.run_name = target.title;
+		values.workflow = target.workflow ?? '';
+		values.branch = target.branch ?? '';
+		values.status = target.status ?? '';
+		return values;
+	}
+
+	// A workflow run is not a numbered item of the repository, so it has no `#number` reference
+	values.ref = `${target.owner}/${target.repo}#${number}`;
+	values.author = target.author ?? '';
+
+	if (target.type === LinkType.Discussion) {
+		values.discussion_number = number;
+		values.discussion_name = target.title;
+		values.category = target.category ?? '';
+		return values;
+	}
+
+	values.state = target.state ?? '';
+	values.labels = (target.labels ?? []).join(LIST_SEPARATOR);
+	values.assignees = (target.assignees ?? []).join(LIST_SEPARATOR);
+	values.milestone = target.milestone ?? '';
 
 	if (target.type === LinkType.PullRequest) {
 		values.pr_number = number;
@@ -188,7 +208,7 @@ function renderParts(
  * the whole text are trimmed, inner spacing is kept.
  *
  * @param template - Template with `{{placeholder}}` tokens and an optional `[link]` part.
- * @param target - The Pull Request or Issue to render.
+ * @param target - The item (Pull Request, Issue, Discussion or workflow run) to render.
  * @returns Plain text parts (NOT HTML-escaped).
  */
 export function renderTemplateParts(
@@ -234,7 +254,7 @@ export function convertLegacyTemplate(
  * removed). See renderTemplateParts for the rules.
  *
  * @param template - Template with `{{placeholder}}` tokens and an optional `[link]` part.
- * @param target - The Pull Request or Issue to render.
+ * @param target - The item (Pull Request, Issue, Discussion or workflow run) to render.
  * @returns Trimmed plain text (NOT HTML-escaped).
  */
 export function renderTemplate(

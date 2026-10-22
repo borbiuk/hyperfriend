@@ -16,6 +16,7 @@ export const SHORTCUT_ITEMS: readonly ShortcutItem[] = [
 	{
 		type: ShortcutType.CopyLink,
 		title: 'Copy link',
-		description: 'On an open pull request or issue',
+		description:
+			'On an open pull request, issue, discussion or workflow run',
 	},
 ];

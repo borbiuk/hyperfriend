@@ -195,6 +195,9 @@ const DEFAULTS: ConfigModel = {
 	templates: {
 		[LinkType.PullRequest]: '[PR {{pr_number}}]: {{pr_name}}',
 		[LinkType.Issue]: '[Issue {{issue_number}}]: {{issue_name}}',
+		[LinkType.Discussion]:
+			'[Discussion {{discussion_number}}]: {{discussion_name}}',
+		[LinkType.WorkflowRun]: '[{{workflow}} #{{run_number}}]: {{run_name}}',
 	},
 	shortcuts: {
 		[ShortcutType.CopyLink]: { keys: ['Shift', 'KeyC'], enabled: true },
@@ -207,6 +210,8 @@ const CUSTOM_STORED = {
 	templates: {
 		'pull-request': '#{{pr_number}} [{{pr_name}}]',
 		issue: '[#{{issue_number}}] {{issue_name}}',
+		discussion: '[#{{discussion_number}}] {{discussion_name}}',
+		'workflow-run': '{{workflow}} [{{run_number}}]',
 	},
 	format: 'markdown',
 	shortcuts: {
@@ -226,6 +231,9 @@ test.describe('get', () => {
 				templates: {
 					[LinkType.PullRequest]: '#{{pr_number}} [{{pr_name}}]',
 					[LinkType.Issue]: '[#{{issue_number}}] {{issue_name}}',
+					[LinkType.Discussion]:
+						'[#{{discussion_number}}] {{discussion_name}}',
+					[LinkType.WorkflowRun]: '{{workflow}} [{{run_number}}]',
 				},
 				shortcuts: {
 					[ShortcutType.CopyLink]: {
@@ -234,6 +242,42 @@ test.describe('get', () => {
 					},
 				},
 				display: { authorAvatars: false },
+			},
+		},
+		{
+			title: 'should give the discussion and workflow run templates their defaults for data of 2.3.0 (no such templates)',
+			stored: {
+				templates: {
+					'pull-request': '#{{pr_number}}',
+					issue: '#{{issue_number}}',
+				},
+				templateFormat: 2,
+			},
+			expected: {
+				...DEFAULTS,
+				templates: {
+					...DEFAULTS.templates,
+					[LinkType.PullRequest]: '#{{pr_number}}',
+					[LinkType.Issue]: '#{{issue_number}}',
+				},
+			},
+		},
+		{
+			title: 'should read stored discussion and workflow run templates as given',
+			stored: {
+				templates: {
+					discussion: '[#{{discussion_number}}]',
+					'workflow-run': '{{workflow}} [{{run_number}}]',
+				},
+				templateFormat: 2,
+			},
+			expected: {
+				...DEFAULTS,
+				templates: {
+					...DEFAULTS.templates,
+					[LinkType.Discussion]: '[#{{discussion_number}}]',
+					[LinkType.WorkflowRun]: '{{workflow}} [{{run_number}}]',
+				},
 			},
 		},
 		{
@@ -264,6 +308,10 @@ test.describe('get', () => {
 				templates: {
 					[LinkType.PullRequest]: '[PR {{pr_number}}]: {{pr_name}}',
 					[LinkType.Issue]: '#{{issue_number}} \\[{{issue_name}}\\]',
+					[LinkType.Discussion]:
+						'[Discussion {{discussion_number}}]: {{discussion_name}}',
+					[LinkType.WorkflowRun]:
+						'[{{workflow}} #{{run_number}}]: {{run_name}}',
 				},
 				shortcuts: {
 					[ShortcutType.CopyLink]: {
@@ -289,6 +337,10 @@ test.describe('get', () => {
 					[LinkType.PullRequest]: '[PR {{pr_number}}]: {{pr_name}}',
 					[LinkType.Issue]:
 						'[Issue {{issue_number}}]: {{issue_name}}',
+					[LinkType.Discussion]:
+						'[Discussion {{discussion_number}}]: {{discussion_name}}',
+					[LinkType.WorkflowRun]:
+						'[{{workflow}} #{{run_number}}]: {{run_name}}',
 				},
 				shortcuts: {
 					[ShortcutType.CopyLink]: {
@@ -307,6 +359,9 @@ test.describe('get', () => {
 				templates: {
 					[LinkType.PullRequest]: '#{{pr_number}} \\[{{pr_name}}\\]',
 					[LinkType.Issue]: '\\[#{{issue_number}}\\] {{issue_name}}',
+					[LinkType.Discussion]:
+						'\\[#{{discussion_number}}\\] {{discussion_name}}',
+					[LinkType.WorkflowRun]: '{{workflow}} \\[{{run_number}}\\]',
 				},
 				shortcuts: {
 					[ShortcutType.CopyLink]: {
@@ -497,6 +552,10 @@ test.describe('template format marker', () => {
 				templates: {
 					'pull-request': '[PR {{pr_number}}]: {{pr_name}}',
 					issue: '\\[{{issue_number}}\\] {{issue_name}}',
+					discussion:
+						'[Discussion {{discussion_number}}]: {{discussion_name}}',
+					'workflow-run':
+						'[{{workflow}} #{{run_number}}]: {{run_name}}',
 				},
 				shortcuts: {
 					'copy-link': { keys: ['Shift', 'KeyC'], enabled: true },
@@ -515,6 +574,10 @@ test.describe('template format marker', () => {
 		expect((await configService.get()).templates).toEqual({
 			[LinkType.PullRequest]: '[PR {{pr_number}}]: {{pr_name}}',
 			[LinkType.Issue]: '\\[{{issue_number}}\\] {{issue_name}}',
+			[LinkType.Discussion]:
+				'[Discussion {{discussion_number}}]: {{discussion_name}}',
+			[LinkType.WorkflowRun]:
+				'[{{workflow}} #{{run_number}}]: {{run_name}}',
 		});
 	});
 });
@@ -531,6 +594,10 @@ test.describe('writers', () => {
 				templates: {
 					'pull-request': '[PR {{pr_number}}]: {{pr_name}}',
 					issue: '#{{issue_number}} [{{issue_name}}]',
+					discussion:
+						'[Discussion {{discussion_number}}]: {{discussion_name}}',
+					'workflow-run':
+						'[{{workflow}} #{{run_number}}]: {{run_name}}',
 				},
 				shortcuts: {
 					'copy-link': { keys: ['Shift', 'KeyC'], enabled: true },
@@ -555,6 +622,24 @@ test.describe('writers', () => {
 					'pull-request': '[{{title}}]',
 				},
 			},
+		});
+	});
+
+	test('should store a discussion and a workflow run template with the rest of the config', async () => {
+		await configService.setTemplates({
+			[LinkType.Discussion]: '[#{{discussion_number}}] {{category}}',
+			[LinkType.WorkflowRun]: '{{workflow}} [{{run_number}}]',
+		});
+
+		expect(storage.writes).toBe(1);
+		expect(
+			(storage.dump() as Record<string, { templates: unknown }>)[KEY]
+				.templates
+		).toEqual({
+			'pull-request': '[PR {{pr_number}}]: {{pr_name}}',
+			issue: '[Issue {{issue_number}}]: {{issue_name}}',
+			discussion: '[#{{discussion_number}}] {{category}}',
+			'workflow-run': '{{workflow}} [{{run_number}}]',
 		});
 	});
 
@@ -588,6 +673,10 @@ test.describe('writers', () => {
 				templates: {
 					'pull-request': '[#{{pr_number}}]',
 					issue: '[#{{issue_number}}]',
+					discussion:
+						'[Discussion {{discussion_number}}]: {{discussion_name}}',
+					'workflow-run':
+						'[{{workflow}} #{{run_number}}]: {{run_name}}',
 				},
 				shortcuts: {
 					'copy-link': { keys: ['Shift', 'KeyC'], enabled: true },
@@ -609,6 +698,10 @@ test.describe('writers', () => {
 				templates: {
 					'pull-request': '[PR {{pr_number}}]: {{pr_name}}',
 					issue: '[Issue {{issue_number}}]: {{issue_name}}',
+					discussion:
+						'[Discussion {{discussion_number}}]: {{discussion_name}}',
+					'workflow-run':
+						'[{{workflow}} #{{run_number}}]: {{run_name}}',
 				},
 				shortcuts: {
 					'copy-link': {
@@ -695,6 +788,10 @@ test.describe('writers', () => {
 				templates: {
 					'pull-request': '[{{repo}}#{{pr_number}}]',
 					issue: '[Issue {{issue_number}}]: {{issue_name}}',
+					discussion:
+						'[Discussion {{discussion_number}}]: {{discussion_name}}',
+					'workflow-run':
+						'[{{workflow}} #{{run_number}}]: {{run_name}}',
 				},
 				shortcuts: {
 					'copy-link': { keys: ['Alt', 'KeyL'], enabled: false },
@@ -753,6 +850,10 @@ test.describe('write queue', () => {
 				templates: {
 					'pull-request': '[#{{pr_number}}]',
 					issue: '[Issue {{issue_number}}]: {{issue_name}}',
+					discussion:
+						'[Discussion {{discussion_number}}]: {{discussion_name}}',
+					'workflow-run':
+						'[{{workflow}} #{{run_number}}]: {{run_name}}',
 				},
 				shortcuts: {
 					'copy-link': { keys: ['Alt', 'KeyL'], enabled: true },
@@ -788,6 +889,10 @@ test.describe('write queue', () => {
 				templates: {
 					'pull-request': '[PR {{pr_number}}]: {{pr_name}}',
 					issue: '[Issue {{issue_number}}]: {{issue_name}}',
+					discussion:
+						'[Discussion {{discussion_number}}]: {{discussion_name}}',
+					'workflow-run':
+						'[{{workflow}} #{{run_number}}]: {{run_name}}',
 				},
 				shortcuts: {
 					'copy-link': { keys: ['Shift', 'KeyC'], enabled: true },
@@ -816,6 +921,10 @@ test.describe('write queue', () => {
 				templates: {
 					'pull-request': '[PR {{pr_number}}]: {{pr_name}}',
 					issue: '[Issue {{issue_number}}]: {{issue_name}}',
+					discussion:
+						'[Discussion {{discussion_number}}]: {{discussion_name}}',
+					'workflow-run':
+						'[{{workflow}} #{{run_number}}]: {{run_name}}',
 				},
 				shortcuts: {
 					'copy-link': { keys: ['Shift', 'KeyC'], enabled: true },
@@ -899,6 +1008,9 @@ test.describe('subscribe', () => {
 				templates: {
 					[LinkType.PullRequest]: '#{{pr_number}} [{{pr_name}}]',
 					[LinkType.Issue]: '[#{{issue_number}}] {{issue_name}}',
+					[LinkType.Discussion]:
+						'[#{{discussion_number}}] {{discussion_name}}',
+					[LinkType.WorkflowRun]: '{{workflow}} [{{run_number}}]',
 				},
 				format: LinkFormat.Markdown,
 				shortcuts: {
@@ -935,6 +1047,10 @@ test('should build the stored value from the config plus the format marker', () 
 			templates: {
 				[LinkType.PullRequest]: '[#{{pr_number}}]',
 				[LinkType.Issue]: '[#{{issue_number}}]',
+				[LinkType.Discussion]:
+					'[Discussion {{discussion_number}}]: {{discussion_name}}',
+				[LinkType.WorkflowRun]:
+					'[{{workflow}} #{{run_number}}]: {{run_name}}',
 			},
 			shortcuts: {
 				[ShortcutType.CopyLink]: {
@@ -948,6 +1064,9 @@ test('should build the stored value from the config plus the format marker', () 
 		templates: {
 			'pull-request': '[#{{pr_number}}]',
 			issue: '[#{{issue_number}}]',
+			discussion:
+				'[Discussion {{discussion_number}}]: {{discussion_name}}',
+			'workflow-run': '[{{workflow}} #{{run_number}}]: {{run_name}}',
 		},
 		shortcuts: { 'copy-link': { keys: ['Alt', 'KeyL'], enabled: false } },
 		display: { authorAvatars: false },

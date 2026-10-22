@@ -1,7 +1,13 @@
-import { GitPullRequestIcon, IssueOpenedIcon } from '@primer/octicons-react';
+import {
+	CommentDiscussionIcon,
+	GitPullRequestIcon,
+	IssueOpenedIcon,
+	PlayIcon,
+} from '@primer/octicons-react';
 import { Text } from '@primer/react';
+import { DEFAULT_CONFIG } from '@shared/constants';
 import { ConfigModel, LinkTargetModel, LinkType } from '@shared/models';
-import { useId } from 'react';
+import { useId, useState } from 'react';
 
 import { FieldControls, TemplateField } from './template-field';
 
@@ -36,6 +42,29 @@ const SAMPLE_ISSUE: LinkTargetModel = {
 	milestone: '2.2.0',
 };
 
+const SAMPLE_DISCUSSION: LinkTargetModel = {
+	type: LinkType.Discussion,
+	owner: 'borbiuk',
+	repo: 'hyperfriend',
+	number: 3,
+	title: 'Ideas for new placeholders',
+	url: 'https://github.com/borbiuk/hyperfriend/discussions/3',
+	author: 'borbiuk',
+	category: 'Ideas',
+};
+
+const SAMPLE_RUN: LinkTargetModel = {
+	type: LinkType.WorkflowRun,
+	owner: 'borbiuk',
+	repo: 'hyperfriend',
+	number: 42,
+	title: 'Add copy button to PR list',
+	url: 'https://github.com/borbiuk/hyperfriend/actions/runs/1234567890',
+	workflow: 'build',
+	branch: 'copy-button',
+	status: 'completed successfully',
+};
+
 interface TemplatesPanelProps {
 	config: ConfigModel;
 	/** Increments every time the settings are replaced from outside (reset, import). */
@@ -45,7 +74,7 @@ interface TemplatesPanelProps {
 }
 
 /**
- * Content of the Templates tab: the Pull Request and Issue link templates.
+ * Content of the Templates tab: the Pull Request, Issue, Discussion and workflow run link templates.
  */
 export function TemplatesPanel({
 	config,
@@ -53,10 +82,19 @@ export function TemplatesPanel({
 	registerField,
 }: TemplatesPanelProps) {
 	const noteId = useId();
+	// A customized template of the two less common types is not hidden; the disclosure is not
+	// re-opened or closed while the user types (the initial value only)
+	const [startOpen] = useState(
+		() =>
+			config.templates[LinkType.Discussion] !==
+				DEFAULT_CONFIG.templates[LinkType.Discussion] ||
+			config.templates[LinkType.WorkflowRun] !==
+				DEFAULT_CONFIG.templates[LinkType.WorkflowRun]
+	);
 
 	return (
 		<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-			{/* A note for both fields, so it comes first; each input lists it in aria-describedby. */}
+			{/* A note for all fields, so it comes first; each input lists it in aria-describedby. */}
 			<Text
 				id={noteId}
 				size="small"
@@ -89,6 +127,49 @@ export function TemplatesPanel({
 					registerField={registerField}
 					noteId={noteId}
 				/>
+				{/* Closed by default: four fields would make the popup taller than Chrome allows (600 px) */}
+				<details open={startOpen}>
+					<summary
+						style={{
+							cursor: 'pointer',
+							fontWeight: 600,
+							fontSize: 14,
+						}}
+					>
+						Discussions and workflow runs
+					</summary>
+					<div
+						style={{
+							display: 'flex',
+							flexDirection: 'column',
+							gap: 16,
+							marginTop: 12,
+						}}
+					>
+						<TemplateField
+							type={LinkType.Discussion}
+							label="Discussion link template"
+							icon={CommentDiscussionIcon}
+							value={config.templates[LinkType.Discussion]}
+							sample={SAMPLE_DISCUSSION}
+							format={config.format}
+							syncEpoch={syncEpoch}
+							registerField={registerField}
+							noteId={noteId}
+						/>
+						<TemplateField
+							type={LinkType.WorkflowRun}
+							label="Workflow run link template"
+							icon={PlayIcon}
+							value={config.templates[LinkType.WorkflowRun]}
+							sample={SAMPLE_RUN}
+							format={config.format}
+							syncEpoch={syncEpoch}
+							registerField={registerField}
+							noteId={noteId}
+						/>
+					</div>
+				</details>
 			</div>
 		</div>
 	);

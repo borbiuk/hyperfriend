@@ -7,7 +7,12 @@
 		"/react/react/issues": "issue-list.html",
 		"/react/react/issues/10": "issue.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": "search-pulls.html",
-		"/search?q=repo%3Areact%2Freact+useActionState&type=issues": "search-issues.html"
+		"/search?q=repo%3Areact%2Freact+useActionState&type=issues": "search-issues.html",
+		"/vercel/next.js/discussions": "discussion-list.html",
+		"/vercel/next.js/discussions/10640": "discussion.html",
+		"/react/react/actions": "run-list.html",
+		"/react/react/actions/runs/39803181561": "run.html",
+		"/react/react/actions/runs/39798109963": "run.html"
 	},
 	"items": {
 		"/react/react/pulls": [
@@ -549,6 +554,389 @@
 				"number": 35242,
 				"title": "Bug: `useActionState`'s second argument is not optional in the React types"
 			}
+		],
+		"/vercel/next.js/discussions": [
+			{
+				"number": 10640,
+				"title": "Companies / Sites using Next.js",
+				"author": "timneutkens",
+				"category": "Show and tell"
+			},
+			{
+				"number": 100590,
+				"title": "NPM Audit Report – High Severity Vulnerabilities",
+				"author": "Codeer22",
+				"category": "Help"
+			},
+			{
+				"number": 100584,
+				"title": "Turbopack Error: Invariant: Expected to replace all template variables, found VAR_MODULE_GLOBAL_ERROR",
+				"author": "veektrie",
+				"category": "Turbopack Error Report"
+			},
+			{
+				"number": 100006,
+				"title": "Release-specific copyright/license references for client-only 0.0.1 and vendored Edge packages in Next 16.4.0",
+				"author": "diegosr00",
+				"category": "Help"
+			},
+			{
+				"number": 91785,
+				"title": "Next.js 16 use cache + revalidateTag behaving unexpectedly — FETCH POSTS logs immediately after revalidation, and Link navigation shows inconsistent stale data",
+				"author": "AnhTuan238",
+				"category": "Help"
+			},
+			{
+				"number": 94103,
+				"title": "What common performance issues have you faced in Next.js apps?",
+				"author": "LakshanHewagama",
+				"category": "Help"
+			},
+			{
+				"number": 98310,
+				"title": "How to stop Next.js from caching notFound() renders for invalid dynamic route params?",
+				"author": "aliasgary1",
+				"category": "Help"
+			},
+			{
+				"number": 93267,
+				"title": "Add Android arm64 SWC binary support",
+				"author": "Zohaib8090",
+				"category": "Ideas"
+			},
+			{
+				"number": 100516,
+				"title": "Turbopack Error: [project]/node_modules/powershell-utils/index.js [app-rsc] (ecmascript)",
+				"author": "Svish",
+				"category": "Turbopack Error Report"
+			},
+			{
+				"number": 99974,
+				"title": "Serving a remote MCP server from a Next.js App Router route handler (Streamable HTTP, stateless)",
+				"author": "matrixagentsocial",
+				"category": "Show and tell"
+			},
+			{
+				"number": 100547,
+				"title": "next build fails on TypeScript 7.1 projects that use content mappers (TS18068)",
+				"author": "colinhacks",
+				"category": "Ideas"
+			},
+			{
+				"number": 53091,
+				"title": "Next.js App with Plugin architecture",
+				"author": "jamalsa",
+				"category": "Help"
+			},
+			{
+				"number": 49371,
+				"title": "Recommended API mocking setup",
+				"author": "SplittyDev",
+				"category": "Help"
+			},
+			{
+				"number": 88000,
+				"title": "# Regression: next/image strips headers from internal API requests",
+				"author": "RHOOPH",
+				"category": "App Router"
+			},
+			{
+				"number": 10640,
+				"title": "Companies / Sites using Next.js",
+				"author": "timneutkens",
+				"category": "Show and tell"
+			},
+			{
+				"number": 98653,
+				"title": "Turbopack Internal Panic: Restore of All for task ... failed in another thread",
+				"author": "smishra11",
+				"category": "Turbopack Error Report"
+			},
+			{
+				"number": 100455,
+				"title": "⚡ In-Engine Hybrid Search for Next.js & PostgreSQL (3.2x faster than Elasticsearch, 0 API tokens)",
+				"author": "am-mar7",
+				"category": "Show and tell"
+			},
+			{
+				"number": 100361,
+				"title": "Nextjs + Plugin Architecture - Is it possible to dynamically load compiled components in runtime?",
+				"author": "HybridSolutions",
+				"category": "Help"
+			},
+			{
+				"number": 100378,
+				"title": "Deploying Next.js: Vercel vs Docker in production?",
+				"author": "codeitwithaayush",
+				"category": "Help"
+			},
+			{
+				"number": 74232,
+				"title": "In SSG mode using API Routes as mock",
+				"author": "clovu",
+				"category": "Ideas"
+			},
+			{
+				"number": 100369,
+				"title": "Turbopack Error: failed to receive message",
+				"author": "moayad98",
+				"category": "Turbopack Error Report"
+			},
+			{
+				"number": 100415,
+				"title": "Turbopack Error: distDirRoot must stay inside the project root",
+				"author": "Chanbasha13",
+				"category": "Turbopack Error Report"
+			},
+			{
+				"number": 100254,
+				"title": "Turbopack Error: OS file watch limit reached. about [\"/home/leontm/Schreibtisch/Projekte/services.find-a.app\"]",
+				"author": "leontm-dev",
+				"category": "Turbopack Error Report"
+			},
+			{
+				"number": 97485,
+				"title": "RSC payload served from browser disk cache after router cache is cleared by a mutation",
+				"author": "VladSmirnou",
+				"category": "Triage"
+			},
+			{
+				"number": 96356,
+				"title": "cacheHandlers doesn't support Typescript or modern module syntax?",
+				"author": "Svish",
+				"category": "Help"
+			},
+			{
+				"number": 99462,
+				"title": "Release-matched native notices and original marker-package source",
+				"author": "lgagamel",
+				"category": "Help"
+			}
+		],
+		"/vercel/next.js/discussions/10640": [
+			{
+				"number": 10640,
+				"title": "Companies / Sites using Next.js",
+				"author": "timneutkens",
+				"category": "Show and tell"
+			}
+		],
+		"/react/react/actions": [
+			{
+				"number": 22223,
+				"runId": 39803181561,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 19650,
+				"runId": 39802678377,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 20481,
+				"runId": 39798109963,
+				"title": "[compiler] Allow ref access in ResizeObserver / MutationObserver callbacks",
+				"workflow": "(Shared) Lint",
+				"status": "completed successfully",
+				"branch": "zhoubiao188:scan-2026-10-19"
+			},
+			{
+				"number": 9008,
+				"runId": 39798109942,
+				"title": "[compiler] Allow ref access in ResizeObserver / MutationObserver callbacks",
+				"workflow": "(Compiler) Playground",
+				"status": "completed successfully",
+				"branch": "zhoubiao188:scan-2026-10-19"
+			},
+			{
+				"number": 9013,
+				"runId": 39798109891,
+				"title": "[compiler] Allow ref access in ResizeObserver / MutationObserver callbacks",
+				"workflow": "(Compiler) TypeScript",
+				"status": "completed successfully",
+				"branch": "zhoubiao188:scan-2026-10-19"
+			},
+			{
+				"number": 1270,
+				"runId": 39798109832,
+				"title": "[compiler] Allow ref access in ResizeObserver / MutationObserver callbacks",
+				"workflow": "React Compiler (Rust)",
+				"status": "completed successfully",
+				"branch": "zhoubiao188:scan-2026-10-19"
+			},
+			{
+				"number": 20480,
+				"runId": 39796955515,
+				"title": "[compiler] Allow ref access in ResizeObserver / MutationObserver callbacks",
+				"workflow": "(Shared) Lint",
+				"status": "completed successfully",
+				"branch": "zhoubiao188:scan-2026-10-19"
+			},
+			{
+				"number": 9012,
+				"runId": 39796955492,
+				"title": "[compiler] Allow ref access in ResizeObserver / MutationObserver callbacks",
+				"workflow": "(Compiler) TypeScript",
+				"status": "failed",
+				"branch": "zhoubiao188:scan-2026-10-19"
+			},
+			{
+				"number": 1269,
+				"runId": 39796955343,
+				"title": "[compiler] Allow ref access in ResizeObserver / MutationObserver callbacks",
+				"workflow": "React Compiler (Rust)",
+				"status": "completed successfully",
+				"branch": "zhoubiao188:scan-2026-10-19"
+			},
+			{
+				"number": 9007,
+				"runId": 39796955206,
+				"title": "[compiler] Allow ref access in ResizeObserver / MutationObserver callbacks",
+				"workflow": "(Compiler) Playground",
+				"status": "completed successfully",
+				"branch": "zhoubiao188:scan-2026-10-19"
+			},
+			{
+				"number": 22222,
+				"runId": 39794194038,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 19649,
+				"runId": 39793745704,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 22221,
+				"runId": 39785505012,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 19648,
+				"runId": 39784938718,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 22220,
+				"runId": 39778013959,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 19647,
+				"runId": 39777388336,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 2292,
+				"runId": 39774852751,
+				"title": "(Shared) Cleanup Stale Branch Caches",
+				"workflow": "(Shared) Cleanup Stale Branch Caches",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 3079,
+				"runId": 39773618764,
+				"title": "[Experiment] Flight Result as a map of Server Component expansions",
+				"workflow": "(Runtime) Discord Notify",
+				"status": "completed successfully"
+			},
+			{
+				"number": 22219,
+				"runId": 39769061043,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 19646,
+				"runId": 39768683070,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 2158,
+				"runId": 39768319543,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 2157,
+				"runId": 39768317911,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 2156,
+				"runId": 39768314523,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 2155,
+				"runId": 39768313152,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 2154,
+				"runId": 39768310344,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			}
+		],
+		"/react/react/actions/runs/39803181561": [
+			{
+				"runId": 39803181561,
+				"number": 22223,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			}
+		],
+		"/react/react/actions/runs/39798109963": [
+			{
+				"runId": 39798109963,
+				"number": 20481,
+				"title": "[compiler] Allow ref access in ResizeObserver / MutationObserver callbacks",
+				"workflow": "(Shared) Lint",
+				"status": "completed successfully",
+				"branch": "zhoubiao188:scan-2026-10-19"
+			}
 		]
-	}
+	},
+	"runPage": "/react/react/actions/runs/39798109963"
 }

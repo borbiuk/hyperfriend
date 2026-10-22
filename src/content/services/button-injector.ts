@@ -16,7 +16,11 @@ import {
 	parseDetailPage,
 	parseListLink,
 } from './link-target-parser';
-import { detectPageKind, PageKind } from './page-detector';
+import {
+	detectPageKind,
+	isDiscussionOrActionsList,
+	PageKind,
+} from './page-detector';
 
 /** Keyboard shortcut of the title button for assistive technologies */
 const KEY_SHORTCUTS_ATTRIBUTE = 'aria-keyshortcuts';
@@ -24,13 +28,21 @@ const KEY_SHORTCUTS_ATTRIBUTE = 'aria-keyshortcuts';
 /** Marker set on hosts (title links / headers) that got a copy button */
 const PROCESSED_ATTRIBUTE = 'data-hyperfriend-processed';
 
-/** Title links of list rows: React list views, classic lists, search results */
+/** Title links of Discussion rows: the classic list rows and the pinned spotlight */
+const DISCUSSION_TITLE_LINK_SELECTOR =
+	'a.markdown-title[href*="/discussions/"], a.discussion-title';
+
+/** Title links of list rows: React list views, classic lists, search results, Discussions, workflow runs */
 const LIST_TITLE_LINK_SELECTOR = [
 	'a[data-testid="listitem-title-link"]',
 	'a[data-testid="issue-pr-title-link"]',
 	'a[data-testid="issue-listitem-title-link"]',
 	'a[id^="issue_"][id$="_link"]',
 	'[data-testid="results-list"] .search-title a[href]',
+	// Discussion rows (classic list, and the pinned spotlight)
+	DISCUSSION_TITLE_LINK_SELECTOR,
+	// Workflow run rows (React list view; the other links of a row point elsewhere)
+	'[data-listview-item-title-container] a[href*="/actions/runs/"]',
 ].join(', ');
 
 /** Fallback when none of the known title links are found: PR / Issue links in the main content */
@@ -60,6 +72,8 @@ const DETAIL_HEADER_SELECTORS = [
 	'[data-testid="issue-title"]',
 	'.gh-header-title',
 	'bdi.js-issue-title',
+	// Workflow run page: the title and the `#run number` in a PageHeader
+	'h1.PageHeader-title',
 ];
 
 /** Sticky (scroll) headers repeat the title; the button goes into the main header only */
@@ -82,7 +96,7 @@ const INLINE_CLASS = 'hyperfriend-copy-button--inline';
 const INLINE_OFFSET_PROPERTY = '--hyperfriend-inline-offset';
 
 /**
- * Finds Pull Request / Issue titles on the page and injects copy buttons next to them.
+ * Finds Pull Request / Issue / Discussion / workflow run titles on the page and injects copy buttons next to them.
  * Idempotent: safe to call on every DOM change.
  */
 export class ButtonInjector {
@@ -120,7 +134,7 @@ export class ButtonInjector {
 	}
 
 	/**
-	 * Resolves the Pull Request / Issue of the current detail page without a title button,
+	 * Resolves the item of the current detail page without a title button,
 	 * from the title header or, failing that, the document title.
 	 *
 	 * @returns The target, or `null` if it can not be resolved.
@@ -150,6 +164,8 @@ export class ButtonInjector {
 				return;
 			case PageKind.PullRequest:
 			case PageKind.Issue:
+			case PageKind.Discussion:
+			case PageKind.WorkflowRun:
 				this.scanDetail();
 				return;
 			default:
@@ -159,7 +175,7 @@ export class ButtonInjector {
 
 	private scanList(): void {
 		let anchors = this.findListLinks(LIST_TITLE_LINK_SELECTOR);
-		if (anchors.length === 0) {
+		if (anchors.length === 0 && !isDiscussionOrActionsList()) {
 			// Comment links (`#issuecomment-1`) and filtered links (`?q=`) are never row titles
 			anchors = this.findListLinks(FALLBACK_LIST_LINK_SELECTOR).filter(
 				(anchor) => !anchor.hash && !anchor.search
@@ -235,7 +251,7 @@ export class ButtonInjector {
 	}
 
 	/**
-	 * Returns title links of list rows that point to a Pull Request or Issue.
+	 * Returns title links of list rows that point to a supported item.
 	 */
 	private findListLinks(selector: string): HTMLAnchorElement[] {
 		return Array.from(
@@ -252,6 +268,12 @@ export class ButtonInjector {
 	 * (so the button is not part of the heading name), otherwise the link itself.
 	 */
 	private getListReference(anchor: HTMLAnchorElement): Element {
+		// A Discussion title is a block heading: the button follows the link inside it, on the
+		// title's last line, instead of sitting on a line of its own
+		if (anchor.matches(DISCUSSION_TITLE_LINK_SELECTOR)) {
+			return anchor;
+		}
+
 		const parent = anchor.parentElement;
 		if (
 			parent &&

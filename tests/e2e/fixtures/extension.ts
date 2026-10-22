@@ -44,9 +44,14 @@ export interface KeyRecord {
 	defaultPrevented: boolean;
 }
 
+/** Settings to store: any part of the config; `templates` may name only some link types */
+export type ConfigOverrides = Omit<Partial<ConfigModel>, 'templates'> & {
+	templates?: Partial<ConfigModel['templates']>;
+};
+
 export interface ExtensionStorage {
 	/** Stores `overrides` merged over the default config, in the shape the extension itself writes */
-	seedConfig(overrides: Partial<ConfigModel>): Promise<void>;
+	seedConfig(overrides: ConfigOverrides): Promise<void>;
 	/** Stores `value` as is; only for upgrade tests with data written by older versions */
 	setRawConfig(value: unknown): Promise<void>;
 	/** The stored config, or `undefined` when nothing is stored */
@@ -193,8 +198,16 @@ export const test = base.extend<ExtensionFixtures & ExtensionOptions>({
 
 		await use({
 			async seedConfig(overrides) {
+				const defaults = cloneDefaultConfig();
 				await setRawConfig(
-					toStoredConfig({ ...cloneDefaultConfig(), ...overrides })
+					toStoredConfig({
+						...defaults,
+						...overrides,
+						templates: {
+							...defaults.templates,
+							...overrides.templates,
+						},
+					})
 				);
 			},
 			setRawConfig,

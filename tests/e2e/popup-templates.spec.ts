@@ -143,6 +143,131 @@ test('should list the metadata placeholders and preview them with the sample ite
 	);
 });
 
+/**
+ * Opens the closed disclosure that holds the Discussion and Workflow run fields.
+ *
+ * @param options - Settings page.
+ */
+async function openDisclosure(options: Page): Promise<void> {
+	await options
+		.getByText('Discussions and workflow runs', { exact: true })
+		.click();
+}
+
+test('should keep the discussion and workflow run fields in a disclosure that is closed at first', async ({
+	openOptions,
+}) => {
+	const options = await openOptions();
+	await expect(
+		options.getByRole('textbox', { name: 'Discussion link template' })
+	).toBeHidden();
+	await expect(
+		options.getByRole('textbox', { name: 'Workflow run link template' })
+	).toBeHidden();
+
+	await openDisclosure(options);
+
+	const discussion = templateField(options, 'Discussion link template');
+	const run = templateField(options, 'Workflow run link template');
+	await expect(discussion.getByRole('textbox')).toHaveValue(
+		'[Discussion {{discussion_number}}]: {{discussion_name}}'
+	);
+	await expect(run.getByRole('textbox')).toHaveValue(
+		'[{{workflow}} #{{run_number}}]: {{run_name}}'
+	);
+	for (const name of ['category', 'author', 'ref']) {
+		await expect(
+			discussion.getByText(`{{${name}}}`, { exact: true })
+		).toBeVisible();
+	}
+	for (const name of ['workflow', 'branch', 'status']) {
+		await expect(
+			run.getByText(`{{${name}}}`, { exact: true })
+		).toBeVisible();
+	}
+	// A workflow run is no numbered item of the repository
+	await expect(run.getByText('{{ref}}', { exact: true })).toHaveCount(0);
+});
+
+test('should open the disclosure at first when a discussion or workflow run template is customized', async ({
+	openOptions,
+	storage,
+}) => {
+	await storage.seedConfig({
+		templates: { 'workflow-run': '{{workflow}} [{{run_number}}]' },
+	});
+
+	const options = await openOptions();
+
+	await expect(
+		options.getByRole('textbox', { name: 'Workflow run link template' })
+	).toHaveValue('{{workflow}} [{{run_number}}]');
+});
+
+test('should preview the discussion and workflow run templates with their samples', async ({
+	openOptions,
+}) => {
+	const options = await openOptions();
+	await openDisclosure(options);
+	const discussion = templateField(options, 'Discussion link template');
+	const run = templateField(options, 'Workflow run link template');
+
+	await discussion
+		.getByRole('textbox')
+		.fill('[#{{discussion_number}}] {{category}} by {{author}}');
+	await run
+		.getByRole('textbox')
+		.fill('{{workflow}} [{{run_number}}] on {{branch}}');
+
+	// Only the bracketed part is the link; the screen reader note "(link)" follows it
+	await expect(
+		discussion.getByText(/^Preview: .*Ideas by borbiuk$/)
+	).toHaveText('Preview: #3 (link) Ideas by borbiuk');
+	await expect(
+		run.getByText(/^Preview: build .* on copy-button$/)
+	).toHaveText('Preview: build 42 (link) on copy-button');
+});
+
+test('should save the discussion and workflow run templates and show them again after a reload', async ({
+	openOptions,
+	storage,
+}) => {
+	const options = await openOptions();
+	await openDisclosure(options);
+	const discussion = templateField(options, 'Discussion link template');
+	const run = templateField(options, 'Workflow run link template');
+
+	await discussion
+		.getByRole('textbox')
+		.fill('[#{{discussion_number}}] {{category}} by {{author}}');
+	await run
+		.getByRole('textbox')
+		.fill('{{workflow}} [{{run_number}}] on {{branch}}');
+
+	await expect
+		.poll(() => storage.getConfig())
+		.toEqual({
+			...DEFAULT_STORED_CONFIG,
+			templates: {
+				...DEFAULT_STORED_CONFIG.templates,
+				discussion:
+					'[#{{discussion_number}}] {{category}} by {{author}}',
+				'workflow-run': '{{workflow}} [{{run_number}}] on {{branch}}',
+			},
+		});
+
+	await test.step('after a reload both fields show their templates', async () => {
+		await options.reload();
+		// A customized template opens the disclosure by itself
+		await expect(
+			options.getByRole('textbox', { name: 'Discussion link template' })
+		).toHaveValue('[#{{discussion_number}}] {{category}} by {{author}}');
+		await expect(
+			options.getByRole('textbox', { name: 'Workflow run link template' })
+		).toHaveValue('{{workflow}} [{{run_number}}] on {{branch}}');
+	});
+});
+
 test('should limit a template to 500 characters', async ({ openOptions }) => {
 	const options = await openOptions();
 	const field = templateField(options, PULL_REQUEST_LABEL);

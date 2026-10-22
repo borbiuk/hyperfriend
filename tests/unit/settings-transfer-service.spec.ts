@@ -17,6 +17,8 @@ const CUSTOM_CONFIG: ConfigModel = {
 	templates: {
 		[LinkType.PullRequest]: '{{pr_name}} [#{{pr_number}}] "draft"',
 		[LinkType.Issue]: '\\[{{issue_number}}\\] {{issue_name}}',
+		[LinkType.Discussion]: '{{category}} [#{{discussion_number}}]',
+		[LinkType.WorkflowRun]: '[{{workflow}}] {{run_name}}',
 	},
 	format: LinkFormat.Markdown,
 	shortcuts: {
@@ -52,7 +54,9 @@ test('should serialize the config as pretty schema 4 JSON with the given export 
 			'  "exportedAt": "2026-10-21T08:30:00.000Z",',
 			'  "templates": {',
 			'    "pull-request": "{{pr_name}} [#{{pr_number}}] \\"draft\\"",',
-			'    "issue": "\\\\[{{issue_number}}\\\\] {{issue_name}}"',
+			'    "issue": "\\\\[{{issue_number}}\\\\] {{issue_name}}",',
+			'    "discussion": "{{category}} [#{{discussion_number}}]",',
+			'    "workflow-run": "[{{workflow}}] {{run_name}}"',
 			'  },',
 			'  "format": "markdown",',
 			'  "shortcuts": {',
@@ -83,6 +87,8 @@ test('should read back every setting of an exported file', () => {
 			templates: {
 				[LinkType.PullRequest]: '{{pr_name}} [#{{pr_number}}] "draft"',
 				[LinkType.Issue]: '\\[{{issue_number}}\\] {{issue_name}}',
+				[LinkType.Discussion]: '{{category}} [#{{discussion_number}}]',
+				[LinkType.WorkflowRun]: '[{{workflow}}] {{run_name}}',
 			},
 			format: LinkFormat.Markdown,
 			shortcuts: {
@@ -159,6 +165,39 @@ const SUCCESS_CASES: ParseCase[] = [
 			display: { authorAvatars: false },
 		}),
 		expected: { ok: true, settings: { display: { authorAvatars: false } } },
+	},
+	{
+		title: 'should read the discussion and workflow run templates of a schema 4 file',
+		text: settingsFile({
+			schemaVersion: 4,
+			templates: {
+				discussion: '  [#{{discussion_number}}] {{category}}  ',
+				'workflow-run': '{{workflow}} [{{run_number}}]',
+			},
+		}),
+		expected: {
+			ok: true,
+			settings: {
+				templates: {
+					[LinkType.Discussion]:
+						'[#{{discussion_number}}] {{category}}',
+					[LinkType.WorkflowRun]: '{{workflow}} [{{run_number}}]',
+				},
+			},
+		},
+	},
+	{
+		title: 'should read a schema 4 file without the discussion and workflow run templates, as 2.3.0 wrote it',
+		text: settingsFile({
+			schemaVersion: 4,
+			templates: { 'pull-request': '[#{{pr_number}}]' },
+		}),
+		expected: {
+			ok: true,
+			settings: {
+				templates: { [LinkType.PullRequest]: '[#{{pr_number}}]' },
+			},
+		},
 	},
 	{
 		title: 'should read the format of a schema 4 file together with the other sections',
@@ -373,6 +412,17 @@ const ERROR_CASES: ParseCase[] = [
 		expected: {
 			ok: false,
 			error: 'Format must be "rich" or "markdown".',
+		},
+	},
+	{
+		title: 'should reject a discussion template with a line break in a schema 4 file',
+		text: settingsFile({
+			schemaVersion: 4,
+			templates: { discussion: '[#{{discussion_number}}]\n{{category}}' },
+		}),
+		expected: {
+			ok: false,
+			error: 'Template "discussion" must be a single line of text up to 500 characters.',
 		},
 	},
 	{

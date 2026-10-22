@@ -21,7 +21,7 @@ const FEEDBACK_DURATION_MS = 1500;
 const ACTIVATION_KEYS = new Set(['Enter', ' ']);
 
 /**
- * Resolves the Pull Request / Issue to copy; called on every click, so the title is always current.
+ * Resolves the item (Pull Request, Issue, Discussion or workflow run) to copy; called on every click, so the title is always current.
  * `withMetadata` asks for the details the placeholders need (author, state, labels, ...); labels
  * and tooltips do not need them.
  */
@@ -63,13 +63,15 @@ const FEEDBACK_MESSAGES: Record<
 const LABELS: Record<LinkType, string> = {
 	[LinkType.PullRequest]: 'Copy link to pull request',
 	[LinkType.Issue]: 'Copy link to issue',
+	[LinkType.Discussion]: 'Copy link to discussion',
+	[LinkType.WorkflowRun]: 'Copy link to workflow run',
 };
 
 /** Label when the target can not be resolved */
 const FALLBACK_LABEL = 'Copy link';
 
 /**
- * Icon button that copies a link to a Pull Request or Issue in the configured format.
+ * Icon button that copies a link to a Pull Request, Issue, Discussion or workflow run in the configured format.
  */
 export class CopyButton {
 	private static readonly instances = new WeakMap<Element, CopyButton>();
@@ -263,7 +265,9 @@ export class CopyButton {
 			return FALLBACK_LABEL;
 		}
 
-		return `${LABELS[target.type]} #${target.number}`;
+		// Runs are numbered per workflow, so their name includes the workflow
+		const workflow = target.workflow ? ` ${target.workflow}` : '';
+		return `${LABELS[target.type]}${workflow} #${target.number}`;
 	}
 
 	private render(): void {

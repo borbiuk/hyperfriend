@@ -1,5 +1,18 @@
 # Release Notes
 
+## 2.4.0
+
+Copy links to Discussions and GitHub Actions workflow runs.
+
+- A copy button next to every discussion title in the discussion list (also the pinned one) and on the discussion page, and next to every workflow run in the Actions list (`/OWNER/REPO/actions` and one workflow's runs) and on the workflow run page.
+- Shift+C (or your own combination) copies the link of an open discussion and of an open workflow run summary page, not of its job and attempt pages.
+- Two new templates with their own defaults: `[Discussion {{discussion_number}}]: {{discussion_name}}` and `[{{workflow}} #{{run_number}}]: {{run_name}}`, so a run is linked as "CI #20481" followed by its name. They sit in a closed **Discussions and workflow runs** section of the **Templates** tab, with their own placeholder hints and live previews.
+- New placeholders for Discussions: `{{discussion_number}}`, `{{discussion_name}}`, `{{category}}` (and `{{ref}}`, `{{author}}` as for other items). For workflow runs: `{{run_number}}` (the number shown as `#20481`, not the run id of the URL), `{{run_name}}`, `{{workflow}}`, `{{branch}}` and `{{status}}`. A placeholder without data on the page is replaced with nothing.
+- The copy format (rich link or Markdown) applies to the new links too. The button of a run is named after its workflow and run number, for screen readers.
+- The settings file stays at schema version 4: it now also holds the `discussion` and `workflow-run` templates. A file without them keeps your current ones, and 2.3.0 and older ignore them in newer files. **Reset all settings** resets them too.
+- Older versions of the extension in other browsers on the same sync account don't know the two new templates and drop them the next time they save a setting. Discussions of an organization (`/orgs/ORG/discussions`) are not supported, only repository discussions.
+- The extension still needs only the `storage` permission and has no new network traffic.
+
 ## 2.3.0
 
 Copy links as Markdown.

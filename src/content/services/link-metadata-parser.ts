@@ -1,7 +1,7 @@
 import { LinkTargetModel, LinkType } from '@shared/models';
 
 /**
- * Optional details of a Pull Request or Issue (author, state, labels, ...) read from the page.
+ * Optional details of a Pull Request, Issue, Discussion or workflow run (author, state, labels, ...) read from the page.
  * Every field is left out when the page does not show it.
  */
 export type LinkMetadata = Pick<
@@ -13,10 +13,37 @@ export type LinkMetadata = Pick<
 	| 'milestone'
 	| 'headBranch'
 	| 'baseBranch'
+	| 'category'
+	| 'workflow'
+	| 'branch'
+	| 'status'
 >;
 
 /** A GitHub login, including app bots such as `dependabot[bot]` */
 const LOGIN_REGEX = /^[\w-]+(?:\[bot\])?$/;
+
+/** Author and category links of a Discussion row: `aria-label="Codeer22 (author)"`, `"Help (category)"` */
+const DISCUSSION_AUTHOR_SELECTOR = 'a[aria-label$=" (author)"]';
+const DISCUSSION_CATEGORY_SELECTOR = 'a[aria-label$=" (category)"]';
+const DISCUSSION_LABEL_SUFFIX_REGEX = / \((?:author|category)\)$/;
+
+/** Header of a Discussion page: its author and category links follow the title heading */
+const DISCUSSION_HEADER_AUTHOR_SELECTOR =
+	'.gh-header-title ~ * a[data-hovercard-type="user"]';
+const DISCUSSION_HEADER_CATEGORY_SELECTOR =
+	'.gh-header-title ~ * a[href*="/discussions/categories/"]';
+
+/** Branch name of a workflow run row (React list) and of the run page header */
+const RUN_ROW_BRANCH_SELECTOR = '[data-component="BranchName"]';
+const RUN_HEADER_BRANCH_SELECTOR = 'a.branch-name';
+
+/** Workflow name and status icon of the run page header */
+const RUN_HEADER_WORKFLOW_SELECTOR = '.PageHeader-parentLink-label';
+const RUN_HEADER_STATUS_SELECTOR =
+	'.actions-workflow-runs-status svg[aria-label]';
+
+/** `completed successfully: Run 20481 of (Shared) Lint. <run name>`: the accessible label of a run row */
+const RUN_ROW_LABEL_REGEX = /^(.*?): Run (\d+) of (.+?)\.(?: .*)?$/;
 
 /** Author filter link or button of a list row */
 const ROW_AUTHOR_SELECTOR = '[data-testid="author-filter-link"]';
@@ -142,6 +169,18 @@ function compact(metadata: LinkMetadata): LinkMetadata {
 	if (metadata.baseBranch) {
 		result.baseBranch = metadata.baseBranch;
 	}
+	if (metadata.category) {
+		result.category = metadata.category;
+	}
+	if (metadata.workflow) {
+		result.workflow = metadata.workflow;
+	}
+	if (metadata.branch) {
+		result.branch = metadata.branch;
+	}
+	if (metadata.status) {
+		result.status = metadata.status;
+	}
 
 	return result;
 }
@@ -194,16 +233,83 @@ function getRowState(row: Element): string | undefined {
 }
 
 /**
- * Reads what a list row shows next to the title: author, state and labels.
- * Assignees, milestone and branches are not part of a row.
+ * Reads the label of a Discussion row link (`Help (category)` gives `Help`).
+ */
+function getDiscussionLabel(
+	row: Element,
+	selector: string
+): string | undefined {
+	const label = row.querySelector(selector)?.getAttribute('aria-label') ?? '';
+	return (
+		normalizeText(label.replace(DISCUSSION_LABEL_SUFFIX_REGEX, '')) ||
+		undefined
+	);
+}
+
+/**
+ * Reads the run number, workflow and status of a workflow run row from its accessible label
+ * (`completed successfully: Run 20481 of (Shared) Lint. <run name>`; a run named like its
+ * workflow ends with the period after the workflow).
  *
  * @param anchor - Title link of the row.
+ * @returns The run number when the row shows it, and the workflow and the status as metadata.
+ */
+export function readRunRow(anchor: Element): {
+	number?: number;
+	metadata: LinkMetadata;
+} {
+	const row = anchor.closest(ROW_SELECTOR);
+	if (!row) {
+		return { metadata: {} };
+	}
+
+	const match = RUN_ROW_LABEL_REGEX.exec(
+		normalizeText(row.getAttribute('aria-label'))
+	);
+	if (!match) {
+		return { metadata: {} };
+	}
+
+	return {
+		number: Number(match[2]),
+		metadata: compact({
+			workflow: normalizeText(match[3]),
+			status: normalizeText(match[1]),
+		}),
+	};
+}
+
+/**
+ * Reads what a list row shows next to the title: author, state and labels of a Pull Request
+ * or Issue, author and category of a Discussion, the branch of a workflow run.
+ * Assignees, milestone and branches of a Pull Request are not part of a row.
+ *
+ * @param anchor - Title link of the row.
+ * @param type - Kind of the row's item.
  * @returns The details found; empty when the row can not be located.
  */
-export function readListMetadata(anchor: Element): LinkMetadata {
+export function readListMetadata(
+	anchor: Element,
+	type: LinkType
+): LinkMetadata {
 	const row = anchor.closest(ROW_SELECTOR);
 	if (!row) {
 		return {};
+	}
+
+	if (type === LinkType.Discussion) {
+		return compact({
+			author: getDiscussionLabel(row, DISCUSSION_AUTHOR_SELECTOR),
+			category: getDiscussionLabel(row, DISCUSSION_CATEGORY_SELECTOR),
+		});
+	}
+
+	if (type === LinkType.WorkflowRun) {
+		return compact({
+			branch: normalizeText(
+				row.querySelector(RUN_ROW_BRANCH_SELECTOR)?.textContent
+			),
+		});
 	}
 
 	const labels = unique([
@@ -226,7 +332,7 @@ export function readListMetadata(anchor: Element): LinkMetadata {
 }
 
 /**
- * Returns whether a URL points to the same Pull Request / Issue as the canonical URL.
+ * Returns whether a URL points to the same item as the canonical URL.
  */
 function isSameItem(url: string, reference: string): boolean {
 	try {
@@ -332,11 +438,65 @@ function getBranches(): Pick<LinkMetadata, 'baseBranch' | 'headBranch'> {
 }
 
 /**
- * Reads the details of the Pull Request or Issue shown on a detail page.
+ * Reads the author and the category of a Discussion page from its header.
+ */
+function readDiscussionHeader(header: Element | null): LinkMetadata {
+	// The author and category links sit in the element after the title heading
+	const scope = header?.parentElement ?? document;
+	const author = HOVERCARD_LOGIN_REGEX.exec(
+		scope
+			.querySelector(DISCUSSION_HEADER_AUTHOR_SELECTOR)
+			?.getAttribute('data-hovercard-url') ?? ''
+	)?.[1];
+
+	return compact({
+		author: author && LOGIN_REGEX.test(author) ? author : undefined,
+		category:
+			normalizeText(
+				scope.querySelector(DISCUSSION_HEADER_CATEGORY_SELECTOR)
+					?.textContent
+			) || undefined,
+	});
+}
+
+/**
+ * Reads the workflow of a workflow run page from its header, for the name of the title button.
+ */
+export function readRunWorkflow(): LinkMetadata {
+	return compact({
+		workflow: normalizeText(
+			document.querySelector(RUN_HEADER_WORKFLOW_SELECTOR)?.textContent
+		),
+	});
+}
+
+/**
+ * Reads the workflow, the status and the branch of a workflow run page from its header.
+ */
+function readRunHeader(): LinkMetadata {
+	return compact({
+		workflow: normalizeText(
+			document.querySelector(RUN_HEADER_WORKFLOW_SELECTOR)?.textContent
+		),
+		status: normalizeText(
+			document
+				.querySelector(RUN_HEADER_STATUS_SELECTOR)
+				?.getAttribute('aria-label')
+				?.replace(/:\s*$/, '')
+		),
+		branch: normalizeText(
+			document.querySelector(RUN_HEADER_BRANCH_SELECTOR)?.textContent
+		),
+	});
+}
+
+/**
+ * Reads the details of the Pull Request, Issue, Discussion or workflow run shown on a detail page.
  *
  * @param type - Kind of the open item.
  * @param reference - Canonical URL of the open item (from the page URL).
  * @param confirmed - The page is known to show this item (its header number matches the URL).
+ * @param header - Title header of the page; a Discussion's author and category are read next to it.
  * Otherwise only the author is read, and only from the page metadata, which checks its own URL;
  * the rest of the page can still show the previous item after an in-page navigation.
  * @returns The details found; fields the page does not show are left out.
@@ -344,8 +504,17 @@ function getBranches(): Pick<LinkMetadata, 'baseBranch' | 'headBranch'> {
 export function readDetailMetadata(
 	type: LinkType,
 	reference: string,
-	confirmed: boolean
+	confirmed: boolean,
+	header: Element | null = null
 ): LinkMetadata {
+	if (type === LinkType.Discussion) {
+		return confirmed ? readDiscussionHeader(header) : {};
+	}
+
+	if (type === LinkType.WorkflowRun) {
+		return confirmed ? readRunHeader() : {};
+	}
+
 	const author = getMetaAuthor(reference);
 	if (!confirmed) {
 		return compact({ author });

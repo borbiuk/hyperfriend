@@ -7,6 +7,8 @@ export const DEFAULT_STORED_CONFIG = {
 	templates: {
 		'pull-request': '[PR {{pr_number}}]: {{pr_name}}',
 		issue: '[Issue {{issue_number}}]: {{issue_name}}',
+		discussion: '[Discussion {{discussion_number}}]: {{discussion_name}}',
+		'workflow-run': '[{{workflow}} #{{run_number}}]: {{run_name}}',
 	},
 	shortcuts: {
 		'copy-link': { keys: ['Shift', 'KeyC'], enabled: true },

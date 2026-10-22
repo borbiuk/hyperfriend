@@ -4,7 +4,11 @@ import { copyLink } from '@shared/services';
 import { toast, ToastVariant } from '../components/toast';
 import { ButtonInjector } from '../services/button-injector';
 import { ConfigStore } from '../services/config-store';
-import { isPullRequestConversation, PageKind } from '../services/page-detector';
+import {
+	isPullRequestConversation,
+	isWorkflowRunSummary,
+	PageKind,
+} from '../services/page-detector';
 
 import { ShortcutHandler } from './shortcut-handler';
 
@@ -15,8 +19,8 @@ const TOAST_MESSAGES = {
 };
 
 /**
- * Copies the link of the open Pull Request (Conversation tab only) or Issue,
- * exactly like the title copy button.
+ * Copies the link of the open Pull Request (Conversation tab only), Issue, Discussion or
+ * workflow run (summary page only), exactly like the title copy button.
  */
 export class CopyLinkShortcutHandler implements ShortcutHandler {
 	/** @inheritdoc */
@@ -33,8 +37,12 @@ export class CopyLinkShortcutHandler implements ShortcutHandler {
 
 	/** @inheritdoc */
 	public isAvailable(kind: PageKind, location: Location | URL): boolean {
-		if (kind === PageKind.Issue) {
+		if (kind === PageKind.Issue || kind === PageKind.Discussion) {
 			return true;
+		}
+
+		if (kind === PageKind.WorkflowRun) {
+			return isWorkflowRunSummary(location);
 		}
 
 		return (

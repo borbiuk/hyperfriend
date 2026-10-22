@@ -17,6 +17,9 @@ export const DEFAULT_CONFIG: ConfigModel = {
 	templates: {
 		[LinkType.PullRequest]: '[PR {{pr_number}}]: {{pr_name}}',
 		[LinkType.Issue]: '[Issue {{issue_number}}]: {{issue_name}}',
+		[LinkType.Discussion]:
+			'[Discussion {{discussion_number}}]: {{discussion_name}}',
+		[LinkType.WorkflowRun]: '[{{workflow}} #{{run_number}}]: {{run_name}}',
 	},
 	format: LinkFormat.Rich,
 	shortcuts: {
@@ -28,10 +31,11 @@ export const DEFAULT_CONFIG: ConfigModel = {
 };
 
 /**
- * Default templates of versions 1.x and 2.0.0, written before the `[link]` syntax existed.
+ * Default templates of versions 1.x and 2.0.0, written before the `[link]` syntax existed
+ * (only Pull Requests and Issues existed then).
  * A stored or imported old template equal to one of these becomes the new default.
  */
-export const LEGACY_DEFAULT_TEMPLATES: Record<LinkType, string> = {
+export const LEGACY_DEFAULT_TEMPLATES: Partial<Record<LinkType, string>> = {
 	[LinkType.PullRequest]: 'PR {{pr_number}}: {{pr_name}}',
 	[LinkType.Issue]: 'Issue {{issue_number}}: {{issue_name}}',
 };
@@ -74,5 +78,25 @@ export const TEMPLATE_PLACEHOLDERS: Record<LinkType, string[]> = {
 		'labels',
 		'assignees',
 		'milestone',
+	],
+	[LinkType.Discussion]: [
+		'discussion_number',
+		'discussion_name',
+		'owner',
+		'repo',
+		'url',
+		'ref',
+		'author',
+		'category',
+	],
+	[LinkType.WorkflowRun]: [
+		'run_number',
+		'run_name',
+		'workflow',
+		'branch',
+		'status',
+		'owner',
+		'repo',
+		'url',
 	],
 };

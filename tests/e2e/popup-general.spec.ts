@@ -19,6 +19,8 @@ const CUSTOM_SETTINGS: ConfigModel = {
 	templates: {
 		[LinkType.PullRequest]: '{{repo}}#[{{pr_number}}] {{pr_name}}',
 		[LinkType.Issue]: '{{repo}}#[{{issue_number}}] {{issue_name}}',
+		[LinkType.Discussion]: '{{category}} [#{{discussion_number}}]',
+		[LinkType.WorkflowRun]: '[{{workflow}}] {{run_name}}',
 	},
 	format: LinkFormat.Markdown,
 	shortcuts: {
@@ -306,6 +308,20 @@ test.describe('Import', () => {
 			await expect(
 				options.getByRole('textbox', { name: 'Issue link template' })
 			).toHaveValue(CUSTOM_SETTINGS.templates[LinkType.Issue]);
+			// The two other fields sit in a disclosure that was closed when the popup opened
+			await options
+				.getByText('Discussions and workflow runs', { exact: true })
+				.click();
+			await expect(
+				options.getByRole('textbox', {
+					name: 'Discussion link template',
+				})
+			).toHaveValue(CUSTOM_SETTINGS.templates[LinkType.Discussion]);
+			await expect(
+				options.getByRole('textbox', {
+					name: 'Workflow run link template',
+				})
+			).toHaveValue(CUSTOM_SETTINGS.templates[LinkType.WorkflowRun]);
 		});
 	});
 
@@ -376,6 +392,7 @@ test.describe('Import', () => {
 			.toEqual({
 				...DEFAULT_STORED_CONFIG,
 				templates: {
+					...DEFAULT_STORED_CONFIG.templates,
 					[LinkType.PullRequest]: '\\[WIP\\] PR {{pr_number}}',
 					[LinkType.Issue]:
 						'[Issue {{issue_number}}]: {{issue_name}}',

@@ -23,6 +23,16 @@ export interface SnapshotItem {
 	baseBranch?: string;
 	/** Pull request head branch as the header shows it */
 	headBranch?: string;
+	/** Discussion category */
+	category?: string;
+	/** Workflow run id of the URL (a run's `number` is its run number) */
+	runId?: number;
+	/** Workflow of a run */
+	workflow?: string;
+	/** Status of a run in the words of the page, e.g. `completed successfully` */
+	status?: string;
+	/** Branch of a run as the page shows it */
+	branch?: string;
 }
 
 /** pages/index.json, written by capture-pages.mjs */
@@ -31,6 +41,8 @@ interface SnapshotIndex {
 	pages: Record<string, string>;
 	/** Items per GitHub path + query: every row of a list page, the single item of a detail page */
 	items: Record<string, SnapshotItem[]>;
+	/** Path of the workflow run page snapshot: the first finished run of the run list at capture time */
+	runPage: string;
 }
 
 const INDEX: SnapshotIndex = JSON.parse(
@@ -40,8 +52,16 @@ const INDEX: SnapshotIndex = JSON.parse(
 /** Repository the snapshots and the live tests use */
 export const REPOSITORY = '/react/react';
 
+/** Repository of the Discussion snapshots */
+export const DISCUSSIONS_REPOSITORY = '/vercel/next.js';
+
 /** GitHub paths (with the query for search pages) that have a snapshot */
 export const PAGES = {
+	discussionList: `${DISCUSSIONS_REPOSITORY}/discussions`,
+	discussion: `${DISCUSSIONS_REPOSITORY}/discussions/10640`,
+	runList: `${REPOSITORY}/actions`,
+	/** Changes with every snapshot refresh (see `INDEX.runPage`) */
+	runPage: INDEX.runPage,
 	pullList: `${REPOSITORY}/pulls`,
 	pull: `${REPOSITORY}/pull/9713`,
 	pullFiles: `${REPOSITORY}/pull/9713/files`,

@@ -41,7 +41,7 @@ function escapeBeforeLink(before: string): string {
 /**
  * Builds the clipboard payload for a link. Pure; used by copyLink, the popup preview and tests.
  *
- * @param target - The Pull Request or Issue to link.
+ * @param target - The item (Pull Request, Issue, Discussion or workflow run) to link.
  * @param config - Config holding the templates.
  * @returns Text, HTML and plain-text representations.
  */
@@ -142,7 +142,7 @@ function writeWithExecCommand(flavors: Record<string, string>): void {
  * `execCommand('copy')` because the gesture has ended. The primary path covers
  * Firefox 127+ (ClipboardItem support), so this only affects edge cases.
  *
- * @param target - The Pull Request or Issue to link.
+ * @param target - The item (Pull Request, Issue, Discussion or workflow run) to link.
  * @param config - Config holding the templates and the format.
  * @returns Resolves when copied; rejects if both methods fail.
  */

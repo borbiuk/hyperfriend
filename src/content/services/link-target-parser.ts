@@ -1,9 +1,25 @@
 import { LinkTargetModel, LinkType } from '@shared/models';
 
-import { readDetailMetadata, readListMetadata } from './link-metadata-parser';
+import {
+	readDetailMetadata,
+	readListMetadata,
+	readRunRow,
+	readRunWorkflow,
+} from './link-metadata-parser';
 
-/** Pull Request / Issue path with an optional sub-path: `/{owner}/{repo}/pull/{n}/files` */
-const ITEM_PATH_REGEX = /^\/([^/]+)\/([^/]+)\/(pull|issues)\/(\d+)(\/.*)?$/;
+/** Pull Request / Issue / Discussion path with an optional sub-path: `/{owner}/{repo}/pull/{n}/files` */
+const ITEM_PATH_REGEX =
+	/^\/(?!orgs\/)([^/]+)\/([^/]+)\/(pull|issues|discussions)\/(\d+)(\/.*)?$/;
+
+/** Workflow run path with an optional sub-path: `/{owner}/{repo}/actions/runs/{id}/job/{job}` */
+const RUN_PATH_REGEX = /^\/([^/]+)\/([^/]+)\/actions\/runs\/(\d+)(\/.*)?$/;
+
+/** Link type of the first path segment after `/{owner}/{repo}/` */
+const ITEM_TYPES: Record<string, LinkType> = {
+	pull: LinkType.PullRequest,
+	issues: LinkType.Issue,
+	discussions: LinkType.Discussion,
+};
 
 /** Text that is only a number reference, e.g. `#123` */
 const NUMBER_ONLY_REGEX = /^#?\d+$/;
@@ -14,6 +30,21 @@ const PULL_REQUEST_DOCUMENT_TITLE_REGEX =
 
 /** `<title> · Issue #<n> · owner/repo[ · GitHub]` */
 const ISSUE_DOCUMENT_TITLE_REGEX = /^(.+?) · Issue #(\d+) · /;
+
+/** `<title> · owner/repo · Discussion #<n> · GitHub` */
+const DISCUSSION_DOCUMENT_TITLE_REGEX =
+	/^(.+?) · [^\s·]+ · Discussion #(\d+) · /;
+
+/** `<run name> · owner/repo@<sha> · GitHub`; the title has no run number */
+const WORKFLOW_RUN_DOCUMENT_TITLE_REGEX = /^(.+?) · [^\s·]+@[0-9a-f]+ · /;
+
+/** Document title patterns per link type */
+const DOCUMENT_TITLE_REGEXES: Record<LinkType, RegExp> = {
+	[LinkType.PullRequest]: PULL_REQUEST_DOCUMENT_TITLE_REGEX,
+	[LinkType.Issue]: ISSUE_DOCUMENT_TITLE_REGEX,
+	[LinkType.Discussion]: DISCUSSION_DOCUMENT_TITLE_REGEX,
+	[LinkType.WorkflowRun]: WORKFLOW_RUN_DOCUMENT_TITLE_REGEX,
+};
 
 /** Elements holding only the title text inside a detail page header */
 const DETAIL_TITLE_TEXT_SELECTORS = [
@@ -33,7 +64,7 @@ const TITLE_TEXT_SELECTOR =
 const NON_TITLE_SELECTOR = '.sr-only, [aria-hidden="true"], [data-hyperfriend]';
 
 /**
- * Identity of a Pull Request or Issue parsed from a URL (everything except the title).
+ * Identity of an item (Pull Request, Issue, Discussion or workflow run) parsed from a URL (everything except the title).
  */
 type ItemReference = Pick<
 	LinkTargetModel,
@@ -48,11 +79,12 @@ export function normalizeText(value: string | null | undefined): string {
 }
 
 /**
- * Parses a Pull Request or Issue reference from a URL or path.
+ * Parses a Pull Request, Issue, Discussion or workflow run reference from a URL or path.
+ * For a workflow run `number` is the run id of the URL; the run number (`#20481`) is read from the page.
  *
  * @param href - Absolute URL or path, resolved against the current page.
  * @param allowSubPath - Accept sub-paths such as `/pull/12/files` (detail pages); list links must be exact.
- * @returns The reference with a canonical URL, or `null` if the URL is not a github.com PR / Issue.
+ * @returns The reference with a canonical URL, or `null` if the URL is not a github.com item of these kinds.
  */
 export function parseItemUrl(
 	href: string,
@@ -69,6 +101,23 @@ export function parseItemUrl(
 		return null;
 	}
 
+	const run = RUN_PATH_REGEX.exec(url.pathname);
+	if (run) {
+		const [, owner, repo, rawId, subPath] = run;
+		if (subPath && !allowSubPath) {
+			return null;
+		}
+
+		const id = Number(rawId);
+		return {
+			type: LinkType.WorkflowRun,
+			owner,
+			repo,
+			number: id,
+			url: `${url.origin}/${owner}/${repo}/actions/runs/${id}`,
+		};
+	}
+
 	const match = ITEM_PATH_REGEX.exec(url.pathname);
 	if (!match) {
 		return null;
@@ -79,7 +128,7 @@ export function parseItemUrl(
 		return null;
 	}
 
-	const type = kind === 'pull' ? LinkType.PullRequest : LinkType.Issue;
+	const type = ITEM_TYPES[kind];
 	const number = Number(rawNumber);
 
 	return {
@@ -95,8 +144,8 @@ export function parseItemUrl(
  * Builds a link target from a list row title link (its text is the title).
  *
  * @param anchor - Title link of a list row.
- * @param withMetadata - Also read author, state and labels of the row (more DOM work; only needed to copy).
- * @returns The target, or `null` if the link is not a PR / Issue title link.
+ * @param withMetadata - Also read the details of the row, such as author, state and labels (more DOM work; only needed to copy).
+ * @returns The target, or `null` if the link is not a title link of a supported item.
  */
 export function parseListLink(
 	anchor: HTMLAnchorElement,
@@ -112,11 +161,33 @@ export function parseListLink(
 		return null;
 	}
 
+	if (reference.type === LinkType.WorkflowRun) {
+		// The URL has the run id; the row shows the run number, the workflow and the status
+		const row = readRunRow(anchor);
+		if (row.number === undefined) {
+			// Without the run number the link text would carry the run id: fail rather than copy that
+			return null;
+		}
+
+		return {
+			...reference,
+			number: row.number,
+			// The workflow tells apart the rows with the same run number (button names)
+			...row.metadata,
+			...(withMetadata ? readListMetadata(anchor, reference.type) : {}),
+			title,
+		};
+	}
+
 	if (!withMetadata) {
 		return { ...reference, title };
 	}
 
-	return { ...reference, ...readListMetadata(anchor), title };
+	return {
+		...reference,
+		...readListMetadata(anchor, reference.type),
+		title,
+	};
 }
 
 /**
@@ -175,10 +246,7 @@ function getHeaderTitle(header: Element): string {
  * Extracts the title from `document.title` or `og:title` for the given item.
  */
 function getDocumentTitle(reference: ItemReference): string {
-	const regex =
-		reference.type === LinkType.PullRequest
-			? PULL_REQUEST_DOCUMENT_TITLE_REGEX
-			: ISSUE_DOCUMENT_TITLE_REGEX;
+	const regex = DOCUMENT_TITLE_REGEXES[reference.type];
 	const sources = [
 		document.title,
 		document
@@ -188,7 +256,11 @@ function getDocumentTitle(reference: ItemReference): string {
 
 	for (const source of sources) {
 		const match = regex.exec(normalizeText(source));
-		if (match && Number(match[2]) === reference.number) {
+		// The title of a workflow run has no number to check
+		if (
+			match &&
+			(match[2] === undefined || Number(match[2]) === reference.number)
+		) {
 			return match[1];
 		}
 	}
@@ -197,7 +269,7 @@ function getDocumentTitle(reference: ItemReference): string {
 }
 
 /**
- * Builds the link target of the current Pull Request / Issue detail page.
+ * Builds the link target of the current Pull Request / Issue / Discussion / workflow run detail page.
  *
  * @param header - Title header element of the page, if found.
  * @param withMetadata - Also read author, state, labels, assignees, milestone and branches (only needed to copy).
@@ -212,14 +284,48 @@ export function parseDetailPage(
 		return null;
 	}
 
+	const number = header ? findNumberElement(header) : null;
+	const shownNumber =
+		number === null
+			? null
+			: Number(normalizeText(number.textContent).slice(1));
+
+	if (reference.type === LinkType.WorkflowRun) {
+		// The header shows the run number, which the URL (the run id) can not confirm; its
+		// update wrapper names the run it belongs to
+		const owner = header?.closest('[data-url*="/actions/runs/"]');
+		const shownRun = owner?.getAttribute('data-url') ?? '';
+		if (
+			shownRun !== '' &&
+			!shownRun.includes(`/actions/runs/${reference.number}/`)
+		) {
+			return null;
+		}
+
+		const title =
+			(header ? getHeaderTitle(header) : '') ||
+			getDocumentTitle(reference);
+		if (!title || shownNumber === null) {
+			// Without the run number the link text would carry the run id: fail rather than copy that
+			return null;
+		}
+
+		return {
+			...reference,
+			number: shownNumber,
+			// The workflow is part of the button name
+			...readRunWorkflow(),
+			...(withMetadata
+				? readDetailMetadata(reference.type, reference.url, true)
+				: {}),
+			title,
+		};
+	}
+
 	// After a soft navigation the URL changes before the header re-renders: a header showing
 	// another number still holds the previous item's title. Use the (number-checked) document
 	// title then, or fail rather than copy a wrong link.
-	const number = header ? findNumberElement(header) : null;
-	if (
-		number &&
-		Number(normalizeText(number.textContent).slice(1)) !== reference.number
-	) {
+	if (shownNumber !== null && shownNumber !== reference.number) {
 		const title = getDocumentTitle(reference);
 		return title ? { ...reference, title } : null;
 	}
@@ -235,13 +341,11 @@ export function parseDetailPage(
 	}
 
 	// The sidebar and the branches are trusted only while the header shows the item of the URL
-	const confirmed =
-		number !== null &&
-		Number(normalizeText(number.textContent).slice(1)) === reference.number;
+	const confirmed = shownNumber === reference.number;
 
 	return {
 		...reference,
-		...readDetailMetadata(reference.type, reference.url, confirmed),
+		...readDetailMetadata(reference.type, reference.url, confirmed, header),
 		title,
 	};
 }

@@ -12,9 +12,11 @@
 	shows, so tests take expected values from the fixture data instead of the page under test.
 
 	Usage: npm run test:snapshots   (needs network access; review the diff before committing)
+	       node tests/e2e/fixtures/capture-pages.mjs discussion-list discussion   (only these pages, the others stay as they are)
 */
 
 import {
+	cpSync,
 	mkdtempSync,
 	readFileSync,
 	renameSync,
@@ -36,6 +38,8 @@ const LIST_LINKS =
  * Pages to capture: file name (without .html), URL, and the kind of page.
  * `list` pages record every title link; `detail` pages record the item in the URL.
  * `requireState` fails the run when no row of the list shows a state (the markup changed).
+ * `discussion-list`, `discussion`, `run-list` and `run` pages have their own readers; the `run` page has
+ * no fixed URL (see PAGES).
  */
 const PAGES = [
 	{
@@ -71,6 +75,27 @@ const PAGES = [
 		kind: 'detail',
 	},
 	{
+		file: 'discussion-list',
+		url: 'https://github.com/vercel/next.js/discussions',
+		kind: 'discussion-list',
+	},
+	{
+		// The pinned (spotlight) discussion of that repository: stable, and also shown in the list above
+		file: 'discussion',
+		url: 'https://github.com/vercel/next.js/discussions/10640',
+		kind: 'discussion',
+	},
+	{
+		file: 'run-list',
+		url: 'https://github.com/react/react/actions',
+		kind: 'run-list',
+	},
+	{
+		// Runs are deleted after a while, so the page is that of the first finished, named run of the list above
+		file: 'run',
+		kind: 'run',
+	},
+	{
 		file: 'search-pulls',
 		url: 'https://github.com/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests',
 		kind: 'list',
@@ -97,6 +122,11 @@ const FORBIDDEN = [
 
 /** Runs in the page: removes everything the tests don't need or that must not be committed. */
 function sanitize() {
+	// Every element of the page, also those inside <template> contents (menus, dialogs)
+	const allElements = (root = document) =>
+		[...root.querySelectorAll('*')].flatMap((el) =>
+			el.tagName === 'TEMPLATE' ? [el, ...allElements(el.content)] : [el]
+		);
 	const remove = (selector) => {
 		document.querySelectorAll(selector).forEach((el) => el.remove());
 	};
@@ -145,7 +175,7 @@ function sanitize() {
 	// No email addresses in committed fixtures, not even public ones
 	const email = /[\w.%+-]+@[\w-]+(\.[\w-]+)+/g;
 	const noEmail = (text) => text.replace(email, 'email@example.com');
-	document.querySelectorAll('*').forEach((el) => {
+	allElements().forEach((el) => {
 		for (const { name, value } of [...el.attributes]) {
 			if (dropped.test(name)) {
 				el.removeAttribute(name);
@@ -174,7 +204,7 @@ function sanitize() {
 			}
 			return stableIds.get(match);
 		});
-	document.querySelectorAll('*').forEach((el) => {
+	allElements().forEach((el) => {
 		for (const { name, value } of [...el.attributes]) {
 			if (stable(value) !== value) {
 				el.setAttribute(name, stable(value));
@@ -312,6 +342,104 @@ function readDetailMetadata() {
 	};
 }
 
+/** Runs in the page: number, title, author and category of every Discussion row (and of the pinned one), in page order. */
+function readDiscussionItems() {
+	const text = (el) => el?.textContent.replace(/\s+/g, ' ').trim();
+	return [
+		...document.querySelectorAll(
+			'a.markdown-title[href*="/discussions/"], a.discussion-title'
+		),
+	].map((link) => {
+		const row = link.closest('li');
+		const author = text(row?.querySelector('a[aria-label$=" (author)"]'));
+		const category = text(
+			row?.querySelector('a[aria-label$=" (category)"]')
+		);
+		return {
+			number: Number(new URL(link.href).pathname.split('/').pop()),
+			title: text(link),
+			...(author ? { author } : {}),
+			...(category ? { category } : {}),
+		};
+	});
+}
+
+/** Runs in the page: author and category of a Discussion page, from the line under the title. */
+function readDiscussionMetadata() {
+	const text = (el) => el?.textContent.replace(/\s+/g, ' ').trim();
+	const author = text(
+		document.querySelector(
+			'.gh-header-title ~ * a[data-hovercard-type="user"]'
+		)
+	);
+	const category = text(
+		document.querySelector(
+			'.gh-header-title ~ * a[href*="/discussions/categories/"]'
+		)
+	);
+	return {
+		...(author ? { author } : {}),
+		...(category ? { category } : {}),
+	};
+}
+
+/**
+ * Runs in the page: run number, run id, run name, workflow, status and branch of every workflow
+ * run row, in page order. The number, the workflow and the status come from the visible texts of
+ * the row (`#20481:`, the bold workflow name, the screen reader text).
+ */
+function readRunItems() {
+	const text = (el) => el?.textContent.replace(/\s+/g, ' ').trim();
+	return [
+		...document.querySelectorAll(
+			'[data-listview-item-title-container] a[href*="/actions/runs/"]'
+		),
+	].map((link) => {
+		const row = link.closest('li');
+		const number = [...(row?.querySelectorAll('span') ?? [])]
+			.map((span) => /^#(\d+):$/.exec(text(span)))
+			.find(Boolean)?.[1];
+		const workflow = text(row?.querySelector('strong'));
+		const status = text(row?.querySelector('.sr-only'))?.replace(/:$/, '');
+		const branch = text(
+			row?.querySelector('[data-component="BranchName"]')
+		);
+		return {
+			number: Number(number),
+			runId: Number(new URL(link.href).pathname.split('/').pop()),
+			title: text(link),
+			...(workflow ? { workflow } : {}),
+			...(status ? { status } : {}),
+			...(branch ? { branch } : {}),
+		};
+	});
+}
+
+/** Runs in the page: run number, workflow, status and branch from the header of a workflow run page. */
+function readRunMetadata() {
+	const text = (el) => el?.textContent.replace(/\s+/g, ' ').trim();
+	const heading = document.querySelector('h1.PageHeader-title');
+	const number = text(heading?.querySelector('.color-fg-muted'))?.replace(
+		'#',
+		''
+	);
+	const workflow = text(
+		document.querySelector('.PageHeader-parentLink-label')
+	);
+	const status = document
+		.querySelector('.actions-workflow-runs-status svg[aria-label]')
+		?.getAttribute('aria-label')
+		.replace(/:\s*$/, '');
+	const branch = text(document.querySelector('a.branch-name'));
+	return {
+		number: Number(number),
+		title: text(heading?.querySelector('.markdown-title')),
+		...(workflow ? { workflow } : {}),
+		...(status ? { status } : {}),
+		...(branch ? { branch } : {}),
+	};
+}
+
 const browser = await chromium.launch();
 const context = await browser.newContext({
 	colorScheme: 'light',
@@ -320,16 +448,94 @@ const context = await browser.newContext({
 });
 const page = await context.newPage();
 const tmpDir = mkdtempSync(join(FIXTURES_DIR, '.pages-'));
+// Pages named on the command line are captured on top of the existing folder, the others stay as they are
+const only = process.argv.slice(2);
 const index = { pages: {}, items: {} };
+if (only.length > 0) {
+	cpSync(PAGES_DIR, tmpDir, { recursive: true });
+	Object.assign(
+		index,
+		JSON.parse(readFileSync(join(PAGES_DIR, 'index.json'), 'utf8'))
+	);
+}
 
 try {
-	for (const { file, url, kind, requireState } of PAGES) {
+	for (const { file, url: fixedUrl, kind, requireState } of PAGES) {
+		if (only.length > 0 && !only.includes(file)) {
+			continue;
+		}
+
+		let url = fixedUrl;
+		if (kind === 'run') {
+			// The first finished run of the run list (captured before this page) whose name differs from
+			// its workflow (a scheduled run is named after its workflow, which would hide a mix-up
+			// of the two) and that ran on a branch
+			const finished = index.items['/react/react/actions']?.find(
+				(item) =>
+					/^(completed|failed|cancel)/i.test(item.status ?? '') &&
+					item.title !== item.workflow &&
+					item.branch
+			);
+			if (!finished) {
+				throw new Error(
+					'run: no finished run with its own name in the run list'
+				);
+			}
+			url = `https://github.com/react/react/actions/runs/${finished.runId}`;
+			index.runPage = new URL(url).pathname;
+		}
+
 		await page.goto(url, { waitUntil: 'domcontentloaded' });
 		const { pathname, search } = new URL(url);
 		// Search pages are told apart by their query; other pages have none
 		const key = pathname + search;
 
-		if (kind === 'list') {
+		if (kind === 'discussion-list') {
+			await page
+				.locator('a.markdown-title[href*="/discussions/"]')
+				.first()
+				.waitFor({ state: 'attached' });
+			await waitForStableDom(page);
+			index.items[key] = await page.evaluate(readDiscussionItems);
+		} else if (kind === 'discussion') {
+			await page
+				.locator('.gh-header-title')
+				.first()
+				.waitFor({ state: 'attached' });
+			await waitForStableDom(page);
+			// "<title> · owner/repo · Discussion #<n> · GitHub"
+			const title = (await page.title()).split(
+				/ · [^\s·]+ · Discussion #/
+			)[0];
+			index.items[key] = [
+				{
+					number: Number(pathname.split('/')[4]),
+					title,
+					...(await page.evaluate(readDiscussionMetadata)),
+				},
+			];
+		} else if (kind === 'run-list') {
+			await page
+				.locator(
+					'[data-listview-item-title-container] a[href*="/actions/runs/"]'
+				)
+				.first()
+				.waitFor({ state: 'attached' });
+			await waitForStableDom(page);
+			index.items[key] = await page.evaluate(readRunItems);
+		} else if (kind === 'run') {
+			await page
+				.locator('h1.PageHeader-title')
+				.first()
+				.waitFor({ state: 'attached' });
+			await waitForStableDom(page);
+			index.items[key] = [
+				{
+					runId: Number(pathname.split('/').pop()),
+					...(await page.evaluate(readRunMetadata)),
+				},
+			];
+		} else if (kind === 'list') {
 			await page
 				.locator(LIST_LINKS)
 				.first()

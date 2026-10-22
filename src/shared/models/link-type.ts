@@ -8,4 +8,10 @@ export enum LinkType {
 
 	/** GitHub Issue (`/issues/{n}`) */
 	Issue = 'issue',
+
+	/** GitHub Discussion (`/discussions/{n}`) */
+	Discussion = 'discussion',
+
+	/** GitHub Actions workflow run (`/actions/runs/{id}`) */
+	WorkflowRun = 'workflow-run',
 }

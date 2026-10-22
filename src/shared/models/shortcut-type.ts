@@ -4,6 +4,6 @@
  * New shortcuts are added here, with a default in DEFAULT_CONFIG and a handler in the content script.
  */
 export enum ShortcutType {
-	/** Copies the link of the open Pull Request or Issue */
+	/** Copies the link of the open Pull Request, Issue, Discussion or workflow run */
 	CopyLink = 'copy-link',
 }
