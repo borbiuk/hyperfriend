@@ -14,6 +14,7 @@ One click on GitHub copies a clean, readable link, ready to paste into Microsoft
 - 🤝 Share with your team: Export your templates, copy format, shortcuts and display settings to a JSON file and import them on another computer, so the whole team pastes links in one format
 - ✅ Clear feedback: The button shows "Copied!" or "Copy failed" right after a click
 - 🌗 Light and dark: Matches the GitHub theme; the settings popup (Templates, Shortcuts and General tabs) follows your system theme, with a live preview of your templates and automatic saving
+- 🏢 GitHub Enterprise: Add the domain of your GitHub Enterprise site in the settings, allow the access in the browser prompt, and the buttons work there too
 - 🔄 Works with GitHub navigation: Buttons show up after in-page navigation too, no refresh needed
 
 🔒 Privacy
@@ -26,7 +27,9 @@ One click on GitHub copies a clean, readable link, ready to paste into Microsoft
 🧾 Permissions (what and why)
 
 - 💾 Storage — Save your link templates, shortcuts and display settings
-- 🌐 Access to github.com — The content script runs only on github.com to add the copy buttons and run the keyboard shortcut. The extension has no other site access and requests no host permissions.
+- 🌐 Access to github.com — The content script runs on github.com to add the copy buttons and run the keyboard shortcut.
+- 🏢 Optional access to your GitHub Enterprise site — Only when you add its domain in the settings, the browser asks you to allow that one site, and the extension then runs there like on github.com. It never asks for any other site, and you can remove the access at any time.
+- 🧩 Scripting — Starts the copy buttons on the GitHub Enterprise domains you added (it registers the content script for them and starts it in the tabs that are already open).
 
 🆘 Support
 

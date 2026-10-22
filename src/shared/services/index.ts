@@ -8,6 +8,15 @@ export {
 } from './clipboard-service';
 export type { LinkPayload, LinksPayload } from './clipboard-service';
 export {
+	listEnterpriseHosts,
+	parseEnterpriseHost,
+	removeEnterpriseHost,
+	requestEnterpriseHost,
+	syncEnterpriseScripts,
+	toOriginPattern,
+} from './enterprise-service';
+export type { ParseHostResult, SyncOptions } from './enterprise-service';
+export {
 	cloneConfig,
 	cloneDefaultConfig,
 	configService,

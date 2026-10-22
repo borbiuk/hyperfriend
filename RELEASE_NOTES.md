@@ -1,5 +1,17 @@
 # Release Notes
 
+## 2.6.0
+
+GitHub Enterprise.
+
+- New **GitHub Enterprise** section in the **General** tab (closed at first). Type the domain of your GitHub Enterprise Server or GitHub Enterprise Cloud site (`github.example.com`, `mycompany.ghe.com`; a pasted URL works too) and click **Add**. The browser asks you to allow Hyperfriend to access that one site; after you agree, the copy buttons, Shift+C and the list selection work there, also in tabs of that site that are already open. **Remove** takes the access back.
+- Pull Requests, Issues, Discussions and workflow runs work as on github.com, and the links point to your site. Author avatars stay on github.com only, because the avatar server does not know the users of an Enterprise site.
+- Only `https` sites, one exact domain at a time (no wildcards, no ports); `github.com` and its subdomains are refused. The added domains belong to this browser and are not part of the settings file.
+- How it works: the extension now asks for the `scripting` permission and lists `https://*/*` as an **optional** host permission, so the browser can ask for one domain when you add it. Nothing is accessed before you allow it. A small background script registers the content script for the domains you added again after an extension update and after the browser starts.
+- In Firefox the popup closes when the permission prompt opens, so **Add** opens the settings page in a tab, where you add the domain.
+- Enterprise Server versions that are older than the current github.com can have other markup: the buttons may be missing on some pages.
+- Settings and settings files are unchanged.
+
 ## 2.5.0
 
 Copy several items as one list.

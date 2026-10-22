@@ -164,6 +164,11 @@ test('should keep the result in the bar until it clears the selection and not re
 	await page.goto(snapshotUrl(PAGES.pullList));
 	await select(page, [FIRST, SECOND]);
 
+	// The announcement of the last click is written after a short delay: wait for it first
+	await expect(page.locator('[data-hyperfriend="live-region"]')).toHaveText(
+		'Added to the selection, 2 selected'
+	);
+
 	await test.step('while items are selected the page is left alone', async () => {
 		// The bar's own text writes must not make the page observer rescan again and again
 		const mutations = await page.evaluate(

@@ -12,6 +12,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { useOptimisticToggle } from '../hooks/use-optimistic-toggle';
 import { ViewMode } from '../hooks/use-view-mode';
 
+import { EnterpriseSection } from './enterprise-section';
 import { SettingsActions } from './settings-actions';
 import { SettingsSection } from './settings-section';
 
@@ -181,6 +182,13 @@ export function GeneralPanel({
 					</Text>
 				</div>
 			</SettingsSection>
+
+			<div
+				role="presentation"
+				style={{ borderTop: '1px solid var(--borderColor-muted)' }}
+			/>
+
+			<EnterpriseSection viewMode={viewMode} />
 
 			<div
 				role="presentation"

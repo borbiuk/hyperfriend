@@ -189,6 +189,24 @@ Import rules:
 - Problems are shown as a short message under the buttons, and nothing is changed.
 - `exportedAt` is informational only.
 
+### GitHub Enterprise
+
+Hyperfriend also works on a GitHub Enterprise site, when you allow it:
+
+1. Open the popup, go to the **General** tab and open **GitHub Enterprise**.
+2. Type the domain of your site (for example `github.example.com`, or `mycompany.ghe.com` for GitHub Enterprise Cloud with data residency; a pasted URL works too) and click **Add**.
+3. The browser asks you to allow Hyperfriend to access that site. After you agree, the copy buttons, the keyboard shortcut and the list selection work there, also in the tabs of that site that are already open.
+
+Remove a domain with **Remove** in the same section; the browser then takes the access back. Notes:
+
+- Only `https` sites, one exact domain each (no wildcards, no port). Nothing else is accessed: the extension asks for one domain at a time, only after you typed it.
+- The links point to your site (`https://github.example.com/OWNER/REPO/pull/12`), and Pull Requests, Issues, Discussions and workflow runs work as on github.com. Author avatars are shown on github.com only.
+- The added domains belong to this browser and are not part of the settings file. The browser may keep the access when you remove the extension's data; remove it in the extension's site access settings.
+- The buttons depend on the markup of your GitHub version: Enterprise Server versions that are older than the current github.com can look different, and the buttons may be missing on some pages.
+- In Firefox the popup closes when the permission prompt opens, so **Add** there opens the settings page in a browser tab, where you type the domain again and add it.
+- After **Remove**, pages of that site that are already open keep their buttons until you reload them. The browser's own site access settings (Chrome: the extension's details page, Firefox: `about:addons`) also show these grants; any `https` site granted there, not only the ones you typed here, gets the content script, and a site with a different layout simply shows no buttons. The broad `https://*/*` entry that Firefox lists as optional does nothing by itself.
+- The domain is a plain host: `github.com` and its subdomains are refused, international names are converted to their ASCII form.
+
 ### Settings popup
 
 The popup has three tabs and a footer with a link to the GitHub repository. The URL hash of `options.html` can open a tab first: `#templates`, `#shortcuts` or `#general`.
@@ -198,6 +216,7 @@ The popup has three tabs and a footer with a link to the GitHub repository. The 
 - **Templates**: each template field is marked with a Pull Request, Issue, Discussion or workflow run icon (the last two sit in a disclosure that is closed at first, so the popup stays short), lists the available placeholders and shows the resulting link text for a sample item (live preview). Changes are saved about 300 ms after you stop typing, with a "Saved" status.
 - **Shortcuts**: change, turn off or reset the keyboard shortcut (see above). Shortcuts don't work while you type in a text field.
 - **General**:
+    - **GitHub Enterprise** (a closed section): add the domain of your GitHub Enterprise site, see [GitHub Enterprise](#github-enterprise).
     - **Copy format**: **Rich link** (default) or **Markdown**, saved at once. The Templates preview shows what is pasted in the chosen format.
     - **Show author avatars** (on by default), applied immediately.
     - **Export** and **Import** share the settings as a file (see above).
@@ -312,6 +331,7 @@ How to write tests and the review standard: [.claude/skills/playwright/SKILL.md]
     - `assets/`: The extension icon PNGs (`logo-16.png`, `logo-32.png`, `logo-48.png`, `logo-128.png`).
 - `design/icon/`: Icon sources (SVG for each size) and `render.sh` that renders them into `public/assets/`, see [design/icon/README.md](design/icon/README.md).
 - `src/`:
+    - `background/`: The background script (`background.ts`) that registers the content script for GitHub Enterprise domains.
     - `content/`: Content script that adds copy buttons, author avatars and the keyboard shortcut on GitHub pages (plain DOM, no React).
         - `components/`: The copy button (`copy-button.ts`), the shared tooltip (`tooltip.ts`) and the toast (`toast.ts`).
         - `icons/`: Inline SVG Octicons (copy, check, x).
@@ -345,7 +365,7 @@ How to write tests and the review standard: [.claude/skills/playwright/SKILL.md]
 - `.mcp.json`: Project MCP servers for AI-assisted development (Chrome DevTools MCP and the Playwright test MCP server).
 - `zip.sh`: A script for creating `.zip` files with builds for publishing.
 
-There is no background script or service worker: the content script talks to `chrome.storage` directly.
+The only background code is `src/background/background.ts` (a service worker in Chrome, an event page in Firefox): it keeps the content script registered for the GitHub Enterprise domains the user added. The content script talks to `chrome.storage` directly.
 
 ### Tooling notes
 

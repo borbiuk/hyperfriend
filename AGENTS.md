@@ -5,6 +5,7 @@ This file orients human and AI contributors to the **Hyperfriend** browser exten
 ## Product
 
 - **Hyperfriend** — adds a copy-link button to every GitHub Pull Request, Issue, Discussion and Actions workflow run (lists and detail pages). A click copies a rich hyperlink: `text/html` `BEFORE<a href="URL">LINK</a>AFTER` (the link part is marked with `[square brackets]` in the template; the whole text when there are none) and `text/plain` `TEXT — URL`; with the copy format `markdown` only `text/plain` `BEFORE[LINK](URL)AFTER`. In a list, Shift+click on the row buttons collects items that a bottom bar copies as one list (`<ul>` plus `- text — url` lines, or Markdown `- [text](url)` lines). The keyboard shortcut `copy-link` (default Shift+C) copies the link of the open Issue, Discussion, workflow run (summary page only) or Pull Request (Conversation tab only).
+- **GitHub Enterprise** — in the General tab the user adds the exact domain of a GitHub Enterprise Server or `*.ghe.com` site; the browser asks for the access, the background script registers the content script there and starts it in open tabs. The granted origins are the only state (not in the settings file); avatars stay github.com only.
 - **Settings** — four link templates (Pull Request, Issue, Discussion, workflow run) with `{{placeholders}}`, the copy format (rich link or Markdown), the keyboard shortcuts (key combination + on/off) and display settings (author avatars on/off). Edited in the toolbar popup (tabs Templates, Shortcuts, General), stored in `chrome.storage.sync` (`ConfigModel`: `templates`, `format`, `shortcuts`, `display`), and shareable as a JSON file (Export / Import, schema version 4; files of versions 1 to 3 still import, the templates of versions 1 and 2 are converted to the `[link]` syntax).
 - **Build output** — `dist/` (Chrome, Load unpacked) and `dist-firefox/` (Firefox, `about:debugging`).
 - **Source manifests** — `public/manifest.json` (Chrome) and `public/manifest.firefox.json` (Firefox); copied to `manifest.json` in the matching build directory.
@@ -12,13 +13,14 @@ This file orients human and AI contributors to the **Hyperfriend** browser exten
 
 ## Architecture (MV3)
 
-| Area           | Path                      | Role                                                                                                                               |
-| -------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| Content script | `src/content/content.ts`  | Runs on `https://github.com/*`; injects copy buttons and PR author avatars, runs keyboard shortcuts; limited `chrome.*` (storage). |
-| Popup          | `src/options/options.tsx` | Toolbar popup and options page (`public/options.html`): React + Primer React settings UI with three tabs.                          |
-| Shared code    | `src/shared/`             | Models, constants, services, utils — reuse via **`@shared/*`** alias.                                                              |
+| Area           | Path                           | Role                                                                                                                                                                                                       |
+| -------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Content script | `src/content/content.ts`       | Runs on `https://github.com/*` and on the GitHub Enterprise domains the user granted; injects copy buttons and PR author avatars (github.com only), runs keyboard shortcuts; limited `chrome.*` (storage). |
+| Background     | `src/background/background.ts` | Service worker (Chrome) / event page (Firefox): keeps the content scripts of the granted GitHub Enterprise domains registered (`syncEnterpriseScripts`).                                                   |
+| Popup          | `src/options/options.tsx`      | Toolbar popup and options page (`public/options.html`): React + Primer React settings UI with three tabs.                                                                                                  |
+| Shared code    | `src/shared/`                  | Models, constants, services, utils — reuse via **`@shared/*`** alias.                                                                                                                                      |
 
-Ambient type declarations live in `src/types/global.d.ts`. **There is no background script and no service worker.** Both entrypoints use `chrome.storage.sync` through `configService`.
+Ambient type declarations live in `src/types/global.d.ts`. The background script does one thing: it registers the content script for the GitHub Enterprise domains the user granted (after install, update, browser start and every permission change). The content script and the popup use `chrome.storage.sync` through `configService`.
 
 Adding a keyboard shortcut touches five places (enum value, default in `DEFAULT_CONFIG`, handler in `src/content/shortcut/`, row in `SHORTCUT_ITEMS`, docs); the checklist is in [extension-architecture.md](.claude/rules/extension-architecture.md).
 
@@ -27,8 +29,8 @@ See also [extension-architecture.md](.claude/rules/extension-architecture.md), [
 ## Build and manifest constraints
 
 - **No hashed bundle filenames** — manifests reference fixed names; webpack uses **`[name].js`** and each entry is a single self-contained file (no vendor or runtime chunks). Do not introduce content hashes without updating both manifests and tooling.
-- **Two manifests, kept in sync** — `public/manifest.json` and `public/manifest.firefox.json` must differ only by `browser_specific_settings` (Gecko ID `hyperfriend@borbiuk`, `strict_min_version` 140.0, `data_collection_permissions`). The version is set in `public/manifest.json`; the pre-commit hook (`.husky/set-version.sh`) copies it to `package.json` and `manifest.firefox.json`.
-- **Permissions** — `storage` only; no `host_permissions`; content script `matches` is `https://github.com/*`.
+- **Two manifests, kept in sync** — `public/manifest.json` and `public/manifest.firefox.json` must differ only by `browser_specific_settings` (Gecko ID `hyperfriend@borbiuk`, `strict_min_version` 140.0, `data_collection_permissions`) and `background` (`service_worker` in Chrome, `scripts` in Firefox). The version is set in `public/manifest.json`; the pre-commit hook (`.husky/set-version.sh`) copies it to `package.json` and `manifest.firefox.json`.
+- **Permissions** — `storage` and `scripting`; no `host_permissions`; `optional_host_permissions` is `https://*/*`, but only the origins the user adds in the General tab are ever requested (one exact `https://HOST/*` each, never a wildcard host); content script `matches` is `https://github.com/*`, and the background script registers the same content script for the granted domains.
 - **`chrome.*` namespace only** — Firefox MV3 supports it; do not add a `browser.*` polyfill.
 - Cross-import shared code via **`@shared/...`** (see `webpack/webpack.common.js` and `tsconfig.json`).
 - CSS imports (including from `node_modules`, e.g. Primer) go through `style-loader` + `css-loader`.

@@ -6,6 +6,7 @@ include_files=(
 	"assets/logo-32.png"
 	"assets/logo-48.png"
 	"assets/logo-128.png"
+	"background.js"
 	"content.js"
 	"manifest.json"
 	"options.html"

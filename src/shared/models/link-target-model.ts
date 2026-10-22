@@ -19,7 +19,7 @@ export interface LinkTargetModel {
 	/** Raw, unescaped title text (the run name of a workflow run) */
 	title: string;
 
-	/** Canonical URL: https://github.com/{owner}/{repo}/pull/{n}, /issues/{n}, /discussions/{n} or /actions/runs/{id} */
+	/** Canonical URL on the site of the page: https://github.com/{owner}/{repo}/pull/{n}, /issues/{n}, /discussions/{n} or /actions/runs/{id} */
 	url: string;
 
 	/** Author login; unknown when the page does not show it */

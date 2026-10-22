@@ -3,6 +3,9 @@ import { LinkType } from '@shared/models';
 import { HydrationGuard } from './hydration-guard';
 import { normalizeText, parseListLink } from './link-target-parser';
 
+/** The only site whose users the avatar server knows */
+const GITHUB_HOST = 'github.com';
+
 /** Author login link of a list row (React list views; search results have no such link) */
 const AUTHOR_LINK_SELECTOR = 'a[data-testid="author-filter-link"]';
 
@@ -38,6 +41,12 @@ export class AvatarInjector {
 	 * Removes stale avatars and adds missing ones. Call on list pages only.
 	 */
 	public scan(): void {
+		// Avatars come from GitHub's avatar server, which does not know the users of an
+		// Enterprise site (their logins can belong to other people on github.com)
+		if (window.location.hostname !== GITHUB_HOST) {
+			return;
+		}
+
 		// Stale: the author link after it was replaced or now shows another login,
 		// or GitHub rendered its own avatar there later (e.g. after hydration)
 		document

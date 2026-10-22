@@ -97,16 +97,19 @@ export interface GitHubRouteOptions {
 }
 
 /**
- * Serves github.com from the saved snapshots and keeps every other host offline.
- * The page URL stays real, so the content script (matches https://github.com/*) is injected as usual.
+ * Serves github.com (and the fake Enterprise domains) from the saved snapshots and keeps every other
+ * host offline. The page URL stays real, so the content script (matches https://github.com/*, or the
+ * script the background registers for a granted domain) is injected as usual.
  *
  * @param context - Browser context of the test.
  * @param options - How avatar requests are answered.
+ * @param enterpriseHosts - Domains of fake GitHub Enterprise sites, served from the same snapshots.
  * @returns URLs the test requested that no snapshot or rule covers; the fixture fails the test when it is not empty.
  */
 export async function routeGitHub(
 	context: BrowserContext,
-	options: GitHubRouteOptions
+	options: GitHubRouteOptions,
+	enterpriseHosts: string[] = []
 ): Promise<string[]> {
 	const unplanned: string[] = [];
 
@@ -119,7 +122,10 @@ export async function routeGitHub(
 			return;
 		}
 
-		if (url.hostname === 'github.com') {
+		if (
+			url.hostname === 'github.com' ||
+			enterpriseHosts.includes(url.hostname)
+		) {
 			if (STATIC_GITHUB_PATH.test(url.pathname)) {
 				await route.abort('blockedbyclient');
 				return;
@@ -132,10 +138,14 @@ export async function routeGitHub(
 				return;
 			}
 
+			// The snapshots link to github.com; a fake Enterprise site links to itself
 			await route.fulfill({
 				status: 200,
 				contentType: 'text/html; charset=utf-8',
-				body: readFileSync(path.join(PAGES_DIR, file), 'utf8'),
+				body: readFileSync(
+					path.join(PAGES_DIR, file),
+					'utf8'
+				).replaceAll('https://github.com/', `https://${url.hostname}/`),
 			});
 			return;
 		}

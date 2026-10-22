@@ -1,5 +1,13 @@
 import { createHash } from 'node:crypto';
-import { realpathSync } from 'node:fs';
+import {
+	cpSync,
+	mkdtempSync,
+	readFileSync,
+	realpathSync,
+	rmSync,
+	writeFileSync,
+} from 'node:fs';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 import { test as base, BrowserContext, chromium, Page } from '@playwright/test';
@@ -17,8 +25,8 @@ export const DIST_PATH = path.join(
 
 /**
  * Id Chromium gives an unpacked extension on macOS and Linux: SHA-256 of its absolute path,
- * the first 32 hex digits mapped 0-f → a-p. Hyperfriend has no service worker, so the id
- * can't be read from `context.serviceWorkers()`.
+ * the first 32 hex digits mapped 0-f → a-p. The id is computed, so it does not depend on
+ * when the extension's service worker starts.
  *
  * @param extensionPath - Absolute, symlink-free path of the unpacked extension.
  */
@@ -64,9 +72,18 @@ export interface ExtensionOptions {
 	 * Override per file with `test.use({ githubRoutes: … })`.
 	 */
 	githubRoutes: GitHubRouteOptions | 'live';
+	/**
+	 * Domains of fake GitHub Enterprise sites the extension may run on. The tests load a copy of
+	 * the build whose manifest already grants access to them (the browser's permission prompt can
+	 * not be answered in a test; a request for an access that is granted resolves without it), and
+	 * the domains are served from the same snapshots as github.com.
+	 */
+	enterpriseHosts: string[];
 }
 
 interface ExtensionFixtures {
+	/** Folder of the extension the context loads: the build, or a copy of it with granted hosts */
+	extensionPath: string;
 	extensionId: string;
 	/** Opens the settings page (`options.html`, optionally with a `#tab` hash) in a new tab */
 	openOptions: (hash?: string) => Promise<Page>;
@@ -92,25 +109,49 @@ interface ExtensionFixtures {
 /**
  * Test with a fresh Chromium profile per test that has the built extension loaded, github.com
  * served from snapshots (or live, in the `live` project), and clipboard access granted for
- * github.com. A test fails when the extension logs an error or the page requests a URL that
+ * github.com (and for the fake Enterprise domains of `enterpriseHosts`). A test fails when the extension logs an error or the page requests a URL that
  * no snapshot covers.
  */
 export const test = base.extend<ExtensionFixtures & ExtensionOptions>({
 	githubRoutes: [{ avatars: 'ok' }, { option: true }],
+	enterpriseHosts: [[], { option: true }],
 
-	extensionId: async ({}, use) => {
-		await use(unpackedExtensionId(DIST_PATH));
+	extensionPath: async ({ enterpriseHosts }, use) => {
+		if (enterpriseHosts.length === 0) {
+			await use(DIST_PATH);
+			return;
+		}
+
+		const copy = realpathSync(
+			mkdtempSync(path.join(tmpdir(), 'hyperfriend-'))
+		);
+		cpSync(DIST_PATH, copy, { recursive: true });
+		const manifestPath = path.join(copy, 'manifest.json');
+		const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+		manifest.host_permissions = enterpriseHosts.map(
+			(host) => `https://${host}/*`
+		);
+		writeFileSync(manifestPath, JSON.stringify(manifest, null, '\t'));
+		await use(copy);
+		rmSync(copy, { recursive: true, force: true });
 	},
 
-	context: async ({ githubRoutes, extensionId, headless }, use) => {
+	extensionId: async ({ extensionPath }, use) => {
+		await use(unpackedExtensionId(extensionPath));
+	},
+
+	context: async (
+		{ githubRoutes, enterpriseHosts, extensionPath, extensionId, headless },
+		use
+	) => {
 		const context: BrowserContext = await chromium.launchPersistentContext(
 			'',
 			{
 				channel: 'chromium',
 				headless,
 				args: [
-					`--disable-extensions-except=${DIST_PATH}`,
-					`--load-extension=${DIST_PATH}`,
+					`--disable-extensions-except=${extensionPath}`,
+					`--load-extension=${extensionPath}`,
 				],
 			}
 		);
@@ -139,18 +180,21 @@ export const test = base.extend<ExtensionFixtures & ExtensionOptions>({
 			.catch(() => null);
 		if (!manifest?.ok()) {
 			throw new Error(
-				`The extension did not load from ${DIST_PATH} (id ${extensionId}); run npm run build`
+				`The extension did not load from ${extensionPath} (id ${extensionId}); run npm run build`
 			);
 		}
 		await probe.close();
 
-		await context.grantPermissions(['clipboard-read', 'clipboard-write'], {
-			origin: 'https://github.com',
-		});
+		for (const host of ['github.com', ...enterpriseHosts]) {
+			await context.grantPermissions(
+				['clipboard-read', 'clipboard-write'],
+				{ origin: `https://${host}` }
+			);
+		}
 		const unplanned =
 			githubRoutes === 'live'
 				? []
-				: await routeGitHub(context, githubRoutes);
+				: await routeGitHub(context, githubRoutes, enterpriseHosts);
 
 		await use(context);
 		await context.close();

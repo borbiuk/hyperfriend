@@ -34,6 +34,10 @@ test('should copy a Markdown link as plain text only from a list row', async ({
 		.getByRole('button', { name: FIRST_BUTTON, exact: true })
 		.click();
 
+	// The confirmation is shown for 1.5 s only: checked first, before a slow clipboard poll
+	await expect(page.locator('[data-hyperfriend="tooltip"]')).toHaveText(
+		'Copied!'
+	);
 	// No HTML flavor: chats and editors would paste a link instead of the Markdown source
 	await expect
 		.poll(() => readClipboard(page))
@@ -41,9 +45,6 @@ test('should copy a Markdown link as plain text only from a list row', async ({
 			html: '',
 			text: `[PR ${FIRST.number}](${FIRST_URL}): ${FIRST.title}`,
 		});
-	await expect(page.locator('[data-hyperfriend="tooltip"]')).toHaveText(
-		'Copied!'
-	);
 });
 
 test('should copy a Markdown link with Shift+C on the issue page', async ({
