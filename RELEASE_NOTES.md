@@ -1,5 +1,11 @@
 # Release Notes
 
+## 2.2.1
+
+Dependency update.
+
+- Updated `@primer/octicons-react` to 19.41.0 and `@types/chrome` to 0.3.6. There are no functional changes, and the extension still needs only the `storage` permission.
+
 ## 2.2.0
 
 More placeholders for link templates.

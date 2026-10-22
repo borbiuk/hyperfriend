@@ -1,6 +1,6 @@
 {
 	"name": "hyperfriend",
-	"version": "2.2.0",
+	"version": "2.2.1",
 	"description": "Copy GitHub Pull Request and Issue links as rich hyperlinks, ready to paste into Teams, Slack and other chats.",
 	"private": true,
 	"author": "Nazariy Borbiuk",
@@ -33,7 +33,7 @@
 		"prepare": "husky"
 	},
 	"dependencies": {
-		"@primer/octicons-react": "19.40.0",
+		"@primer/octicons-react": "19.41.0",
 		"@primer/primitives": "11.10.0",
 		"@primer/react": "38.42.0",
 		"react": "19.3.1",
@@ -43,7 +43,7 @@
 	"devDependencies": {
 		"@eslint/js": "10.0.1",
 		"@playwright/test": "1.64.1",
-		"@types/chrome": "0.3.5",
+		"@types/chrome": "0.3.6",
 		"@types/node": "26.6.5",
 		"@types/react": "19.3.0",
 		"@types/react-dom": "19.3.0",
