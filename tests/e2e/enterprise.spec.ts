@@ -401,3 +401,64 @@ test.describe('without a granted domain', () => {
 		).toHaveCount(0);
 	});
 });
+
+test.describe('GitHub Enterprise Cloud (*.ghe.com) without any setup', () => {
+	const CLOUD_HOST = 'mycompany.ghe.com';
+
+	test.use({ enterpriseHosts: [], manifestHosts: [CLOUD_HOST] });
+
+	test('should add the copy buttons and link to the site, from the manifest alone', async ({
+		page,
+		readClipboard,
+		writeClipboardSentinel,
+		normalizeHtml,
+	}) => {
+		const url = `https://${CLOUD_HOST}${REPOSITORY}/pull/${FIRST.number}`;
+
+		await page.goto(
+			snapshotUrl(PAGES.pullList).replace(
+				'https://github.com',
+				`https://${CLOUD_HOST}`
+			)
+		);
+		await writeClipboardSentinel(page, 'sentinel: ghe.com copy');
+
+		await expect(
+			page.locator('[data-hyperfriend="copy-button"]')
+		).toHaveCount(PULL_REQUESTS.length);
+		await rowOf(page, FIRST.title)
+			.getByRole('button', {
+				name: `Copy link to pull request #${FIRST.number}`,
+				exact: true,
+			})
+			.click();
+		await expect
+			.poll(() => readClipboard(page))
+			.toEqual({
+				html: await normalizeHtml(
+					page,
+					`<a href="${url}">PR ${FIRST.number}</a>: ${FIRST.title}`
+				),
+				text: `PR ${FIRST.number}: ${FIRST.title} — ${url}`,
+			});
+	});
+
+	test('should refuse to add a ghe.com domain, because it needs no setup', async ({
+		openOptions,
+	}) => {
+		const options = await openOptions('#general');
+		const calls = await stubPermissions(options, 'request', true);
+		const section = enterpriseSection(options);
+
+		await section.getByText('GitHub Enterprise', { exact: true }).click();
+		await section
+			.getByRole('textbox', { name: 'GitHub Enterprise domain' })
+			.fill(CLOUD_HOST);
+		await section.getByRole('button', { name: 'Add', exact: true }).click();
+
+		await expect(section.getByRole('alert')).toHaveText(
+			'ghe.com sites are supported without any setup.'
+		);
+		expect(await calls()).toEqual([]);
+	});
+});

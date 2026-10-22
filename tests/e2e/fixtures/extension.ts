@@ -79,6 +79,8 @@ export interface ExtensionOptions {
 	 * the domains are served from the same snapshots as github.com.
 	 */
 	enterpriseHosts: string[];
+	/** Fake sites served from the snapshots whose access the built manifest already gives (a `matches` pattern of its content script, `*.ghe.com`); a host the manifest does not match gets no content script. */
+	manifestHosts: string[];
 }
 
 interface ExtensionFixtures {
@@ -115,6 +117,7 @@ interface ExtensionFixtures {
 export const test = base.extend<ExtensionFixtures & ExtensionOptions>({
 	githubRoutes: [{ avatars: 'ok' }, { option: true }],
 	enterpriseHosts: [[], { option: true }],
+	manifestHosts: [[], { option: true }],
 
 	extensionPath: async ({ enterpriseHosts }, use) => {
 		if (enterpriseHosts.length === 0) {
@@ -141,7 +144,14 @@ export const test = base.extend<ExtensionFixtures & ExtensionOptions>({
 	},
 
 	context: async (
-		{ githubRoutes, enterpriseHosts, extensionPath, extensionId, headless },
+		{
+			githubRoutes,
+			enterpriseHosts,
+			manifestHosts,
+			extensionPath,
+			extensionId,
+			headless,
+		},
 		use
 	) => {
 		const context: BrowserContext = await chromium.launchPersistentContext(
@@ -185,7 +195,11 @@ export const test = base.extend<ExtensionFixtures & ExtensionOptions>({
 		}
 		await probe.close();
 
-		for (const host of ['github.com', ...enterpriseHosts]) {
+		for (const host of [
+			'github.com',
+			...enterpriseHosts,
+			...manifestHosts,
+		]) {
 			await context.grantPermissions(
 				['clipboard-read', 'clipboard-write'],
 				{ origin: `https://${host}` }
@@ -194,7 +208,10 @@ export const test = base.extend<ExtensionFixtures & ExtensionOptions>({
 		const unplanned =
 			githubRoutes === 'live'
 				? []
-				: await routeGitHub(context, githubRoutes, enterpriseHosts);
+				: await routeGitHub(context, githubRoutes, [
+						...enterpriseHosts,
+						...manifestHosts,
+					]);
 
 		await use(context);
 		await context.close();

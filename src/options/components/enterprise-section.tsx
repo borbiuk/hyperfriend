@@ -165,10 +165,10 @@ export function EnterpriseSection({ viewMode }: EnterpriseSectionProps) {
 				}}
 			>
 				<Text size="small" style={{ color: 'var(--fgColor-muted)' }}>
-					Add the domain of your GitHub Enterprise site, such as
-					github.example.com, to get the copy buttons there. The
-					browser asks you to allow it. Works with the markup of
-					recent versions.
+					GitHub Enterprise Cloud sites (*.ghe.com) work without any
+					setup. For a GitHub Enterprise Server on its own domain, add
+					that domain, such as github.example.com, to get the copy
+					buttons there. The browser asks you to allow it.
 				</Text>
 				<form
 					style={{ display: 'flex', gap: 8 }}

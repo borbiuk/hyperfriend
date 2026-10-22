@@ -1,5 +1,15 @@
 # Release Notes
 
+## 2.7.0
+
+GitHub Enterprise Cloud works without setup.
+
+- **`*.ghe.com` sites** (GitHub Enterprise Cloud with data residency, for example `mycompany.ghe.com`) get the copy buttons, Shift+C and the list selection right away. You do not add them in the settings any more.
+- Because of this the extension now lists `https://*.ghe.com/*` next to `https://github.com/*` as the sites its content script runs on. Chrome shows a new permission warning ("all ghe.com sites") and **turns the extension off after the update until you accept it**; Firefox may ask too (check the Permissions tab of the add-on in `about:addons` if the buttons are missing on a ghe.com site). Nothing is sent anywhere: the extension still has no network traffic of its own.
+- The **GitHub Enterprise** section of the **General** tab is now for GitHub Enterprise Server sites on their own domain. It says so, and refuses a `*.ghe.com` domain, because that needs no entry. A `*.ghe.com` domain you added in 2.6.0 keeps working and is no longer registered separately; it no longer shows in the list, and the browser keeps the old access, which you can remove in the extension's site access settings.
+- Author avatars still show on github.com only.
+- Settings and settings files are unchanged.
+
 ## 2.6.0
 
 GitHub Enterprise.

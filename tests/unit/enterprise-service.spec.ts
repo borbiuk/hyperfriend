@@ -145,11 +145,18 @@ const HOST_CASES: HostCase[] = [
 		input: 'https://github.example.com/org/repo/pull/1?x=1#top',
 		expected: { ok: true, host: 'github.example.com' },
 	},
-	{
-		input: 'legendari.ghe.com',
-		expected: { ok: true, host: 'legendari.ghe.com' },
-	},
 	{ input: 'ghe', expected: { ok: true, host: 'ghe' } },
+	{
+		input: 'ghe.com',
+		expected: {
+			ok: false,
+			error: 'ghe.com sites are supported without any setup.',
+		},
+	},
+	{
+		input: 'myghe.com',
+		expected: { ok: true, host: 'myghe.com' },
+	},
 	{
 		input: 'münchen.example.com',
 		expected: { ok: true, host: 'xn--mnchen-3ya.example.com' },
@@ -251,6 +258,20 @@ const HOST_CASES: HostCase[] = [
 		},
 	},
 	{
+		input: 'mycompany.ghe.com',
+		expected: {
+			ok: false,
+			error: 'ghe.com sites are supported without any setup.',
+		},
+	},
+	{
+		input: 'https://Team.Eu.GHE.com/org/repo',
+		expected: {
+			ok: false,
+			error: 'ghe.com sites are supported without any setup.',
+		},
+	},
+	{
 		input: 'https://GitHub.com/react/react',
 		expected: {
 			ok: false,
@@ -271,9 +292,10 @@ test('should build the origin pattern of a domain', () => {
 	);
 });
 
-test('should list the granted Enterprise domains, sorted, without github.com and other patterns', async () => {
+test('should list the granted Enterprise domains, sorted, without github.com, ghe.com sites and other patterns', async () => {
 	fake.origins = [
 		'https://github.com/*',
+		'https://mycompany.ghe.com/*',
 		'https://z.example.com/*',
 		'https://a.example.com/*',
 		'https://*.example.org/*',
@@ -312,11 +334,11 @@ test('should register the content script of every granted domain and start it in
 	fake.origins = [
 		'https://github.com/*',
 		'https://github.example.com/*',
-		'https://legendari.ghe.com/*',
+		'https://hosts.example.org/*',
 	];
 	fake.tabs = {
 		'https://github.example.com/*': [7, 8],
-		'https://legendari.ghe.com/*': [],
+		'https://hosts.example.org/*': [],
 	};
 
 	await syncEnterpriseScripts({ injectIntoTabs: true });
@@ -330,8 +352,8 @@ test('should register the content script of every granted domain and start it in
 			persistAcrossSessions: true,
 		},
 		{
-			id: 'hyperfriend-enterprise:legendari.ghe.com',
-			matches: ['https://legendari.ghe.com/*'],
+			id: 'hyperfriend-enterprise:hosts.example.org',
+			matches: ['https://hosts.example.org/*'],
 			js: ['content.js'],
 			runAt: 'document_idle',
 			persistAcrossSessions: true,
@@ -341,7 +363,7 @@ test('should register the content script of every granted domain and start it in
 		'register hyperfriend-enterprise:github.example.com',
 		'inject 7 content.js',
 		'inject 8 content.js',
-		'register hyperfriend-enterprise:legendari.ghe.com',
+		'register hyperfriend-enterprise:hosts.example.org',
 	]);
 });
 
@@ -358,11 +380,11 @@ test('should do nothing when the registered scripts already match the granted do
 test('should unregister the script of a domain whose access was taken back and keep the others', async () => {
 	fake.origins = [
 		'https://github.example.com/*',
-		'https://legendari.ghe.com/*',
+		'https://hosts.example.org/*',
 	];
 	await syncEnterpriseScripts();
 	fake.calls = [];
-	fake.origins = ['https://legendari.ghe.com/*'];
+	fake.origins = ['https://hosts.example.org/*'];
 
 	await syncEnterpriseScripts();
 
@@ -370,7 +392,7 @@ test('should unregister the script of a domain whose access was taken back and k
 		'unregister hyperfriend-enterprise:github.example.com',
 	]);
 	expect(fake.scripts.map((script) => script.id)).toEqual([
-		'hyperfriend-enterprise:legendari.ghe.com',
+		'hyperfriend-enterprise:hosts.example.org',
 	]);
 });
 
@@ -380,17 +402,17 @@ test('should register only the missing script and start only that one in its tab
 	fake.calls = [];
 	fake.origins = [
 		'https://github.example.com/*',
-		'https://legendari.ghe.com/*',
+		'https://hosts.example.org/*',
 	];
 	fake.tabs = {
 		'https://github.example.com/*': [1],
-		'https://legendari.ghe.com/*': [2],
+		'https://hosts.example.org/*': [2],
 	};
 
 	await syncEnterpriseScripts({ injectIntoTabs: true });
 
 	expect(fake.calls).toEqual([
-		'register hyperfriend-enterprise:legendari.ghe.com',
+		'register hyperfriend-enterprise:hosts.example.org',
 		'inject 2 content.js',
 	]);
 });
@@ -444,7 +466,7 @@ test('should not start the content script in the open tabs unless asked to', asy
 test('should register every script anew when asked to refresh, also the ones that exist', async () => {
 	fake.origins = [
 		'https://github.example.com/*',
-		'https://legendari.ghe.com/*',
+		'https://hosts.example.org/*',
 	];
 	await syncEnterpriseScripts();
 	fake.calls = [];
@@ -452,9 +474,9 @@ test('should register every script anew when asked to refresh, also the ones tha
 	await syncEnterpriseScripts({ refresh: true });
 
 	expect(fake.calls).toEqual([
-		'unregister hyperfriend-enterprise:github.example.com,hyperfriend-enterprise:legendari.ghe.com',
+		'unregister hyperfriend-enterprise:github.example.com,hyperfriend-enterprise:hosts.example.org',
 		'register hyperfriend-enterprise:github.example.com',
-		'register hyperfriend-enterprise:legendari.ghe.com',
+		'register hyperfriend-enterprise:hosts.example.org',
 	]);
 	expect(fake.scripts).toHaveLength(2);
 });
@@ -462,18 +484,18 @@ test('should register every script anew when asked to refresh, also the ones tha
 test('should keep registering the other domains when one registration fails', async () => {
 	fake.origins = [
 		'https://github.example.com/*',
-		'https://legendari.ghe.com/*',
+		'https://hosts.example.org/*',
 	];
 	fake.rejecting = ['hyperfriend-enterprise:github.example.com'];
 	fake.tabs = {
 		'https://github.example.com/*': [1],
-		'https://legendari.ghe.com/*': [2],
+		'https://hosts.example.org/*': [2],
 	};
 
 	await syncEnterpriseScripts({ injectIntoTabs: true });
 
 	expect(fake.scripts.map((script) => script.id)).toEqual([
-		'hyperfriend-enterprise:legendari.ghe.com',
+		'hyperfriend-enterprise:hosts.example.org',
 	]);
 	expect(fake.warnings).toEqual([
 		'[Hyperfriend] Could not register github.example.com.',
@@ -481,7 +503,28 @@ test('should keep registering the other domains when one registration fails', as
 	// No tab of the domain that failed was started
 	expect(fake.calls).toEqual([
 		'register hyperfriend-enterprise:github.example.com',
-		'register hyperfriend-enterprise:legendari.ghe.com',
+		'register hyperfriend-enterprise:hosts.example.org',
 		'inject 2 content.js',
 	]);
+});
+
+test('should drop the script a 2.6.0 install registered for a ghe.com domain, and register nothing for it', async () => {
+	fake.origins = ['https://mycompany.ghe.com/*'];
+	fake.scripts = [
+		{
+			id: 'hyperfriend-enterprise:mycompany.ghe.com',
+			matches: ['https://mycompany.ghe.com/*'],
+			js: ['content.js'],
+			runAt: 'document_idle',
+			persistAcrossSessions: true,
+		},
+	];
+	fake.tabs = { 'https://mycompany.ghe.com/*': [3] };
+
+	await syncEnterpriseScripts({ injectIntoTabs: true });
+
+	expect(fake.calls).toEqual([
+		'unregister hyperfriend-enterprise:mycompany.ghe.com',
+	]);
+	expect(fake.scripts).toEqual([]);
 });

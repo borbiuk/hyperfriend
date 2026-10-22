@@ -25,7 +25,7 @@ const STARTED_KEY = '__hyperfriendContentScript';
 
 /**
  * Main content script entry point.
- * Adds "copy link" buttons next to Pull Requests and Issues on github.com,
+ * Adds "copy link" buttons next to Pull Requests and Issues on github.com and GitHub Enterprise sites,
  * author avatars to Pull Request list rows, and keyboard shortcuts.
  */
 function start(): void {

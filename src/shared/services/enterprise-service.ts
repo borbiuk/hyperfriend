@@ -1,13 +1,20 @@
 /**
  * GitHub Enterprise support: the user grants the extension access to the domain of a GitHub
- * Enterprise Server or GitHub Enterprise Cloud (`*.ghe.com`) site, and the content script is
- * registered for that domain. The granted origins are the single source of truth: the
- * background script reconciles the registered content scripts with them (after install,
- * update, browser start and every permission change), so nothing else is stored.
+ * Enterprise Server site on its own domain, and the content script is registered for that
+ * domain. GitHub Enterprise Cloud sites (`*.ghe.com`) need no setup: the manifest covers them.
+ * The granted origins are the single source of truth: the background script reconciles the registered content scripts with them (after install, update, browser start and every permission change), so nothing else is stored.
  */
 
 /** The site the manifest already covers; it is not an Enterprise domain. */
 const GITHUB_HOST = 'github.com';
+
+/** GitHub Enterprise Cloud with data residency: the manifest covers `ghe.com` and every `*.ghe.com` site. */
+const GHE_CLOUD_HOST = 'ghe.com';
+
+/** Whether the manifest's content script already matches the host (`ghe.com` or a subdomain). */
+function isGheCloudHost(host: string): boolean {
+	return host === GHE_CLOUD_HOST || host.endsWith(`.${GHE_CLOUD_HOST}`);
+}
 
 /** Prefix of the ids of the registered content scripts (the id must not start with `_`). */
 const SCRIPT_ID_PREFIX = 'hyperfriend-enterprise:';
@@ -83,6 +90,13 @@ export function parseEnterpriseHost(input: string): ParseHostResult {
 		};
 	}
 
+	if (isGheCloudHost(host)) {
+		return {
+			ok: false,
+			error: 'ghe.com sites are supported without any setup.',
+		};
+	}
+
 	return { ok: true, host };
 }
 
@@ -96,13 +110,13 @@ export function toOriginPattern(host: string): string {
 }
 
 /**
- * Returns the Enterprise domains among origin patterns: `https://host/*` ones, except github.com.
+ * Returns the Enterprise domains among origin patterns: `https://host/*` ones, except github.com and `*.ghe.com`.
  */
 function hostsOfOrigins(origins: string[] | undefined): string[] {
 	const hosts = new Set<string>();
 	for (const origin of origins ?? []) {
 		const host = ORIGIN_PATTERN_REGEX.exec(origin)?.[1];
-		if (host && host !== GITHUB_HOST) {
+		if (host && host !== GITHUB_HOST && !isGheCloudHost(host)) {
 			hosts.add(host);
 		}
 	}
