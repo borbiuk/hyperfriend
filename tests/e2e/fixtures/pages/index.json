@@ -12,6 +12,36 @@
 	"items": {
 		"/react/react/pulls": [
 			{
+				"number": 37953,
+				"title": "[DevTools] Fix string value reset in native style editor",
+				"author": "chengchuu"
+			},
+			{
+				"number": 37952,
+				"title": "[Flight] Escape colons in reference paths and keep undefined object keys",
+				"author": "gaearon"
+			},
+			{
+				"number": 37951,
+				"title": "[compiler] Keep SSR event handlers that run during render",
+				"author": "mattcarrollcode"
+			},
+			{
+				"number": 37950,
+				"title": "[Flight] Let stream items and shared streams take part in cycles",
+				"author": "gaearon"
+			},
+			{
+				"number": 37949,
+				"title": "[Flight] Check for a plain object before the built-ins",
+				"author": "gaearon"
+			},
+			{
+				"number": 37948,
+				"title": "Preserve SSR Suspense fallback when a browser-only boundary re-suspends on the client",
+				"author": "whitewolfoklahoma-rgb"
+			},
+			{
 				"number": 37944,
 				"title": "[Flight] Write rows as strings to object-mode Node destinations",
 				"author": "gaearon"
@@ -28,7 +58,7 @@
 			},
 			{
 				"number": 37939,
-				"title": "[Flight] Fix two DEV writer bugs found by the reader fuzz",
+				"title": "[Flight] Fix three writer bugs found by the reader fuzz",
 				"author": "gaearon"
 			},
 			{
@@ -38,7 +68,7 @@
 			},
 			{
 				"number": 37937,
-				"title": "[Flight] Fix three stream bugs found by the reader fuzz",
+				"title": "[Flight] Fix six stream bugs found by the reader fuzz",
 				"author": "gaearon"
 			},
 			{
@@ -105,36 +135,6 @@
 				"number": 37908,
 				"title": "[eslint-plugin-react-hooks] Treat static primitive constants as stable in exhaustive-deps",
 				"author": "skyzhao1223"
-			},
-			{
-				"number": 37906,
-				"title": "[DOM] Keep React's own resource links when clearing the Document on a root's first commit",
-				"author": "winkelmeyer"
-			},
-			{
-				"number": 37903,
-				"title": "Fix state preservation when resolving lazy components",
-				"author": "Head-less-Reaper"
-			},
-			{
-				"number": 37900,
-				"title": "Fix TypeError in CheckStringCoercion typeName() for null-prototype objects in DEV",
-				"author": "prasad2512"
-			},
-			{
-				"number": 37896,
-				"title": "Bump handlebars from 4.7.7 to 4.7.10 in /fixtures/concurrent/time-slicing",
-				"author": "dependabot[bot]"
-			},
-			{
-				"number": 37895,
-				"title": "[compiler] Allow ref access in ResizeObserver / MutationObserver callbacks",
-				"author": "zhoubiao188"
-			},
-			{
-				"number": 37894,
-				"title": "[compiler] Infer function names from assignments, object properties, and patterns in Rust port",
-				"author": "RubenPari"
 			}
 		],
 		"/react/react/pull/9713": [
