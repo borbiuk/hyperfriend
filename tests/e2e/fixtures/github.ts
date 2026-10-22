@@ -9,8 +9,20 @@ const PAGES_DIR = path.join(__dirname, 'pages');
 export interface SnapshotItem {
 	number: number;
 	title: string;
-	/** Login in the row's author filter link (list rows that show one) */
+	/** Login in the row's author filter link (list rows that show one); the author of a detail page */
 	author?: string;
+	/** `open`, `closed`, `merged` or `draft`, when the page shows it */
+	state?: string;
+	/** Label names, in page order, when the page shows any */
+	labels?: string[];
+	/** Assignee logins of a detail page, when it shows any */
+	assignees?: string[];
+	/** Milestone title of a detail page, when it has one */
+	milestone?: string;
+	/** Pull request base branch as the header shows it */
+	baseBranch?: string;
+	/** Pull request head branch as the header shows it */
+	headBranch?: string;
 }
 
 /** pages/index.json, written by capture-pages.mjs */

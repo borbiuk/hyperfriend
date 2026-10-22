@@ -14,278 +14,456 @@
 			{
 				"number": 37953,
 				"title": "[DevTools] Fix string value reset in native style editor",
-				"author": "chengchuu"
+				"author": "chengchuu",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
 			},
 			{
 				"number": 37952,
 				"title": "[Flight] Escape colons in reference paths and keep undefined object keys",
-				"author": "gaearon"
+				"author": "gaearon",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"React Core Team"
+				]
 			},
 			{
 				"number": 37951,
 				"title": "[compiler] Keep SSR event handlers that run during render",
-				"author": "mattcarrollcode"
+				"author": "mattcarrollcode",
+				"state": "draft",
+				"labels": [
+					"CLA Signed"
+				]
 			},
 			{
 				"number": 37950,
 				"title": "[Flight] Let stream items and shared streams take part in cycles",
-				"author": "gaearon"
+				"author": "gaearon",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"React Core Team"
+				]
 			},
 			{
 				"number": 37949,
 				"title": "[Flight] Check for a plain object before the built-ins",
-				"author": "gaearon"
+				"author": "gaearon",
+				"state": "draft",
+				"labels": [
+					"CLA Signed",
+					"React Core Team"
+				]
 			},
 			{
 				"number": 37948,
 				"title": "Preserve SSR Suspense fallback when a browser-only boundary re-suspends on the client",
-				"author": "whitewolfoklahoma-rgb"
+				"author": "whitewolfoklahoma-rgb",
+				"state": "open"
 			},
 			{
 				"number": 37944,
 				"title": "[Flight] Write rows as strings to object-mode Node destinations",
-				"author": "gaearon"
+				"author": "gaearon",
+				"state": "draft",
+				"labels": [
+					"CLA Signed",
+					"React Core Team"
+				]
 			},
 			{
 				"number": 37941,
 				"title": "[Flight] Complete reply models by their reachable fields, not by chunk",
-				"author": "gaearon"
+				"author": "gaearon",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"React Core Team"
+				]
 			},
 			{
 				"number": 37940,
 				"title": "[Flight] Run the reader fuzz against the reply decoder",
-				"author": "gaearon"
+				"author": "gaearon",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"React Core Team"
+				]
 			},
 			{
 				"number": 37939,
 				"title": "[Flight] Fix three writer bugs found by the reader fuzz",
-				"author": "gaearon"
+				"author": "gaearon",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"React Core Team"
+				]
 			},
 			{
 				"number": 37938,
 				"title": "[Flight] Complete models by their reachable fields, not by chunk",
-				"author": "gaearon"
+				"author": "gaearon",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"React Core Team"
+				]
 			},
 			{
 				"number": 37937,
 				"title": "[Flight] Fix six stream bugs found by the reader fuzz",
-				"author": "gaearon"
+				"author": "gaearon",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"React Core Team"
+				]
 			},
 			{
 				"number": 37936,
 				"title": "[Flight] Add reader fuzz tests",
-				"author": "gaearon"
+				"author": "gaearon",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"React Core Team"
+				]
 			},
 			{
 				"number": 37935,
 				"title": "[Fizz] Keep the leading newline of <pre> content that is not a single string",
-				"author": "spokodev"
+				"author": "spokodev",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
 			},
 			{
 				"number": 37932,
 				"title": "[Fiber] Fix useActionState dispatching a stale action after switching back to a previous action",
-				"author": "koreahghg"
+				"author": "koreahghg",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
 			},
 			{
 				"number": 37930,
 				"title": "[Experiment] Flight Result as a map of Server Component expansions",
-				"author": "gaearon"
+				"author": "gaearon",
+				"state": "draft",
+				"labels": [
+					"CLA Signed"
+				]
 			},
 			{
 				"number": 37925,
 				"title": "[Flight] Skip revival for models without protocol strings",
-				"author": "gaearon"
+				"author": "gaearon",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
 			},
 			{
 				"number": 37922,
 				"title": "[Fiber] Track non-extensible thenables in a side table instead of crashing",
-				"author": "zhoubiao188"
+				"author": "zhoubiao188",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
 			},
 			{
 				"number": 37921,
 				"title": "Bump @modelcontextprotocol/sdk from 1.9.0 to 1.32.0 in /compiler",
-				"author": "dependabot[bot]"
+				"author": "dependabot[bot]",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"dependencies",
+					"javascript"
+				]
 			},
 			{
 				"number": 37920,
 				"title": "Fix TypeError in CheckStringCoercion typeName for null-prototype objects",
-				"author": "Fire162"
+				"author": "Fire162",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
 			},
 			{
 				"number": 37918,
 				"title": "Bump follow-redirects from 1.16.0 to 1.16.1 in /packages/react-devtools-cdt-mcp/fixtures/app",
-				"author": "dependabot[bot]"
+				"author": "dependabot[bot]",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"dependencies",
+					"javascript"
+				]
 			},
 			{
 				"number": 37913,
 				"title": "Fix/catch clause destructuring",
-				"author": "radhika817"
+				"author": "radhika817",
+				"state": "open"
 			},
 			{
 				"number": 37910,
 				"title": "Add a test for the Children helper warning when a Map is passed",
-				"author": "skyzhao1223"
+				"author": "skyzhao1223",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
 			},
 			{
 				"number": 37909,
 				"title": "Warn in DEV when useMemo's first argument is not a function",
-				"author": "skyzhao1223"
+				"author": "skyzhao1223",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
 			},
 			{
 				"number": 37908,
 				"title": "[eslint-plugin-react-hooks] Treat static primitive constants as stable in exhaustive-deps",
-				"author": "skyzhao1223"
+				"author": "skyzhao1223",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
 			}
 		],
 		"/react/react/pull/9713": [
 			{
 				"number": 9713,
-				"title": "[#9712] fix <input type=\"number\" /> value '.98' should not be equal to '0.98'."
+				"title": "[#9712] fix <input type=\"number\" /> value '.98' should not be equal to '0.98'.",
+				"author": "pingan1927",
+				"state": "closed",
+				"labels": [
+					"CLA Signed"
+				],
+				"baseBranch": "react:master",
+				"headBranch": "koubei-fe:master"
 			}
 		],
 		"/react/react/pull/9713/files": [
 			{
 				"number": 9713,
-				"title": "[#9712] fix <input type=\"number\" /> value '.98' should not be equal to '0.98'."
+				"title": "[#9712] fix <input type=\"number\" /> value '.98' should not be equal to '0.98'.",
+				"author": "pingan1927",
+				"state": "closed",
+				"baseBranch": "react:master",
+				"headBranch": "koubei-fe:master"
 			}
 		],
 		"/react/react/pull/9713/commits": [
 			{
 				"number": 9713,
-				"title": "[#9712] fix <input type=\"number\" /> value '.98' should not be equal to '0.98'."
+				"title": "[#9712] fix <input type=\"number\" /> value '.98' should not be equal to '0.98'.",
+				"author": "pingan1927",
+				"state": "closed",
+				"baseBranch": "react:master",
+				"headBranch": "koubei-fe:master"
 			}
 		],
 		"/react/react/issues": [
 			{
 				"number": 37933,
 				"title": "Bug: Hover highlight in interactive code example overlaps the preview content",
-				"author": "Smriti-N"
+				"author": "Smriti-N",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
 			},
 			{
 				"number": 37907,
 				"title": "[Fizz] Aborting while a resumed boundary's replay walk is stalled above the resumable slot client-renders the boundary and returns null postponed state",
-				"author": "zhoubiao188"
+				"author": "zhoubiao188",
+				"state": "open"
 			},
 			{
 				"number": 37899,
 				"title": "Bug: a component loses its state when its type changes from React.lazy to the component the lazy resolved to",
-				"author": "nitedani"
+				"author": "nitedani",
+				"state": "open"
 			},
 			{
 				"number": 37891,
 				"title": "Bug:",
-				"author": "zhaosjeng"
+				"author": "zhaosjeng",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
 			},
 			{
 				"number": 37888,
 				"title": "[Compiler Bug]: Local copy of a module-level variable is replaced by the variable itself inside closures",
-				"author": "miltonmc"
+				"author": "miltonmc",
+				"state": "open"
 			},
 			{
 				"number": 37886,
 				"title": "Bug:",
-				"author": "vitormourapro-beep"
+				"author": "vitormourapro-beep",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
 			},
 			{
 				"number": 37885,
 				"title": "Bug: TypeError in ReactDOM.prefetchDNS() when called with null or prototype-less options in DEV",
-				"author": "ShakilUrRehman21"
+				"author": "ShakilUrRehman21",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
 			},
 			{
 				"number": 37881,
 				"title": "Bug: TypeError in CheckStringCoercion typeName() for null-prototype objects in DEV",
-				"author": "ShakilUrRehman21"
+				"author": "ShakilUrRehman21",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
 			},
 			{
 				"number": 37874,
 				"title": "[DevTools Bug]: Operation packets accumulate until the first frontend connects",
-				"author": "Elehiggle"
+				"author": "Elehiggle",
+				"state": "open"
 			},
 			{
 				"number": 37866,
 				"title": "Bug: dev-only \"two <ViewTransition name> mounted at the same time\" warning is a false positive after name changes to undefined/another name",
-				"author": "esershnr"
+				"author": "esershnr",
+				"state": "open"
 			},
 			{
 				"number": 37837,
 				"title": "Bug: Submitting a form before hydration fails when a field is named \"action\"",
-				"author": "christianaurichzm"
+				"author": "christianaurichzm",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
 			},
 			{
 				"number": 37833,
 				"title": "[Compiler Bug]: hoisted function declaration memoized without assigning the outer binding (undefined on cache miss)",
-				"author": "drosi94"
+				"author": "drosi94",
+				"state": "open"
 			},
 			{
 				"number": 37830,
 				"title": "Transition never commits: a Flight chunk's synchronous then() pings from inside the render phase while the root is already suspended-with-delay, and the ping is dropped (React 19.2.8, Next 15.5 same-route navigation)",
-				"author": "lloydhelio"
+				"author": "lloydhelio",
+				"state": "open"
 			},
 			{
 				"number": 37809,
 				"title": "Bug: error recovery is disabled when the recovery retry is only interrupted for selective hydration (regression from #37739)",
-				"author": "8tungi"
+				"author": "8tungi",
+				"state": "open"
 			},
 			{
 				"number": 37805,
 				"title": "Transition never commits: a ping from a synchronously resolving Flight chunk is dropped during render (RootSuspendedWithDelay)",
-				"author": "Minnyat"
+				"author": "Minnyat",
+				"state": "open"
 			},
 			{
 				"number": 37804,
 				"title": "Bug: react-refresh retains roots that unmount before their first render (StrictMode), same leak as #36379",
-				"author": "amosvizer"
+				"author": "amosvizer",
+				"state": "open"
 			},
 			{
 				"number": 37802,
 				"title": "[DevTools Bug]: DOM nodes removed from a still-mounted component stay in publicInstanceToDevToolsInstanceMap until reload (8.0.0, DevTools closed)",
-				"author": "olinanderson"
+				"author": "olinanderson",
+				"state": "open"
 			},
 			{
 				"number": 37792,
 				"title": "Bug:",
-				"author": "paulintangana2-hash"
+				"author": "paulintangana2-hash",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
 			},
 			{
 				"number": 37790,
 				"title": "[Compiler Bug]: React Compiler breaks useFrameCallback memoization",
-				"author": "Nezz"
+				"author": "Nezz",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed",
+					"Type: Bug"
+				]
 			},
 			{
 				"number": 37789,
 				"title": "[Compiler]: Request for a new babel-plugin-react-compiler release — eslint-plugin-react-hooks 7.1.x bundles a newer compiler than 1.0.0, so lint passes on code the build silently skips",
-				"author": "einarq"
+				"author": "einarq",
+				"state": "open"
 			},
 			{
 				"number": 37785,
 				"title": "areHookInputsEqual ignores extra deps when the deps array grows, returning a stale useMemo value",
-				"author": "kburym"
+				"author": "kburym",
+				"state": "open"
 			},
 			{
 				"number": 37783,
 				"title": "Bug:",
-				"author": "rayatulislami403-prog"
+				"author": "rayatulislami403-prog",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
 			},
 			{
 				"number": 37765,
 				"title": "Bug: ViewTransition breaks the root when its container is a ShadowRoot",
-				"author": "Aias"
+				"author": "Aias",
+				"state": "open"
 			},
 			{
 				"number": 37762,
 				"title": "Bug: \"Cannot commit the same tree as before\" (#177) when a throttled Suspense reveal's commit flushes another root's passive effects that update its root synchronously",
-				"author": "FaridSafi"
+				"author": "FaridSafi",
+				"state": "open"
 			},
 			{
 				"number": 37761,
 				"title": "[Compiler Bug]: purity reports impure calls in functions that only run from event handlers (closure created inside .map(), or closure referencing a later-declared const)",
-				"author": "outof-place"
+				"author": "outof-place",
+				"state": "open"
 			}
 		],
 		"/react/react/issues/10": [
 			{
 				"number": 10,
-				"title": "Can't require() react-tools module"
+				"title": "Can't require() react-tools module",
+				"author": "jriecken",
+				"state": "closed"
 			}
 		],
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": [

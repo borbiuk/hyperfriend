@@ -99,6 +99,50 @@ test('should preview only the bracketed part as the link', async ({
 	);
 });
 
+test('should list the metadata placeholders and preview them with the sample item', async ({
+	openOptions,
+}) => {
+	const options = await openOptions();
+	const field = templateField(options, PULL_REQUEST_LABEL);
+
+	for (const name of [
+		'ref',
+		'author',
+		'state',
+		'labels',
+		'assignees',
+		'milestone',
+		'head_branch',
+		'base_branch',
+	]) {
+		await expect(
+			field.getByText(`{{${name}}}`, { exact: true })
+		).toBeVisible();
+	}
+
+	await test.step('the Issue field lists the shared placeholders but no branch placeholders', async () => {
+		const issueField = templateField(options, 'Issue link template');
+		await expect(
+			issueField.getByText('{{milestone}}', { exact: true })
+		).toBeVisible();
+		await expect(
+			issueField.getByText('{{head_branch}}', { exact: true })
+		).toHaveCount(0);
+		await expect(
+			issueField.getByText('{{base_branch}}', { exact: true })
+		).toHaveCount(0);
+	});
+
+	await field
+		.getByRole('textbox')
+		.fill('{{ref}} {{state}} {{author}} {{labels}} {{head_branch}}');
+
+	// The popup's sample pull request is open, by borbiuk, labelled enhancement and ui
+	await expect(field.getByText(/^Preview: .*\(link\)$/)).toHaveText(
+		'Preview: borbiuk/hyperfriend#12 open borbiuk enhancement, ui copy-button (link)'
+	);
+});
+
 test('should limit a template to 500 characters', async ({ openOptions }) => {
 	const options = await openOptions();
 	const field = templateField(options, PULL_REQUEST_LABEL);

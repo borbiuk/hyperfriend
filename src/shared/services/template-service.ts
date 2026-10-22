@@ -4,9 +4,13 @@ import { LinkTargetModel, LinkType } from '@shared/models';
 /** Matches `{{name}}` tokens, allowing whitespace inside the braces. */
 const PLACEHOLDER_REGEX = /\{\{\s*([a-z_]+)\s*\}\}/g;
 
+/** Separator of list values such as labels and assignees */
+const LIST_SEPARATOR = ', ';
+
 /**
  * Builds the placeholder values available for the given target.
  * Besides the advertised placeholders, the generic aliases `number` and `title` work for every type.
+ * A placeholder whose data the page did not show is empty.
  */
 function getPlaceholderValues(target: LinkTargetModel): Record<string, string> {
 	const number = String(target.number);
@@ -16,11 +20,19 @@ function getPlaceholderValues(target: LinkTargetModel): Record<string, string> {
 		owner: target.owner,
 		repo: target.repo,
 		url: target.url,
+		ref: `${target.owner}/${target.repo}#${number}`,
+		author: target.author ?? '',
+		state: target.state ?? '',
+		labels: (target.labels ?? []).join(LIST_SEPARATOR),
+		assignees: (target.assignees ?? []).join(LIST_SEPARATOR),
+		milestone: target.milestone ?? '',
 	};
 
 	if (target.type === LinkType.PullRequest) {
 		values.pr_number = number;
 		values.pr_name = target.title;
+		values.head_branch = target.headBranch ?? '';
+		values.base_branch = target.baseBranch ?? '';
 	}
 
 	if (target.type === LinkType.Issue) {

@@ -13,6 +13,13 @@ const SAMPLE_PULL_REQUEST: LinkTargetModel = {
 	number: 12,
 	title: 'Add copy button to PR list',
 	url: 'https://github.com/borbiuk/hyperfriend/pull/12',
+	author: 'borbiuk',
+	state: 'open',
+	labels: ['enhancement', 'ui'],
+	assignees: ['borbiuk'],
+	milestone: '2.2.0',
+	headBranch: 'copy-button',
+	baseBranch: 'master',
 };
 
 const SAMPLE_ISSUE: LinkTargetModel = {
@@ -22,6 +29,11 @@ const SAMPLE_ISSUE: LinkTargetModel = {
 	number: 7,
 	title: 'Button is missing on the issue page',
 	url: 'https://github.com/borbiuk/hyperfriend/issues/7',
+	author: 'borbiuk',
+	state: 'open',
+	labels: ['bug'],
+	assignees: ['borbiuk'],
+	milestone: '2.2.0',
 };
 
 interface TemplatesPanelProps {
@@ -51,6 +63,8 @@ export function TemplatesPanel({
 				style={{ color: 'var(--fgColor-muted)' }}
 			>
 				Put the part that should be the link in [square brackets].
+				Details such as labels, assignees and branches are filled only
+				where the page shows them.
 			</Text>
 			<div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 				<TemplateField

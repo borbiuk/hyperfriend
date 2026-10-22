@@ -35,12 +35,14 @@ const LIST_LINKS =
 /**
  * Pages to capture: file name (without .html), URL, and the kind of page.
  * `list` pages record every title link; `detail` pages record the item in the URL.
+ * `requireState` fails the run when no row of the list shows a state (the markup changed).
  */
 const PAGES = [
 	{
 		file: 'pull-list',
 		url: 'https://github.com/react/react/pulls',
 		kind: 'list',
+		requireState: true,
 	},
 	{
 		file: 'pull',
@@ -61,6 +63,7 @@ const PAGES = [
 		file: 'issue-list',
 		url: 'https://github.com/react/react/issues',
 		kind: 'list',
+		requireState: true,
 	},
 	{
 		file: 'issue',
@@ -201,21 +204,112 @@ async function waitForStableDom(page) {
 	throw new Error(`${page.url()} kept changing for 15 s`);
 }
 
-/** Runs in the page: number, title and (where the row shows one) author login of every list item, in page order. */
+/**
+ * Runs in the page: number, title and, where the row shows them, author login, state and label
+ * names of every list item, in page order.
+ */
 function readListItems(selector) {
+	const toState = (text) => {
+		const lower = (text ?? '').toLowerCase();
+		return ['draft', 'merged', 'closed', 'open'].find((word) =>
+			lower.includes(word)
+		);
+	};
+
 	return [...document.querySelectorAll(selector)].map((link) => {
-		const author = link
-			.closest('li, [role="listitem"]')
+		const row = link.closest('li, [role="listitem"]');
+		const author = row
 			?.querySelector('[data-testid="author-filter-link"]')
 			// Issue lists render it as a button labelled "Filter by author <login>"
 			?.textContent.trim()
 			.replace(/^Filter by author /, '');
+		const state = [...(row?.querySelectorAll('svg[aria-label]') ?? [])]
+			.map((icon) => toState(icon.getAttribute('aria-label')))
+			.find(Boolean);
+		const labels = [
+			...(row?.querySelectorAll(
+				'button[aria-label^="Filter by label "]'
+			) ?? []),
+		].map((button) =>
+			button.getAttribute('aria-label').replace('Filter by label ', '')
+		);
 		return {
 			number: Number(new URL(link.href).pathname.split('/').pop()),
 			title: link.textContent.trim(),
 			...(author ? { author } : {}),
+			...(state ? { state } : {}),
+			...(labels.length > 0 ? { labels } : {}),
 		};
 	});
+}
+
+/**
+ * Runs in the page: author, state, label names, assignee logins, milestone and (pull requests)
+ * base and head branch of a detail page; fields the page does not show are left out.
+ */
+function readDetailMetadata() {
+	const toState = (text) => {
+		const lower = (text ?? '').toLowerCase();
+		return ['draft', 'merged', 'closed', 'open'].find((word) =>
+			lower.includes(word)
+		);
+	};
+	const text = (el) => el?.textContent.replace(/\s+/g, ' ').trim();
+	const author =
+		document
+			.querySelector('meta[property="og:author:username"]')
+			?.getAttribute('content') ??
+		text(document.querySelector('.gh-header-meta a.author'));
+	const state =
+		toState(
+			document
+				.querySelector('[data-component="StateLabel"][data-status]')
+				?.getAttribute('data-status')
+		) ??
+		toState(document.querySelector('.State[title^="Status: "]')?.title);
+	const labels = [
+		...new Set(
+			[
+				...document.querySelectorAll(
+					'.js-issue-labels a[data-name], [data-testid="issue-labels"] a'
+				),
+			]
+				.map((label) => label.dataset.name ?? text(label))
+				.filter(Boolean)
+		),
+	];
+	const assignees = [
+		...new Set(
+			[
+				...document.querySelectorAll(
+					'[data-channel-event-name="assignees_updated"] [data-assignee-name]'
+				),
+			].map((el) => el.dataset.assigneeName)
+		),
+	];
+	const milestone = text(
+		document.querySelector(
+			'[data-channel-event-name="milestone_updated"] a[href*="/milestone/"], [data-testid="sidebar-milestones-section"] a[href*="/milestone/"]'
+		)
+	);
+	const branches = [
+		...document.querySelectorAll('[data-component="BranchName"]'),
+	];
+	const [base, head] = (
+		branches.length >= 2
+			? branches
+			: [...document.querySelectorAll('.gh-header-meta .commit-ref')]
+	).map(text);
+
+	return {
+		...(author ? { author } : {}),
+		...(state ? { state } : {}),
+		...(labels.length > 0 ? { labels } : {}),
+		...(assignees.length > 0 ? { assignees } : {}),
+		...(milestone ? { milestone } : {}),
+		...(base ? { baseBranch: base } : {}),
+		...(head ? { headBranch: head } : {}),
+	};
 }
 
 const browser = await chromium.launch();
@@ -229,7 +323,7 @@ const tmpDir = mkdtempSync(join(FIXTURES_DIR, '.pages-'));
 const index = { pages: {}, items: {} };
 
 try {
-	for (const { file, url, kind } of PAGES) {
+	for (const { file, url, kind, requireState } of PAGES) {
 		await page.goto(url, { waitUntil: 'domcontentloaded' });
 		const { pathname, search } = new URL(url);
 		// Search pages are told apart by their query; other pages have none
@@ -240,21 +334,30 @@ try {
 				.locator(LIST_LINKS)
 				.first()
 				.waitFor({ state: 'attached' });
+			await waitForStableDom(page);
 			index.items[key] = await page.evaluate(readListItems, LIST_LINKS);
+			// A repository list shows the state of its rows: none recorded means the markup changed
+			if (requireState && !index.items[key].some((item) => item.state)) {
+				throw new Error(
+					`${file}: no row shows a state; update readListItems`
+				);
+			}
 		} else {
 			await page
 				.locator('main h1')
 				.first()
 				.waitFor({ state: 'attached' });
+			await waitForStableDom(page);
 			const number = Number(pathname.split('/')[4]);
 			// The page title is "<title> by <author> · Pull Request #<n> · …" / "<title> · Issue #<n> · …"
 			const title = (await page.title()).split(
 				/ (?:by \S+ )?· (?:Pull Request|Issue) #/
 			)[0];
-			index.items[key] = [{ number, title }];
+			index.items[key] = [
+				{ number, title, ...(await page.evaluate(readDetailMetadata)) },
+			];
 		}
 
-		await waitForStableDom(page);
 		await page.evaluate(sanitize);
 		const html = `<!DOCTYPE html>\n${await page.evaluate(() => document.documentElement.outerHTML)}\n`;
 		const leak = FORBIDDEN.find((pattern) => pattern.test(html));

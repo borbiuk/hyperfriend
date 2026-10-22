@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test';
+import { LinkType } from '@shared/models';
 
 import { expect, readyForShortcut, test } from './fixtures/extension';
 import {
@@ -8,6 +9,7 @@ import {
 	PAGES,
 	REPOSITORY,
 	serveUnhydrated,
+	snapshotHtml,
 	snapshotItems,
 	snapshotUrl,
 	titleButton,
@@ -27,10 +29,14 @@ const BUTTON_NAME = `Copy link to issue #${NUMBER}`;
 /** Modifier bit of Shift in CDP `Input.dispatchKeyEvent` */
 const CDP_SHIFT = 8;
 
+/** What the snapshot's header shows; the placeholder tests are checked against these literals */
+const AUTHOR = 'jriecken';
+const STATE = 'closed';
+
 test.beforeAll(() => {
 	// The literals above are this file's oracle; they must describe the snapshot the tests load
 	expect(snapshotItems(PAGES.issue)).toEqual([
-		{ number: NUMBER, title: TITLE },
+		{ number: NUMBER, title: TITLE, author: AUTHOR, state: STATE },
 	]);
 });
 
@@ -67,6 +73,96 @@ test('should add the copy button right after the issue number', async ({
 	await expect(elementBeforeTitleButton(page, BUTTON_NAME)).toHaveText(
 		`#${NUMBER}`
 	);
+});
+
+test('should fill the metadata placeholders and leave missing ones empty', async ({
+	page,
+	storage,
+	readClipboard,
+	writeClipboardSentinel,
+	normalizeHtml,
+}) => {
+	await storage.seedConfig({
+		templates: {
+			[LinkType.PullRequest]: '[PR {{pr_number}}]: {{pr_name}}',
+			[LinkType.Issue]:
+				'{{ref}} | {{state}} | {{author}} | labels:{{labels}} assignees:{{assignees}} milestone:{{milestone}}.',
+		},
+	});
+	await page.goto(snapshotUrl(PAGES.issue));
+	await readyForShortcut(page);
+	await writeClipboardSentinel(page, 'sentinel: issue page placeholders');
+
+	await page.keyboard.press('Shift+C');
+
+	// Issue 10 has no labels, no assignee and no milestone
+	const text = `react/react#${NUMBER} | ${STATE} | ${AUTHOR} | labels: assignees: milestone:.`;
+	await expect
+		.poll(() => readClipboard(page))
+		.toEqual({
+			html: await normalizeHtml(
+				page,
+				`<a href="${ISSUE_URL}">${text}</a>`
+			),
+			text: `${text} — ${ISSUE_URL}`,
+		});
+});
+
+test('should read the labels, assignees and milestone from the sidebar of the new issue layout', async ({
+	page,
+	storage,
+	readClipboard,
+	writeClipboardSentinel,
+	normalizeHtml,
+}) => {
+	await test.step('setup: fill the sidebar sections of the snapshot, which shows no labels, assignee or milestone', async () => {
+		const original = snapshotHtml(PAGES.issue);
+		const html = original
+			.replace(
+				/(data-testid="issue-labels"[^>]*>)No labels/,
+				'$1<a href="/react/react/issues?q=label%3Abug"><span>bug</span></a><a href="/react/react/issues?q=label%3Aui"><span>ui</span></a>'
+			)
+			.replace(
+				/(data-testid="sidebar-assignees-section"[^>]*>)/,
+				// The last link leaves the site, so it is no assignee
+				'$1<a href="/octocat">octocat</a><a href="/hubot">hubot</a><a href="https://docs.github.com/en">docs</a>'
+			)
+			.replace(
+				/(data-testid="sidebar-milestones-section"[^>]*>)/,
+				`$1<a href="${REPOSITORY}/milestone/3">v16</a>`
+			);
+		expect(html, 'precondition: the three sections exist').not.toBe(
+			original
+		);
+		await page.route(snapshotUrl(PAGES.issue), (route) =>
+			route.fulfill({
+				contentType: 'text/html; charset=utf-8',
+				body: html,
+			})
+		);
+		await storage.seedConfig({
+			templates: {
+				[LinkType.PullRequest]: '[PR {{pr_number}}]: {{pr_name}}',
+				[LinkType.Issue]: '{{labels}} | {{assignees}} | {{milestone}}',
+			},
+		});
+	});
+
+	await page.goto(snapshotUrl(PAGES.issue));
+	await readyForShortcut(page);
+	await writeClipboardSentinel(page, 'sentinel: issue sidebar placeholders');
+
+	await page.keyboard.press('Shift+C');
+
+	await expect
+		.poll(() => readClipboard(page))
+		.toEqual({
+			html: await normalizeHtml(
+				page,
+				`<a href="${ISSUE_URL}">bug, ui | octocat, hubot | v16</a>`
+			),
+			text: `bug, ui | octocat, hubot | v16 — ${ISSUE_URL}`,
+		});
 });
 
 test('should add the copy button only after GitHub has hydrated the page', async ({

@@ -26,6 +26,28 @@ const ISSUE: LinkTargetModel = {
 	url: 'https://github.com/react/react/issues/10',
 };
 
+/** Pull request with every detail the page can show */
+const DETAILED_PULL_REQUEST: LinkTargetModel = {
+	...PULL_REQUEST,
+	author: 'pingan1927',
+	state: 'merged',
+	labels: ['CLA Signed', 'React Core Team'],
+	assignees: ['aweary', 'gaearon'],
+	milestone: 'v16',
+	headBranch: 'koubei-fe:master',
+	baseBranch: 'react:master',
+};
+
+/** Issue with every detail the page can show */
+const DETAILED_ISSUE: LinkTargetModel = {
+	...ISSUE,
+	author: 'jriecken',
+	state: 'closed',
+	labels: ['Type: Bug'],
+	assignees: ['aweary'],
+	milestone: 'v15',
+};
+
 /** Pull request whose title has brackets, to prove they are plain text */
 const BRACKET_PULL_REQUEST: LinkTargetModel = {
 	...PULL_REQUEST,
@@ -53,6 +75,66 @@ interface PartsCase {
 }
 
 const PLACEHOLDER_CASES: PartsCase[] = [
+	{
+		title: 'should fill "{{ref}}" with owner, repo and number for a pull request',
+		template: '{{ref}}',
+		target: PULL_REQUEST,
+		expected: { before: '', link: 'react/react#9713', after: '' },
+	},
+	{
+		title: 'should fill "{{ref}}" with owner, repo and number for an issue',
+		template: '{{ref}}',
+		target: ISSUE,
+		expected: { before: '', link: 'react/react#10', after: '' },
+	},
+	{
+		title: 'should fill every detail placeholder of a pull request',
+		template:
+			'{{author}} | {{state}} | {{labels}} | {{assignees}} | {{milestone}} | {{base_branch}} <- {{head_branch}}',
+		target: DETAILED_PULL_REQUEST,
+		expected: {
+			before: '',
+			link: 'pingan1927 | merged | CLA Signed, React Core Team | aweary, gaearon | v16 | react:master <- koubei-fe:master',
+			after: '',
+		},
+	},
+	{
+		title: 'should fill every detail placeholder of an issue',
+		template:
+			'{{author}} | {{state}} | {{labels}} | {{assignees}} | {{milestone}}',
+		target: DETAILED_ISSUE,
+		expected: {
+			before: '',
+			link: 'jriecken | closed | Type: Bug | aweary | v15',
+			after: '',
+		},
+	},
+	{
+		title: 'should render details the page did not show as empty text and use the whole text as the link in "[{{author}}]: {{state}}{{labels}}{{milestone}}"',
+		template: '[{{author}}]: {{state}}{{labels}}{{milestone}}',
+		target: PULL_REQUEST,
+		expected: { before: '', link: ':', after: '' },
+	},
+	{
+		title: 'should use the default template when every placeholder of the template is empty',
+		template: '{{author}}{{labels}}',
+		target: PULL_REQUEST,
+		expected: {
+			before: '',
+			link: 'PR 9713',
+			after: ': Fix number input value',
+		},
+	},
+	{
+		title: 'should keep the branch placeholders of "{{head_branch}}" as is for an issue',
+		template: '{{head_branch}} {{base_branch}}',
+		target: DETAILED_ISSUE,
+		expected: {
+			before: '',
+			link: '{{head_branch}} {{base_branch}}',
+			after: '',
+		},
+	},
 	{
 		title: 'should fill every pull request placeholder in "{{pr_number}} {{pr_name}} {{owner}}/{{repo}} {{url}}"',
 		template: '{{pr_number}} {{pr_name}} {{owner}}/{{repo}} {{url}}',

@@ -22,8 +22,10 @@ const ACTIVATION_KEYS = new Set(['Enter', ' ']);
 
 /**
  * Resolves the Pull Request / Issue to copy; called on every click, so the title is always current.
+ * `withMetadata` asks for the details the placeholders need (author, state, labels, ...); labels
+ * and tooltips do not need them.
  */
-export type TargetResolver = () => LinkTargetModel | null;
+export type TargetResolver = (withMetadata?: boolean) => LinkTargetModel | null;
 
 /**
  * Where the button is placed; only affects spacing.
@@ -140,7 +142,7 @@ export class CopyButton {
 	 * @returns Resolves with `true` when copied, `false` when copying failed.
 	 */
 	public copy(showTooltip = true): Promise<boolean> {
-		const target = this.resolveTarget();
+		const target = this.resolveTarget(true);
 		if (!target) {
 			this.showFeedback(CopyButtonState.Failed, showTooltip);
 			return Promise.resolve(false);

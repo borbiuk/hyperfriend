@@ -1,5 +1,7 @@
 import { LinkTargetModel, LinkType } from '@shared/models';
 
+import { readDetailMetadata, readListMetadata } from './link-metadata-parser';
+
 /** Pull Request / Issue path with an optional sub-path: `/{owner}/{repo}/pull/{n}/files` */
 const ITEM_PATH_REGEX = /^\/([^/]+)\/([^/]+)\/(pull|issues)\/(\d+)(\/.*)?$/;
 
@@ -33,7 +35,10 @@ const NON_TITLE_SELECTOR = '.sr-only, [aria-hidden="true"], [data-hyperfriend]';
 /**
  * Identity of a Pull Request or Issue parsed from a URL (everything except the title).
  */
-type ItemReference = Omit<LinkTargetModel, 'title'>;
+type ItemReference = Pick<
+	LinkTargetModel,
+	'type' | 'owner' | 'repo' | 'number' | 'url'
+>;
 
 /**
  * Collapses whitespace (including non-breaking spaces) and trims.
@@ -90,10 +95,12 @@ export function parseItemUrl(
  * Builds a link target from a list row title link (its text is the title).
  *
  * @param anchor - Title link of a list row.
+ * @param withMetadata - Also read author, state and labels of the row (more DOM work; only needed to copy).
  * @returns The target, or `null` if the link is not a PR / Issue title link.
  */
 export function parseListLink(
-	anchor: HTMLAnchorElement
+	anchor: HTMLAnchorElement,
+	withMetadata = false
 ): LinkTargetModel | null {
 	const reference = parseItemUrl(anchor.getAttribute('href') ?? '', false);
 	if (!reference) {
@@ -105,7 +112,11 @@ export function parseListLink(
 		return null;
 	}
 
-	return { ...reference, title };
+	if (!withMetadata) {
+		return { ...reference, title };
+	}
+
+	return { ...reference, ...readListMetadata(anchor), title };
 }
 
 /**
@@ -189,10 +200,12 @@ function getDocumentTitle(reference: ItemReference): string {
  * Builds the link target of the current Pull Request / Issue detail page.
  *
  * @param header - Title header element of the page, if found.
+ * @param withMetadata - Also read author, state, labels, assignees, milestone and branches (only needed to copy).
  * @returns The target, or `null` if the URL or the title can not be resolved.
  */
 export function parseDetailPage(
-	header: Element | null
+	header: Element | null,
+	withMetadata = false
 ): LinkTargetModel | null {
 	const reference = parseItemUrl(window.location.href, true);
 	if (!reference) {
@@ -217,5 +230,18 @@ export function parseDetailPage(
 		return null;
 	}
 
-	return { ...reference, title };
+	if (!withMetadata) {
+		return { ...reference, title };
+	}
+
+	// The sidebar and the branches are trusted only while the header shows the item of the URL
+	const confirmed =
+		number !== null &&
+		Number(normalizeText(number.textContent).slice(1)) === reference.number;
+
+	return {
+		...reference,
+		...readDetailMetadata(reference.type, reference.url, confirmed),
+		title,
+	};
 }

@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test';
+import { LinkType } from '@shared/models';
 
 import { expect, readyForShortcut, test } from './fixtures/extension';
 import {
@@ -23,10 +24,25 @@ const HTML = `<a href="${PULL_URL}">PR ${NUMBER}</a>: [#9712] fix &lt;input type
 const TEXT = `PR ${NUMBER}: ${TITLE} — ${PULL_URL}`;
 const BUTTON_NAME = `Copy link to pull request #${NUMBER}`;
 
+/** What the snapshot's header and sidebar show; the placeholder tests are checked against these literals */
+const AUTHOR = 'pingan1927';
+const STATE = 'closed';
+const LABEL = 'CLA Signed';
+const BASE_BRANCH = 'react:master';
+const HEAD_BRANCH = 'koubei-fe:master';
+
 test.beforeAll(() => {
 	// The literals above are this file's oracle; they must describe the snapshot the tests load
 	expect(snapshotItems(PAGES.pull)).toEqual([
-		{ number: NUMBER, title: TITLE },
+		{
+			number: NUMBER,
+			title: TITLE,
+			author: AUTHOR,
+			state: STATE,
+			labels: [LABEL],
+			baseBranch: BASE_BRANCH,
+			headBranch: HEAD_BRANCH,
+		},
 	]);
 });
 
@@ -42,6 +58,90 @@ async function navigateInPage(page: Page, path: string): Promise<void> {
 		document.dispatchEvent(new Event('turbo:load'));
 	}, path);
 }
+
+test('should fill the metadata placeholders from the pull request page and skip the reviewers', async ({
+	page,
+	storage,
+	readClipboard,
+	writeClipboardSentinel,
+	normalizeHtml,
+}) => {
+	await storage.seedConfig({
+		templates: {
+			[LinkType.PullRequest]:
+				'{{ref}} | {{state}} | {{author}} | {{labels}} | {{base_branch}} <- {{head_branch}} | {{assignees}} | {{milestone}}',
+			[LinkType.Issue]: '[Issue {{issue_number}}]: {{issue_name}}',
+		},
+	});
+	await page.goto(snapshotUrl(PAGES.pull));
+	await readyForShortcut(page);
+	await writeClipboardSentinel(page, 'sentinel: page placeholders');
+
+	await page.keyboard.press('Shift+C');
+
+	// The page has a reviewer (aweary) but no assignee and no milestone, so those two stay empty
+	const text = `react/react#${NUMBER} | ${STATE} | ${AUTHOR} | ${LABEL} | ${BASE_BRANCH} <- ${HEAD_BRANCH} |  |`;
+	const html = `<a href="${PULL_URL}">react/react#${NUMBER} | ${STATE} | ${AUTHOR} | ${LABEL} | ${BASE_BRANCH} &lt;- ${HEAD_BRANCH} |  |</a>`;
+	await expect
+		.poll(() => readClipboard(page))
+		.toEqual({
+			html: await normalizeHtml(page, html),
+			text: `${text} — ${PULL_URL}`,
+		});
+});
+
+test('should read the assignees and the milestone from their sidebar blocks', async ({
+	page,
+	storage,
+	readClipboard,
+	writeClipboardSentinel,
+	normalizeHtml,
+}) => {
+	await test.step('setup: fill the sidebar blocks of the snapshot, which shows no assignee and no milestone', async () => {
+		const original = snapshotHtml(PAGES.pull);
+		const html = original
+			.replace(
+				/(data-channel-event-name="assignees_updated"[^>]*>)/,
+				'$1<span data-assignee-name="octocat"></span><span data-assignee-name="hubot"></span>'
+			)
+			.replace(
+				/(data-channel-event-name="milestone_updated"[^>]*>)/,
+				`$1<a href="${REPOSITORY}/milestone/7">v2 release</a>`
+			);
+		expect(html, 'precondition: both sidebar blocks exist').not.toBe(
+			original
+		);
+		await page.route(snapshotUrl(PAGES.pull), (route) =>
+			route.fulfill({
+				contentType: 'text/html; charset=utf-8',
+				body: html,
+			})
+		);
+		await storage.seedConfig({
+			templates: {
+				[LinkType.PullRequest]: '{{assignees}} | {{milestone}}',
+				[LinkType.Issue]: '[Issue {{issue_number}}]: {{issue_name}}',
+			},
+		});
+	});
+
+	await page.goto(snapshotUrl(PAGES.pull));
+	await readyForShortcut(page);
+	await writeClipboardSentinel(page, 'sentinel: sidebar placeholders');
+
+	await page.keyboard.press('Shift+C');
+
+	// The reviewer block of the snapshot (aweary) uses the same markup but is not an assignee
+	await expect
+		.poll(() => readClipboard(page))
+		.toEqual({
+			html: await normalizeHtml(
+				page,
+				`<a href="${PULL_URL}">octocat, hubot | v2 release</a>`
+			),
+			text: `octocat, hubot | v2 release — ${PULL_URL}`,
+		});
+});
 
 test.describe('Conversation tab', () => {
 	test('should copy the link with Shift+C and confirm it on the title button', async ({
@@ -269,6 +369,36 @@ test.describe('Files changed tab', () => {
 		await expect(
 			page.locator('[data-hyperfriend="live-region"]')
 		).toHaveText('Copied!');
+	});
+
+	test('should fill the author, state and branch placeholders from the classic header', async ({
+		page,
+		storage,
+		readClipboard,
+		writeClipboardSentinel,
+		normalizeHtml,
+	}) => {
+		await storage.seedConfig({
+			templates: {
+				[LinkType.PullRequest]:
+					'{{state}} | {{author}} | {{base_branch}} <- {{head_branch}}',
+				[LinkType.Issue]: '[Issue {{issue_number}}]: {{issue_name}}',
+			},
+		});
+		await page.goto(snapshotUrl(PAGES.pullFiles));
+		await writeClipboardSentinel(page, 'sentinel: files placeholders');
+
+		await titleButton(page, BUTTON_NAME).click();
+
+		await expect
+			.poll(() => readClipboard(page))
+			.toEqual({
+				html: await normalizeHtml(
+					page,
+					`<a href="${PULL_URL}">${STATE} | ${AUTHOR} | ${BASE_BRANCH} &lt;- ${HEAD_BRANCH}</a>`
+				),
+				text: `${STATE} | ${AUTHOR} | ${BASE_BRANCH} <- ${HEAD_BRANCH} — ${PULL_URL}`,
+			});
 	});
 
 	test('should leave Shift+C to the page and not announce the shortcut', async ({

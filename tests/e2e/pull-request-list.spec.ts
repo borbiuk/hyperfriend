@@ -18,6 +18,12 @@ import {
 
 const PULL_REQUESTS = snapshotItems(PAGES.pullList);
 
+/** A row that shows an author, a state and labels, none with HTML special characters; the list changes with every snapshot refresh */
+const DETAILED = PULL_REQUESTS.find(
+	({ author, state, labels }) =>
+		author && state && labels?.length && !/[&<>"']/.test(labels.join(', '))
+);
+
 /** First row whose title has no HTML special characters, so the payload literal stays readable */
 const FIRST = firstPlainItem(PAGES.pullList);
 const FIRST_URL = `https://github.com${REPOSITORY}/pull/${FIRST.number}`;
@@ -103,6 +109,46 @@ test('should copy the rich link of a pull request from its row', async ({
 			page.locator('[data-hyperfriend="live-region"]')
 		).toHaveText('Copied!');
 	});
+});
+
+test('should fill the author, state and label placeholders from the pull request row', async ({
+	page,
+	storage,
+	readClipboard,
+	writeClipboardSentinel,
+	normalizeHtml,
+}) => {
+	expect(
+		DETAILED,
+		'precondition: a pull request row shows an author, a state and labels'
+	).toBeDefined();
+	const url = `https://github.com${REPOSITORY}/pull/${DETAILED?.number}`;
+
+	await storage.seedConfig({
+		templates: {
+			[LinkType.PullRequest]:
+				'{{ref}} | {{state}} | {{author}} | {{labels}} | {{assignees}}.',
+			[LinkType.Issue]: '[Issue {{issue_number}}]: {{issue_name}}',
+		},
+	});
+	await page.goto(snapshotUrl(PAGES.pullList));
+	await writeClipboardSentinel(page, 'sentinel: row placeholders');
+
+	await page
+		.getByRole('button', {
+			name: `Copy link to pull request #${DETAILED?.number}`,
+			exact: true,
+		})
+		.click();
+
+	// A row does not show assignees, so that placeholder renders empty
+	const text = `react/react#${DETAILED?.number} | ${DETAILED?.state} | ${DETAILED?.author} | ${DETAILED?.labels?.join(', ')} | .`;
+	await expect
+		.poll(() => readClipboard(page))
+		.toEqual({
+			html: await normalizeHtml(page, `<a href="${url}">${text}</a>`),
+			text: `${text} — ${url}`,
+		});
 });
 
 test('should copy the link with the pull request template saved in settings', async ({

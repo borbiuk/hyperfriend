@@ -41,6 +41,32 @@ export const MAX_TEMPLATE_LENGTH = 500;
  * Used for hints in the settings popup.
  */
 export const TEMPLATE_PLACEHOLDERS: Record<LinkType, string[]> = {
-	[LinkType.PullRequest]: ['pr_number', 'pr_name', 'owner', 'repo', 'url'],
-	[LinkType.Issue]: ['issue_number', 'issue_name', 'owner', 'repo', 'url'],
+	[LinkType.PullRequest]: [
+		'pr_number',
+		'pr_name',
+		'owner',
+		'repo',
+		'url',
+		'ref',
+		'author',
+		'state',
+		'labels',
+		'assignees',
+		'milestone',
+		'head_branch',
+		'base_branch',
+	],
+	[LinkType.Issue]: [
+		'issue_number',
+		'issue_name',
+		'owner',
+		'repo',
+		'url',
+		'ref',
+		'author',
+		'state',
+		'labels',
+		'assignees',
+		'milestone',
+	],
 };

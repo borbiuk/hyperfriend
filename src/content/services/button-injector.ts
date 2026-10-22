@@ -126,7 +126,7 @@ export class ButtonInjector {
 	 * @returns The target, or `null` if it can not be resolved.
 	 */
 	public resolveDetailTarget(): LinkTargetModel | null {
-		return parseDetailPage(this.findDetailHeader());
+		return parseDetailPage(this.findDetailHeader(), true);
 	}
 
 	/**
@@ -173,7 +173,8 @@ export class ButtonInjector {
 			}
 
 			const reference = this.getListReference(anchor);
-			const resolver: TargetResolver = () => parseListLink(anchor);
+			const resolver: TargetResolver = (withMetadata) =>
+				parseListLink(anchor, withMetadata);
 
 			const button = this.ensureButtonAfter(
 				reference,
@@ -191,7 +192,8 @@ export class ButtonInjector {
 			return;
 		}
 
-		const resolver: TargetResolver = () => parseDetailPage(header);
+		const resolver: TargetResolver = (withMetadata) =>
+			parseDetailPage(header, withMetadata);
 		if (!resolver()) {
 			return;
 		}

@@ -52,15 +52,25 @@ links and one for Issue links. Defaults:
 
 **Square brackets mark the link.** Only the text inside `[` and `]` becomes the hyperlink; the rest is plain text. With the defaults a Pull Request pastes as the link "PR 12" followed by the plain text ": Add copy button to PR list". This keeps the link short: Microsoft Teams makes the whole pasted text one blue link and shortens long link text, so a short link such as "PR 12" stays readable.
 
-| Placeholder        | Available in  | Replaced with                  | Example                      |
-| ------------------ | ------------- | ------------------------------ | ---------------------------- |
-| `{{pr_number}}`    | Pull Requests | Pull Request number            | `12`                         |
-| `{{pr_name}}`      | Pull Requests | Pull Request title             | `Add copy button to PR list` |
-| `{{issue_number}}` | Issues        | Issue number                   | `34`                         |
-| `{{issue_name}}`   | Issues        | Issue title                    | `Button is not shown`        |
-| `{{owner}}`        | Both          | Repository owner               | `borbiuk`                    |
-| `{{repo}}`         | Both          | Repository name                | `hyperfriend`                |
-| `{{url}}`          | Both          | Canonical Pull Request / Issue | `https://github.com/…`       |
+| Placeholder        | Available in  | Replaced with                                                 | Example                      |
+| ------------------ | ------------- | ------------------------------------------------------------- | ---------------------------- |
+| `{{pr_number}}`    | Pull Requests | Pull Request number                                           | `12`                         |
+| `{{pr_name}}`      | Pull Requests | Pull Request title                                            | `Add copy button to PR list` |
+| `{{issue_number}}` | Issues        | Issue number                                                  | `34`                         |
+| `{{issue_name}}`   | Issues        | Issue title                                                   | `Button is not shown`        |
+| `{{owner}}`        | Both          | Repository owner                                              | `borbiuk`                    |
+| `{{repo}}`         | Both          | Repository name                                               | `hyperfriend`                |
+| `{{url}}`          | Both          | Canonical Pull Request / Issue                                | `https://github.com/…`       |
+| `{{ref}}`          | Both          | Short reference `owner/repo#number`                           | `borbiuk/hyperfriend#12`     |
+| `{{author}}`       | Both          | Login of the author                                           | `borbiuk`                    |
+| `{{state}}`        | Both          | `open`, `closed`, `merged` or `draft`                         | `merged`                     |
+| `{{labels}}`       | Both          | Label names, separated by a comma and a space                 | `bug, ui`                    |
+| `{{assignees}}`    | Both          | Assignee logins, separated by a comma and a space             | `borbiuk, octocat`           |
+| `{{milestone}}`    | Both          | Milestone title                                               | `v2 release`                 |
+| `{{base_branch}}`  | Pull Requests | Target branch, as the page shows it                           | `master`                     |
+| `{{head_branch}}`  | Pull Requests | Source branch, as the page shows it (`owner:branch` in forks) | `copy-button`                |
+
+Where the data comes from: the number, title, owner, repo, `{{url}}` and `{{ref}}` are always known. The other placeholders are read from the page you copy on. A **list row** shows the author, the state and the labels (search results show none of them); a **Pull Request or Issue page** shows all of them (the branches on Pull Requests only). A placeholder whose data the page does not show is replaced with nothing, so `{{labels}}` is empty when the item has no labels or the row shows none.
 
 Notes:
 
@@ -70,9 +80,9 @@ Notes:
 - Spaces at the edges of the bracketed part stay outside the link: `[ PR {{pr_number}} ]: …` links only "PR 12".
 - A bracket can't cut through a placeholder: `{{pr_[number]}}` is not a placeholder.
 - `text/plain` never contains the brackets: `PR 12: Add copy button to PR list — https://github.com/…`.
-- The live preview in the popup underlines the part that will be the link, and a hint above the fields reminds you of the square brackets.
+- The live preview in the popup underlines the part that will be the link, and a hint above the fields reminds you of the square brackets and that details such as labels, assignees and branches are filled only where the page shows them.
 - Spaces inside the braces are allowed: `{{ pr_number }}`.
-- Unknown placeholders (including the ones of the other link type) are left as they are.
+- Unknown placeholders (including the ones of the other link type, such as `{{head_branch}}` in an Issue template) are left as they are. A known placeholder without data is replaced with an empty text, and the spaces around it stay, so `{{state}} {{labels}}` can leave a double space.
 - An empty template, or one that renders to empty text (for example `[]`), falls back to the default one.
 - Settings are saved in the browser sync storage, so they follow you across devices signed in to the same browser account. When you update from 1.x or 2.0.0, your saved templates are converted once: a template that is exactly the old default (`PR {{pr_number}}: {{pr_name}}` / `Issue {{issue_number}}: {{issue_name}}`) becomes the new bracketed default, and any other template keeps its text as it was, with its `[` and `]` escaped (`\[` and `\]`), so it copies exactly as before (the whole text is the link). Add square brackets to it yourself to mark a shorter link.
 

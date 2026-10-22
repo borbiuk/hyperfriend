@@ -1,3 +1,5 @@
+import { LinkType } from '@shared/models';
+
 import { expect, readyForShortcut, test } from './fixtures/extension';
 import {
 	firstPlainItem,
@@ -15,6 +17,12 @@ const ISSUES = snapshotItems(PAGES.issueList);
 
 /** Titles repeat on this list (several rows are titled "Bug:"), so rows are counted per title */
 const TITLES = [...new Set(ISSUES.map((issue) => issue.title))];
+
+/** A row that shows an author, a state and labels, none with HTML special characters; the list changes with every snapshot refresh */
+const DETAILED = ISSUES.find(
+	({ author, state, labels }) =>
+		author && state && labels?.length && !/[&<>"']/.test(labels.join(', '))
+);
 
 /** First row whose title has no HTML special characters, so the payload literal stays readable */
 const FIRST = firstPlainItem(PAGES.issueList);
@@ -44,6 +52,41 @@ test('should give every issue row exactly one copy button named after its number
 			).toHaveCount(1);
 		}
 	}
+});
+
+test('should fill the author, state and label placeholders from the issue row', async ({
+	page,
+	storage,
+	readClipboard,
+	writeClipboardSentinel,
+	normalizeHtml,
+}) => {
+	test.skip(!DETAILED, 'no snapshot row shows an author, a state and labels');
+	const url = `https://github.com${REPOSITORY}/issues/${DETAILED?.number}`;
+
+	await storage.seedConfig({
+		templates: {
+			[LinkType.Issue]: '{{ref}} | {{state}} | {{author}} | {{labels}}',
+			[LinkType.PullRequest]: '[PR {{pr_number}}]: {{pr_name}}',
+		},
+	});
+	await page.goto(snapshotUrl(PAGES.issueList));
+	await writeClipboardSentinel(page, 'sentinel: row placeholders');
+
+	await page
+		.getByRole('button', {
+			name: `Copy link to issue #${DETAILED?.number}`,
+			exact: true,
+		})
+		.click();
+
+	const text = `react/react#${DETAILED?.number} | ${DETAILED?.state} | ${DETAILED?.author} | ${DETAILED?.labels?.join(', ')}`;
+	await expect
+		.poll(() => readClipboard(page))
+		.toEqual({
+			html: await normalizeHtml(page, `<a href="${url}">${text}</a>`),
+			text: `${text} — ${url}`,
+		});
 });
 
 test('should copy the rich link of an issue from its row', async ({

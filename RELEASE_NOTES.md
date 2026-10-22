@@ -1,5 +1,14 @@
 # Release Notes
 
+## 2.2.0
+
+More placeholders for link templates.
+
+- New placeholders: `{{ref}}` (`owner/repo#12`), `{{author}}`, `{{state}}` (`open`, `closed`, `merged` or `draft`), `{{labels}}`, `{{assignees}}`, `{{milestone}}`, and for Pull Requests `{{base_branch}}` and `{{head_branch}}`. Labels and assignees are joined with a comma and a space.
+- The details are read from the page you copy on. List rows show the author, the state and the labels; Pull Request and Issue pages show all of them. Search results show none of them. A placeholder whose data the page does not show is replaced with nothing.
+- The Templates tab lists the new placeholders, and the live preview fills them for a sample item.
+- Existing templates and settings files are not changed: schema version 3 stays. The extension still needs only the `storage` permission and has no new network traffic.
+
 ## 2.1.1
 
 Fix for GitHub's new pull request page.
