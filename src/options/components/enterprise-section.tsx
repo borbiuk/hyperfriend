@@ -1,11 +1,12 @@
-import { Button, Text, TextInput, VisuallyHidden } from '@primer/react';
+import { ChevronLeftIcon } from '@primer/octicons-react';
+import { Button, Text, TextInput } from '@primer/react';
 import {
 	listEnterpriseHosts,
 	parseEnterpriseHost,
 	removeEnterpriseHost,
 	requestEnterpriseHost,
 } from '@shared/services';
-import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { Ref, useCallback, useEffect, useId, useRef, useState } from 'react';
 
 import { ViewMode } from '../hooks/use-view-mode';
 
@@ -18,21 +19,31 @@ const NOTICE_VISIBLE_MS = 6000;
 interface EnterpriseSectionProps {
 	/** `null` until the view is detected; adding waits until then. */
 	viewMode: ViewMode | null;
+	/** Returns to the settings view. */
+	onBack: () => void;
+	/** The back button, so the parent can focus it when this view opens. */
+	backRef: Ref<HTMLButtonElement>;
+	/** Called with the number of added domains every time the list is read. */
+	onHostsChange: (count: number) => void;
 }
 
 /**
- * The "GitHub Enterprise" section of the General tab: the domains the extension runs on besides
+ * The GitHub Enterprise view of the General tab: the domains the extension runs on besides
  * github.com. Adding a domain asks the browser for access to it (a prompt the user confirms);
  * the background script then registers the content script for it.
  */
-export function EnterpriseSection({ viewMode }: EnterpriseSectionProps) {
+export function EnterpriseSection({
+	viewMode,
+	onBack,
+	backRef,
+	onHostsChange,
+}: EnterpriseSectionProps) {
 	const [hosts, setHosts] = useState<string[]>([]);
 	const [input, setInput] = useState('');
 	const [error, setError] = useState<string | null>(null);
 	/** The error is about the typed domain (the field is marked invalid), not about the browser. */
 	const [inputInvalid, setInputInvalid] = useState(false);
 	const [notice, setNotice] = useState<string | null>(null);
-	const [open, setOpen] = useState(false);
 	const inputId = useId();
 	const descriptionId = useId();
 	const errorId = useId();
@@ -40,9 +51,8 @@ export function EnterpriseSection({ viewMode }: EnterpriseSectionProps) {
 	/** Number of the latest list request: an older answer that arrives later is dropped. */
 	const latestRequest = useRef(0);
 	const mounted = useRef(true);
-	// Closed at first, so the popup stays short; opened once when domains were added before
-	// (not again after the user closed it)
-	const openedForHosts = useRef(false);
+	const onHostsChangeRef = useRef(onHostsChange);
+	onHostsChangeRef.current = onHostsChange;
 
 	const showError = (message: string, forInput = false): void => {
 		setError(message);
@@ -58,10 +68,7 @@ export function EnterpriseSection({ viewMode }: EnterpriseSectionProps) {
 				}
 
 				setHosts(list);
-				if (list.length > 0 && !openedForHosts.current) {
-					openedForHosts.current = true;
-					setOpen(true);
-				}
+				onHostsChangeRef.current(list.length);
 			},
 			() => {
 				if (!mounted.current || request !== latestRequest.current) {
@@ -69,6 +76,7 @@ export function EnterpriseSection({ viewMode }: EnterpriseSectionProps) {
 				}
 
 				setHosts([]);
+				onHostsChangeRef.current(0);
 				setError('Could not read the added domains.');
 				setInputInvalid(false);
 			}
@@ -196,37 +204,54 @@ export function EnterpriseSection({ viewMode }: EnterpriseSectionProps) {
 	};
 
 	return (
-		<details
-			open={open}
-			onToggle={(event) => setOpen(event.currentTarget.open)}
-		>
-			<summary style={{ cursor: 'pointer' }}>
-				<Text
-					as="h2"
-					size="medium"
-					weight="semibold"
-					style={{ display: 'inline', margin: 0 }}
-				>
-					GitHub Enterprise
-				</Text>
-			</summary>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
 			<div
 				style={{
 					display: 'flex',
 					flexDirection: 'column',
-					gap: 8,
-					marginTop: 8,
+					alignItems: 'flex-start',
+					gap: 6,
 				}}
 			>
+				<Button
+					ref={backRef}
+					size="small"
+					variant="invisible"
+					leadingVisual={ChevronLeftIcon}
+					style={{ marginLeft: -8 }}
+					onClick={onBack}
+				>
+					General
+				</Button>
+				<Text
+					as="h2"
+					size="large"
+					weight="semibold"
+					style={{ margin: 0 }}
+				>
+					GitHub Enterprise Server
+				</Text>
 				<Text
 					id={descriptionId}
 					size="small"
 					style={{ color: 'var(--fgColor-muted)' }}
 				>
-					GitHub Enterprise Cloud sites (*.ghe.com) work without any
-					setup. For a GitHub Enterprise Server on its own domain, add
-					that domain, such as github.example.com, to get the copy
-					buttons there. The browser asks you to allow it.
+					Sites on *.ghe.com work without setup. For a GitHub
+					Enterprise Server on its own domain, add that domain, such
+					as github.example.com, to get the copy buttons there. The
+					browser asks you to allow it.
+				</Text>
+			</div>
+
+			<div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+				<Text
+					as="label"
+					htmlFor={inputId}
+					size="small"
+					weight="semibold"
+					style={{ color: 'var(--fgColor-muted)' }}
+				>
+					Domain
 				</Text>
 				<form
 					style={{ display: 'flex', gap: 8 }}
@@ -235,12 +260,6 @@ export function EnterpriseSection({ viewMode }: EnterpriseSectionProps) {
 						handleAdd();
 					}}
 				>
-					{/* Absolutely positioned, so it takes no place in the row */}
-					<VisuallyHidden>
-						<label htmlFor={inputId}>
-							GitHub Enterprise domain
-						</label>
-					</VisuallyHidden>
 					<TextInput
 						id={inputId}
 						block
@@ -283,22 +302,32 @@ export function EnterpriseSection({ viewMode }: EnterpriseSectionProps) {
 				>
 					{notice ?? ''}
 				</Text>
-				{hosts.length > 0 && (
+			</div>
+
+			{hosts.length > 0 && (
+				<div
+					style={{ display: 'flex', flexDirection: 'column', gap: 6 }}
+				>
+					<Text
+						size="small"
+						weight="semibold"
+						style={{ color: 'var(--fgColor-muted)' }}
+					>
+						Added domains
+					</Text>
 					<ul
+						className="hyperfriend-group"
 						aria-label="Added domains"
 						style={{
 							listStyle: 'none',
 							margin: 0,
 							padding: 0,
-							display: 'flex',
-							flexDirection: 'column',
-							gap: 4,
 							// A long list must not make the popup taller than the browser allows
-							maxHeight: 96,
+							maxHeight: 160,
 							overflowY: 'auto',
 						}}
 					>
-						{hosts.map((host) => (
+						{hosts.map((host, index) => (
 							<li
 								key={host}
 								style={{
@@ -306,6 +335,11 @@ export function EnterpriseSection({ viewMode }: EnterpriseSectionProps) {
 									alignItems: 'center',
 									justifyContent: 'space-between',
 									gap: 8,
+									padding: '4px 4px 4px 12px',
+									borderTop:
+										index === 0
+											? undefined
+											: '1px solid var(--borderColor-default)',
 								}}
 							>
 								<Text
@@ -318,6 +352,7 @@ export function EnterpriseSection({ viewMode }: EnterpriseSectionProps) {
 									size="small"
 									variant="invisible"
 									aria-label={`Remove ${host}`}
+									style={{ color: 'var(--fgColor-danger)' }}
 									onClick={() => handleRemove(host)}
 								>
 									Remove
@@ -325,8 +360,8 @@ export function EnterpriseSection({ viewMode }: EnterpriseSectionProps) {
 							</li>
 						))}
 					</ul>
-				)}
-			</div>
-		</details>
+				</div>
+			)}
+		</div>
 	);
 }

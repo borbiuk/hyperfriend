@@ -1,9 +1,9 @@
-import { CheckIcon, Icon } from '@primer/octicons-react';
+import { AlertIcon, CheckIcon } from '@primer/octicons-react';
 import {
-	FormControl,
+	ActionList,
+	ActionMenu,
+	Button,
 	Text,
-	TextInput,
-	Token,
 	VisuallyHidden,
 } from '@primer/react';
 import {
@@ -18,6 +18,14 @@ import {
 	toSingleLineTemplate,
 } from '@shared/services';
 import { useCallback, useEffect, useRef, useState } from 'react';
+
+import '../styles/templates.css';
+import {
+	groupPlaceholders,
+	QUICK_PLACEHOLDERS,
+} from '../utils/template-tokens';
+
+import { TokenEditor, TokenEditorHandle } from './token-editor';
 
 /** Delay before a change is written to storage. */
 const SAVE_DELAY_MS = 300;
@@ -36,8 +44,8 @@ export interface FieldControls {
 interface TemplateFieldProps {
 	type: LinkType;
 	label: string;
-	/** Octicon shown before the label, like in the GitHub repository tabs. */
-	icon: Icon;
+	/** False for the fields of the link types that are not selected: they stay mounted but hidden. */
+	active: boolean;
 	/** Template currently stored in the config. */
 	value: string;
 	/** Sample item used for the live preview. */
@@ -48,24 +56,22 @@ interface TemplateFieldProps {
 	syncEpoch: number;
 	/** Registers this field's save controls with the parent. Returns an unregister function. */
 	registerField: (controls: FieldControls) => () => void;
-	/** Id of a note shared by all template fields, added to the input's description. */
-	noteId?: string;
 }
 
 /**
- * One template setting: input with autosave, placeholder hints and a live preview.
+ * One template setting: editor with autosave, placeholder buttons and a live preview.
  */
 export function TemplateField({
 	type,
 	label,
-	icon: LabelIcon,
+	active,
 	value,
 	sample,
 	format,
 	syncEpoch,
 	registerField,
-	noteId,
 }: TemplateFieldProps) {
+	const editor = useRef<TokenEditorHandle>(null);
 	const [draft, setDraft] = useState(value);
 	const [saved, setSaved] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -126,7 +132,7 @@ export function TemplateField({
 					) {
 						unsaved.current = text;
 					}
-					setError('Could not save. Try again.');
+					setError('Could not save. Your text is kept.');
 				})
 				.finally(() => {
 					// A newer change may have been typed while this save was in flight.
@@ -216,120 +222,268 @@ export function TemplateField({
 		templates: { ...DEFAULT_CONFIG.templates, [type]: draft },
 	});
 	const preview = payload.parts;
-	const inputId = `template-${type}`;
-	const placeholdersId = `${inputId}-placeholders`;
-	const errorId = `${inputId}-error`;
-	// Set explicitly (it replaces FormControl's own value) to add the shared note.
-	const describedBy = [error ? errorId : null, placeholdersId, noteId]
+	const baseId = `template-${type}`;
+	const labelId = `${baseId}-label`;
+	const hintId = `${baseId}-hint`;
+	const errorId = `${baseId}-error`;
+	const describedBy = [error ? errorId : null, hintId]
 		.filter(Boolean)
 		.join(' ');
+	const groups = groupPlaceholders(TEMPLATE_PLACEHOLDERS[type]);
+	const isDefault = draft === DEFAULT_CONFIG.templates[type];
+
+	const insert = (name: string): void => {
+		editor.current?.insert(`{{${name}}}`);
+	};
+
+	const retry = (): void => {
+		setError(null);
+		flush();
+	};
 
 	return (
-		<FormControl id={inputId}>
-			<FormControl.Label>
-				<span
+		<div
+			className="hyperfriend-field"
+			data-inactive={active ? undefined : ''}
+		>
+			<div>
+				<div
 					style={{
-						display: 'inline-flex',
+						display: 'flex',
+						justifyContent: 'space-between',
 						alignItems: 'center',
 						gap: 8,
+						minHeight: 28,
 					}}
 				>
-					<LabelIcon
-						size={16}
-						aria-hidden="true"
-						fill="var(--fgColor-muted)"
-					/>
-					{label}
-				</span>
-			</FormControl.Label>
-			<TextInput
-				block
-				monospace
-				size="small"
-				value={draft}
-				// Longer templates could be exported but not imported again.
-				maxLength={MAX_TEMPLATE_LENGTH}
-				aria-describedby={describedBy}
-				onChange={(event) => handleChange(event.target.value)}
-				onBlur={() => flush()}
-				spellCheck={false}
-				autoComplete="off"
-			/>
-			<FormControl.Caption>
-				<span
-					id={placeholdersId}
+					<Text
+						id={labelId}
+						size="small"
+						weight="semibold"
+						style={{ color: 'var(--fgColor-muted)' }}
+					>
+						{label}
+					</Text>
+					<span
+						style={{
+							display: 'inline-flex',
+							alignItems: 'center',
+							gap: 8,
+						}}
+					>
+						{!isDefault && (
+							<Button
+								variant="invisible"
+								size="small"
+								onClick={() =>
+									handleChange(DEFAULT_CONFIG.templates[type])
+								}
+							>
+								Reset to default
+							</Button>
+						)}
+						{/* Hidden with `visibility` to keep its space; the status region below announces it */}
+						<Text
+							size="small"
+							style={{
+								color: 'var(--fgColor-success)',
+								visibility: saved ? 'visible' : 'hidden',
+							}}
+							aria-hidden="true"
+						>
+							<CheckIcon size={12} /> Saved
+						</Text>
+					</span>
+				</div>
+				<TokenEditor
+					ref={editor}
+					type={type}
+					value={draft}
+					// Longer templates could be exported but not imported again.
+					maxLength={MAX_TEMPLATE_LENGTH}
+					labelId={labelId}
+					describedBy={describedBy}
+					invalid={error !== null}
+					placeholder="Type text and insert placeholders"
+					onChange={handleChange}
+					onBlur={() => flush()}
+				/>
+				<Text
+					id={hintId}
+					as="div"
+					size="small"
+					style={{ color: 'var(--fgColor-muted)', marginTop: 6 }}
+				>
+					Text inside [brackets] becomes the link.
+				</Text>
+				{error && (
+					<div
+						style={{
+							display: 'flex',
+							alignItems: 'center',
+							gap: 8,
+							marginTop: 6,
+							padding: '4px 8px',
+							borderRadius: 6,
+							backgroundColor: 'var(--bgColor-danger-muted)',
+							color: 'var(--fgColor-danger)',
+							fontSize: 12,
+						}}
+					>
+						<AlertIcon size={14} />
+						<span id={errorId}>{error}</span>
+						<Button
+							variant="invisible"
+							size="small"
+							style={{ marginLeft: 'auto' }}
+							onClick={retry}
+						>
+							Try again
+						</Button>
+					</div>
+				)}
+			</div>
+
+			<div>
+				<Text
+					as="div"
+					size="small"
+					weight="semibold"
+					style={{ color: 'var(--fgColor-muted)', marginBottom: 6 }}
+				>
+					Insert placeholder
+				</Text>
+				<div
 					style={{
 						display: 'flex',
 						flexWrap: 'wrap',
-						gap: 4,
 						alignItems: 'center',
+						gap: 6,
 					}}
 				>
-					<span>Available:</span>
-					{TEMPLATE_PLACEHOLDERS[type].map((name) => (
-						<Token key={name} text={`{{${name}}}`} size="small" />
+					{QUICK_PLACEHOLDERS[type].map((name) => (
+						<button
+							key={name}
+							type="button"
+							className="hyperfriend-chip"
+							// Keep the caret in the editor
+							onMouseDown={(event) => event.preventDefault()}
+							onClick={() => insert(name)}
+						>
+							{`{{${name}}}`}
+						</button>
 					))}
-				</span>
-			</FormControl.Caption>
-			{error && (
-				<FormControl.Validation variant="error">
-					<span id={errorId}>{error}</span>
-				</FormControl.Validation>
-			)}
-			<div
-				style={{
-					display: 'flex',
-					justifyContent: 'space-between',
-					alignItems: 'baseline',
-					gap: 8,
-					marginTop: 8,
-				}}
-			>
-				<Text
-					size="small"
-					style={{ overflowWrap: 'anywhere', minWidth: 0 }}
-				>
-					<VisuallyHidden>Preview: </VisuallyHidden>
-					{format === LinkFormat.Markdown ? (
-						// Markdown is pasted as source text: no link to underline
-						payload.markdown
-					) : (
-						<>
-							{preview.before}
-							<span
+					<ActionMenu>
+						<ActionMenu.Button size="small" variant="invisible">
+							All placeholders
+						</ActionMenu.Button>
+						<ActionMenu.Overlay width="medium" maxHeight="medium">
+							<ActionList>
+								{groups.map((group) => (
+									<ActionList.Group key={group.title}>
+										<ActionList.GroupHeading>
+											{group.title}
+										</ActionList.GroupHeading>
+										{group.names.map((name) => (
+											<ActionList.Item
+												key={name}
+												// The menu gives the focus back to its button after this
+												onSelect={() =>
+													window.setTimeout(
+														() => insert(name),
+														0
+													)
+												}
+											>
+												<span
+													style={{
+														fontFamily:
+															'var(--fontStack-monospace)',
+														fontSize: 12,
+													}}
+												>
+													{`{{${name}}}`}
+												</span>
+											</ActionList.Item>
+										))}
+									</ActionList.Group>
+								))}
+							</ActionList>
+							<Text
+								as="div"
+								size="small"
 								style={{
-									color: 'var(--fgColor-accent)',
-									textDecoration: 'underline',
+									color: 'var(--fgColor-muted)',
+									padding: '4px 16px 8px',
 								}}
 							>
-								{preview.link}
-							</span>
-							{/* The styling alone does not tell screen reader users which part is the link. */}
-							{preview.link && (
-								<VisuallyHidden> (link)</VisuallyHidden>
-							)}
-							{preview.after}
-						</>
-					)}
-				</Text>
-				{/* Hidden with `visibility` to keep its space; the status region below announces it */}
+								Details such as labels and branches are filled
+								only where the page shows them.
+							</Text>
+						</ActionMenu.Overlay>
+					</ActionMenu>
+				</div>
+			</div>
+
+			<div>
 				<Text
+					as="div"
 					size="small"
-					style={{
-						color: 'var(--fgColor-muted)',
-						flexShrink: 0,
-						visibility: saved ? 'visible' : 'hidden',
-					}}
-					aria-hidden="true"
+					weight="semibold"
+					style={{ color: 'var(--fgColor-muted)', marginBottom: 6 }}
 				>
-					<CheckIcon size={12} /> Saved
+					You will paste
+				</Text>
+				<div
+					style={{
+						padding: 12,
+						border: '1px solid var(--borderColor-default)',
+						borderRadius: 6,
+						backgroundColor: 'var(--bgColor-muted)',
+					}}
+				>
+					<Text style={{ overflowWrap: 'anywhere' }}>
+						<VisuallyHidden>Preview: </VisuallyHidden>
+						{format === LinkFormat.Markdown ? (
+							// Markdown is pasted as source text: no link to underline
+							payload.markdown
+						) : (
+							<>
+								{preview.before}
+								<span
+									style={{
+										color: 'var(--fgColor-accent)',
+										textDecoration: 'underline',
+									}}
+								>
+									{preview.link}
+								</span>
+								{/* The styling alone does not tell screen reader users which part is the link. */}
+								{preview.link && (
+									<VisuallyHidden> (link)</VisuallyHidden>
+								)}
+								{preview.after}
+							</>
+						)}
+					</Text>
+				</div>
+				<Text
+					as="div"
+					size="small"
+					style={{ color: 'var(--fgColor-muted)', marginTop: 6 }}
+				>
+					{format === LinkFormat.Markdown
+						? 'Pasted as Markdown.'
+						: 'Pasted as a rich link.'}{' '}
+					Change the format in the General tab.
 				</Text>
 			</div>
+
 			{/* Always mounted, so screen readers announce the text when it changes */}
 			<VisuallyHidden role="status">
 				{saved ? `${label} saved` : ''}
 			</VisuallyHidden>
 			<VisuallyHidden role="alert">{error ?? ''}</VisuallyHidden>
-		</FormControl>
+		</div>
 	);
 }

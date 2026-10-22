@@ -1,5 +1,15 @@
 # Release Notes
 
+## 2.9.0
+
+A redesigned settings popup.
+
+- **Templates tab**: a switch picks the link type (**PR**, **Issue**, **Discussion** or **Run**), so all four templates are one click away and no longer hidden in a closed section. A dot on the switch marks a template you changed.
+- **Template editor**: placeholders show as chips (one Backspace removes a whole chip) and the part in `[square brackets]` that becomes the link is highlighted. Click a quick placeholder, or open **All placeholders** (grouped by Item, Repository, Branches and Details), to insert one at the caret. **Reset to default** appears when a template differs from the default, and a failed save shows **Try again**.
+- **You will paste**: the preview now says which format is pasted (rich link or Markdown).
+- **General tab**: the copy format is a switch with a preview made from your Pull Request template. Author avatars sit under **Options**. **Enterprise Server domains** is a row that opens its own screen (with a **General** button to go back) and shows how many domains are added. **Export**, **Import** and **Reset all settings** share one row.
+- The settings, the settings file and the copy behavior on GitHub are unchanged.
+
 ## 2.8.0
 
 Fixes and more reliable settings.

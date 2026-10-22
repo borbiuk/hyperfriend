@@ -13,7 +13,7 @@ One click on GitHub copies a clean, readable link, ready to paste into Microsoft
 - 🖼️ Author avatars: A small avatar before the author in Pull Request lists; turn it off with one switch in the settings
 - 🤝 Share with your team: Export your templates, copy format, shortcuts and display settings to a JSON file and import them on another computer, so the whole team pastes links in one format
 - ✅ Clear feedback: The button shows "Copied!" or "Copy failed" right after a click
-- 🌗 Light and dark: Matches the GitHub theme; the settings popup (Templates, Shortcuts and General tabs) follows your system theme, with a live preview of your templates and automatic saving
+- 🌗 Light and dark: Matches the GitHub theme; the settings popup (Templates, Shortcuts and General tabs) follows your system theme, with a template editor that shows placeholders as chips, a live preview of what you paste and automatic saving
 - 🏢 GitHub Enterprise: Works on GitHub Enterprise Cloud (ghe.com sites) right away; for a GitHub Enterprise Server, add its domain in the settings and allow the access in the browser prompt
 - 🔄 Works with GitHub navigation: Buttons show up after in-page navigation too, no refresh needed
 

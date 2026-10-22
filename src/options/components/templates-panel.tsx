@@ -1,18 +1,21 @@
 import {
 	CommentDiscussionIcon,
 	GitPullRequestIcon,
+	Icon,
 	IssueOpenedIcon,
 	PlayIcon,
 } from '@primer/octicons-react';
-import { Text } from '@primer/react';
+import { VisuallyHidden } from '@primer/react';
 import { DEFAULT_CONFIG } from '@shared/constants';
 import { ConfigModel, LinkTargetModel, LinkType } from '@shared/models';
-import { useId, useState } from 'react';
+import { useState } from 'react';
+
+import '../styles/templates.css';
 
 import { FieldControls, TemplateField } from './template-field';
 
 /** Sample items used for the live previews. */
-const SAMPLE_PULL_REQUEST: LinkTargetModel = {
+export const SAMPLE_PULL_REQUEST: LinkTargetModel = {
 	type: LinkType.PullRequest,
 	owner: 'borbiuk',
 	repo: 'hyperfriend',
@@ -65,6 +68,48 @@ const SAMPLE_RUN: LinkTargetModel = {
 	status: 'completed successfully',
 };
 
+interface LinkTypeItem {
+	type: LinkType;
+	/** Short name on the switch. */
+	short: string;
+	/** Name of the template field. */
+	label: string;
+	icon: Icon;
+	sample: LinkTargetModel;
+}
+
+/** The link types in display order. */
+const LINK_TYPES: LinkTypeItem[] = [
+	{
+		type: LinkType.PullRequest,
+		short: 'PR',
+		label: 'Pull Request link template',
+		icon: GitPullRequestIcon,
+		sample: SAMPLE_PULL_REQUEST,
+	},
+	{
+		type: LinkType.Issue,
+		short: 'Issue',
+		label: 'Issue link template',
+		icon: IssueOpenedIcon,
+		sample: SAMPLE_ISSUE,
+	},
+	{
+		type: LinkType.Discussion,
+		short: 'Discussion',
+		label: 'Discussion link template',
+		icon: CommentDiscussionIcon,
+		sample: SAMPLE_DISCUSSION,
+	},
+	{
+		type: LinkType.WorkflowRun,
+		short: 'Run',
+		label: 'Workflow run link template',
+		icon: PlayIcon,
+		sample: SAMPLE_RUN,
+	},
+];
+
 interface TemplatesPanelProps {
 	config: ConfigModel;
 	/** Increments every time the settings are replaced from outside (reset, import). */
@@ -74,102 +119,69 @@ interface TemplatesPanelProps {
 }
 
 /**
- * Content of the Templates tab: the Pull Request, Issue, Discussion and workflow run link templates.
+ * Content of the Templates tab: a switch between the Pull Request, Issue, Discussion and
+ * workflow run templates and the editor of the selected one. All four editors stay mounted
+ * (the hidden ones keep their state and their box), so the tab never changes its height.
  */
 export function TemplatesPanel({
 	config,
 	syncEpoch,
 	registerField,
 }: TemplatesPanelProps) {
-	const noteId = useId();
-	// A customized template of the two less common types is not hidden; the disclosure is not
-	// re-opened or closed while the user types (the initial value only)
-	const [startOpen] = useState(
-		() =>
-			config.templates[LinkType.Discussion] !==
-				DEFAULT_CONFIG.templates[LinkType.Discussion] ||
-			config.templates[LinkType.WorkflowRun] !==
-				DEFAULT_CONFIG.templates[LinkType.WorkflowRun]
-	);
+	const [selected, setSelected] = useState<LinkType>(LinkType.PullRequest);
 
 	return (
-		<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-			{/* A note for all fields, so it comes first; each input lists it in aria-describedby. */}
-			<Text
-				id={noteId}
-				size="small"
-				style={{ color: 'var(--fgColor-muted)' }}
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+			<div
+				role="group"
+				aria-label="Link type"
+				className="hyperfriend-switch"
 			>
-				Put the part that should be the link in [square brackets].
-				Details such as labels, assignees and branches are filled only
-				where the page shows them.
-			</Text>
-			<div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-				<TemplateField
-					type={LinkType.PullRequest}
-					label="Pull Request link template"
-					icon={GitPullRequestIcon}
-					value={config.templates[LinkType.PullRequest]}
-					sample={SAMPLE_PULL_REQUEST}
-					format={config.format}
-					syncEpoch={syncEpoch}
-					registerField={registerField}
-					noteId={noteId}
-				/>
-				<TemplateField
-					type={LinkType.Issue}
-					label="Issue link template"
-					icon={IssueOpenedIcon}
-					value={config.templates[LinkType.Issue]}
-					sample={SAMPLE_ISSUE}
-					format={config.format}
-					syncEpoch={syncEpoch}
-					registerField={registerField}
-					noteId={noteId}
-				/>
-				{/* Closed by default: four fields would make the popup taller than Chrome allows (600 px) */}
-				<details open={startOpen}>
-					<summary
-						style={{
-							cursor: 'pointer',
-							fontWeight: 600,
-							fontSize: 14,
-						}}
-					>
-						Discussions and workflow runs
-					</summary>
-					<div
-						style={{
-							display: 'flex',
-							flexDirection: 'column',
-							gap: 16,
-							marginTop: 12,
-						}}
-					>
-						<TemplateField
-							type={LinkType.Discussion}
-							label="Discussion link template"
-							icon={CommentDiscussionIcon}
-							value={config.templates[LinkType.Discussion]}
-							sample={SAMPLE_DISCUSSION}
-							format={config.format}
-							syncEpoch={syncEpoch}
-							registerField={registerField}
-							noteId={noteId}
-						/>
-						<TemplateField
-							type={LinkType.WorkflowRun}
-							label="Workflow run link template"
-							icon={PlayIcon}
-							value={config.templates[LinkType.WorkflowRun]}
-							sample={SAMPLE_RUN}
-							format={config.format}
-							syncEpoch={syncEpoch}
-							registerField={registerField}
-							noteId={noteId}
-						/>
-					</div>
-				</details>
+				{LINK_TYPES.map(({ type, short, icon: TypeIcon }) => {
+					const customized =
+						config.templates[type] !==
+						DEFAULT_CONFIG.templates[type];
+
+					return (
+						<button
+							key={type}
+							type="button"
+							className="hyperfriend-switch__item"
+							aria-pressed={type === selected}
+							onClick={() => setSelected(type)}
+						>
+							<TypeIcon size={14} aria-hidden="true" />
+							{short}
+							{customized && (
+								<>
+									<span
+										className="hyperfriend-dot"
+										aria-hidden="true"
+									/>
+									<VisuallyHidden>
+										{' '}
+										(customized)
+									</VisuallyHidden>
+								</>
+							)}
+						</button>
+					);
+				})}
+			</div>
+			<div className="hyperfriend-fields">
+				{LINK_TYPES.map(({ type, label, sample }) => (
+					<TemplateField
+						key={type}
+						type={type}
+						label={label}
+						active={type === selected}
+						value={config.templates[type]}
+						sample={sample}
+						format={config.format}
+						syncEpoch={syncEpoch}
+						registerField={registerField}
+					/>
+				))}
 			</div>
 		</div>
 	);

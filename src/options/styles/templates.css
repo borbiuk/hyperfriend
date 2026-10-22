@@ -1,0 +1,147 @@
+/*
+ * Templates tab: the link type switch, the template editor with placeholder chips and the
+ * quick placeholder buttons. Colors come from the Primer CSS variables, so both themes work.
+ */
+
+/* The four fields share one grid cell: the hidden ones keep their box, so the tab never jumps. */
+.hyperfriend-fields {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.hyperfriend-field {
+	grid-area: 1 / 1;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	min-width: 0;
+}
+
+.hyperfriend-field[data-inactive] {
+	visibility: hidden;
+}
+
+.hyperfriend-switch {
+	display: flex;
+	gap: 2px;
+	padding: 2px;
+	border: 1px solid var(--borderColor-default);
+	border-radius: 8px;
+	background-color: var(--bgColor-muted);
+}
+
+.hyperfriend-switch__item {
+	flex: 1 1 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	height: 30px;
+	padding: 0 8px;
+	border: 1px solid transparent;
+	border-radius: 6px;
+	background: none;
+	color: var(--fgColor-muted);
+	font: inherit;
+	font-size: 13px;
+	cursor: pointer;
+}
+
+.hyperfriend-switch__item:hover {
+	color: var(--fgColor-default);
+}
+
+.hyperfriend-switch__item[aria-pressed='true'] {
+	border-color: var(--borderColor-default);
+	background-color: var(--bgColor-default);
+	color: var(--fgColor-default);
+	font-weight: 600;
+}
+
+.hyperfriend-switch__item:focus-visible {
+	outline: 2px solid var(--focus-outlineColor);
+	outline-offset: -1px;
+}
+
+/* Marks a template that differs from the default. */
+.hyperfriend-dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background-color: var(--fgColor-attention);
+}
+
+.hyperfriend-editor {
+	min-height: 72px;
+	padding: 10px;
+	border: 1px solid var(--borderColor-default);
+	border-radius: 6px;
+	background-color: var(--bgColor-default);
+	color: var(--fgColor-default);
+	font-family: var(--fontStack-monospace, monospace);
+	font-size: 13px;
+	line-height: 24px;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	cursor: text;
+}
+
+.hyperfriend-editor:focus {
+	outline: 2px solid var(--focus-outlineColor);
+	outline-offset: -1px;
+	border-color: var(--fgColor-accent);
+}
+
+.hyperfriend-editor[aria-invalid='true'] {
+	border-color: var(--borderColor-danger-emphasis);
+}
+
+.hyperfriend-editor:empty::before {
+	content: attr(data-placeholder);
+	color: var(--fgColor-muted);
+}
+
+.hyperfriend-token {
+	display: inline-block;
+	margin: 0 1px;
+	padding: 0 8px;
+	border: 1px solid var(--borderColor-accent-muted);
+	border-radius: 11px;
+	background-color: var(--bgColor-accent-muted);
+	color: var(--fgColor-accent);
+	font-size: 12px;
+	line-height: 20px;
+	white-space: nowrap;
+}
+
+/* The link part of the template, marked with the CSS Custom Highlight API. */
+::highlight(hyperfriend-link-pull-request),
+::highlight(hyperfriend-link-issue),
+::highlight(hyperfriend-link-discussion),
+::highlight(hyperfriend-link-workflow-run) {
+	background-color: var(--bgColor-accent-muted);
+}
+
+.hyperfriend-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	height: 22px;
+	padding: 0 8px;
+	border: 1px solid var(--borderColor-default);
+	border-radius: 11px;
+	background-color: var(--bgColor-default);
+	color: var(--fgColor-default);
+	font-family: var(--fontStack-monospace, monospace);
+	font-size: 12px;
+	cursor: pointer;
+}
+
+.hyperfriend-chip:hover {
+	background-color: var(--control-transparent-bgColor-hover);
+}
+
+.hyperfriend-chip:focus-visible {
+	outline: 2px solid var(--focus-outlineColor);
+	outline-offset: 1px;
+}

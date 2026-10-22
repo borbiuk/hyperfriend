@@ -54,8 +54,7 @@ The selection is cleared after a successful copy, with **Clear**, with **Esc** (
 
 ### Customizable templates
 
-Click the Hyperfriend icon in the browser toolbar to open the settings popup. Its **Templates** tab has one template for Pull Request
-links and one for Issue links; the templates for Discussion and workflow run links are under **Discussions and workflow runs**. Defaults:
+Click the Hyperfriend icon in the browser toolbar to open the settings popup. Its **Templates** tab has a switch (**PR**, **Issue**, **Discussion**, **Run**) and the template of the selected link type. Defaults:
 
 - Pull Request: `[PR {{pr_number}}]: {{pr_name}}`
 - Issue: `[Issue {{issue_number}}]: {{issue_name}}`
@@ -195,7 +194,7 @@ Hyperfriend works on **GitHub Enterprise Cloud with data residency** (`mycompany
 
 For a **GitHub Enterprise Server** on its own domain, you allow the site once:
 
-1. Open the popup, go to the **General** tab and open **GitHub Enterprise**.
+1. Open the popup, go to the **General** tab and click the **Enterprise Server domains** row.
 2. Type the domain of your site (for example `github.example.com`; a pasted URL works too) and click **Add**.
 3. The browser asks you to allow Hyperfriend to access that site. After you agree, the copy buttons, the keyboard shortcut and the list selection work there, also in the tabs of that site that are already open.
 
@@ -215,14 +214,14 @@ The popup has three tabs and a footer with a link to the GitHub repository. The 
 
 - **GitHub look**: built with Primer React, the design system of GitHub.
 - **Header**: the popup shows the extension icon next to the name.
-- **Templates**: each template field is marked with a Pull Request, Issue, Discussion or workflow run icon (the last two sit in a disclosure that is closed at first, so the popup stays short), lists the available placeholders and shows the resulting link text for a sample item (live preview). Changes are saved about 300 ms after you stop typing, with a "Saved" status.
+- **Templates**: a switch picks the link type (Pull Request, Issue, Discussion or workflow run; a dot marks a template you changed). The template editor shows each placeholder as a chip and highlights the part in `[square brackets]` that becomes the link. Click a quick placeholder or open **All placeholders** to insert one at the caret; **Reset to default** appears when the template differs from the default. **You will paste** shows the resulting link text for a sample item (live preview). Changes are saved about 300 ms after you stop typing, with a "Saved" status.
 - **Shortcuts**: change, turn off or reset the keyboard shortcut (see above). Shortcuts don't work while you type in a text field.
 - **General**:
-    - **GitHub Enterprise** (a closed section): add the domain of your GitHub Enterprise site, see [GitHub Enterprise](#github-enterprise).
-    - **Copy format**: **Rich link** (default) or **Markdown**, saved at once. The Templates preview shows what is pasted in the chosen format.
+    - **Copy format**: a switch between **Rich link** (default) and **Markdown**, saved at once, with a preview of what is pasted (made with your Pull Request template). The Templates preview shows the same format.
     - **Show author avatars** (on by default), applied immediately.
+    - **Enterprise Server domains**: a row that opens a screen to add the domain of your GitHub Enterprise Server (**Add**, **Remove**, a **General** button to go back); the row shows how many domains are added. See [GitHub Enterprise](#github-enterprise).
     - **Export** and **Import** share the settings as a file (see above).
-    - **Reset all settings** restores the default templates, copy format, shortcuts and display settings after a confirmation ("Reset all settings?").
+    - **Reset all settings** (at the right of the file buttons) restores the default templates, copy format, shortcuts and display settings after a confirmation ("Reset all settings?").
 - **Light and dark themes**: the popup follows the operating system theme.
 
 <hr/>
@@ -343,11 +342,11 @@ How to write tests and the review standard: [.claude/skills/playwright/SKILL.md]
         - `styles/`: CSS of the button, tooltip, toast and avatar (uses GitHub's Primer CSS variables).
         - `content.ts`: The entry of the content script.
     - `options/`: Toolbar popup (settings), a React app built with Primer React.
-        - `components/`: React components of the popup (`options-app.tsx` with the tabs, `templates-panel.tsx`, `shortcuts-panel.tsx` and `general-panel.tsx` for the tab contents, `template-field.tsx`, `shortcut-row.tsx`, `key-chips.tsx`, `settings-section.tsx`, `settings-actions.tsx` with export, import and reset).
+        - `components/`: React components of the popup (`options-app.tsx` with the tabs, `templates-panel.tsx`, `shortcuts-panel.tsx` and `general-panel.tsx` for the tab contents, `template-field.tsx`, `token-editor.tsx`, `shortcut-row.tsx`, `key-chips.tsx`, `settings-section.tsx`, `settings-actions.tsx` with export, import and reset).
         - `constants/`: `shortcut-items.ts`, the rows of the Shortcuts tab.
         - `hooks/`: React hooks (`use-config.ts` loads the config and keeps it fresh, `use-view-mode.ts` tells popup from tab).
-        - `styles/`: CSS of the tabs.
-        - `utils/`: Helpers (`download-text.ts` saves a file without the `downloads` permission, `options-hash.ts` reads the URL hash, `describe-shortcut.ts` spells a shortcut for screen readers).
+        - `styles/`: CSS of the tabs, of the Templates tab (`templates.css`) and of the General tab (`general.css`).
+        - `utils/`: Helpers (`download-text.ts` saves a file without the `downloads` permission, `options-hash.ts` reads the URL hash, `template-tokens.ts` splits a template into text and placeholder chips and finds the link part, `describe-shortcut.ts` spells a shortcut for screen readers).
         - `options.tsx`: The entry of the popup.
     - `shared/`: Models, constants, services (templates, config, clipboard, settings import/export) and utils (including the shortcut helpers), imported via `@shared/*`.
     - `types/`: Ambient type declarations (`global.d.ts` allows `*.css` imports).

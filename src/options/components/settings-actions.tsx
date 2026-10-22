@@ -1,4 +1,4 @@
-import { DownloadIcon, UploadIcon } from '@primer/octicons-react';
+import { DownloadIcon, TrashIcon, UploadIcon } from '@primer/octicons-react';
 import { Button, ConfirmationDialog, Text } from '@primer/react';
 import {
 	configService,
@@ -10,6 +10,8 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
 import { ViewMode } from '../hooks/use-view-mode';
 import { downloadText } from '../utils/download-text';
+
+import { SettingsSection } from './settings-section';
 
 /** Settings page URL the Firefox popup opens for Export and Import (General tab). */
 const SETTINGS_TAB_PATH = 'options.html#general';
@@ -174,67 +176,85 @@ export function SettingsActions({
 	};
 
 	return (
-		<div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-			<div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-				<Button
-					size="small"
-					leadingVisual={DownloadIcon}
-					disabled={viewMode === null}
-					onClick={handleExport}
-				>
-					Export
-				</Button>
-				<Button
-					size="small"
-					leadingVisual={UploadIcon}
-					disabled={viewMode === null}
-					onClick={handleImportClick}
-				>
-					Import
-				</Button>
-				<Button
-					size="small"
-					variant="danger"
-					onClick={() => {
-						show(null);
-						setConfirmingReset(true);
-					}}
-				>
-					Reset all settings
-				</Button>
-				<input
-					ref={fileInput}
-					type="file"
-					accept="application/json,.json"
-					hidden
-					onChange={handleFileChange}
-				/>
-			</div>
-			{/* Live regions stay mounted, so screen readers announce the text changes. */}
-			<div>
-				<Text
-					size="small"
-					role="status"
-					style={{
-						display: 'block',
-						color: 'var(--fgColor-success)',
-						overflowWrap: 'anywhere',
-					}}
-				>
-					{notice?.kind === 'success' ? notice.text : ''}
+		<>
+			<SettingsSection title="Settings file">
+				<Text size="small" style={{ color: 'var(--fgColor-muted)' }}>
+					Share templates, copy format and shortcuts as a JSON file.
 				</Text>
-				<Text
-					size="small"
-					role="alert"
+				<div
 					style={{
-						display: 'block',
-						color: 'var(--fgColor-danger)',
-						overflowWrap: 'anywhere',
+						display: 'flex',
+						flexWrap: 'wrap',
+						alignItems: 'center',
+						gap: 8,
 					}}
 				>
-					{notice?.kind === 'error' ? notice.text : ''}
-				</Text>
-			</div>
+					<Button
+						size="small"
+						leadingVisual={DownloadIcon}
+						disabled={viewMode === null}
+						onClick={handleExport}
+					>
+						Export
+					</Button>
+					<Button
+						size="small"
+						leadingVisual={UploadIcon}
+						disabled={viewMode === null}
+						onClick={handleImportClick}
+					>
+						Import
+					</Button>
+					{/* Apart from the file actions: it is the one action that throws settings away */}
+					<Button
+						size="small"
+						variant="invisible"
+						leadingVisual={TrashIcon}
+						style={{
+							marginLeft: 'auto',
+							color: 'var(--fgColor-danger)',
+						}}
+						onClick={() => {
+							show(null);
+							setConfirmingReset(true);
+						}}
+					>
+						Reset all settings
+					</Button>
+					<input
+						ref={fileInput}
+						type="file"
+						accept="application/json,.json"
+						hidden
+						onChange={handleFileChange}
+					/>
+				</div>
+				{/* Live regions stay mounted, so screen readers announce the text changes. */}
+				<div>
+					<Text
+						size="small"
+						role="status"
+						style={{
+							display: 'block',
+							color: 'var(--fgColor-success)',
+							overflowWrap: 'anywhere',
+						}}
+					>
+						{notice?.kind === 'success' ? notice.text : ''}
+					</Text>
+					<Text
+						size="small"
+						role="alert"
+						style={{
+							display: 'block',
+							color: 'var(--fgColor-danger)',
+							overflowWrap: 'anywhere',
+						}}
+					>
+						{notice?.kind === 'error' ? notice.text : ''}
+					</Text>
+				</div>
+			</SettingsSection>
 			{confirmingReset && (
 				<ConfirmationDialog
 					title="Reset all settings?"
@@ -246,6 +266,6 @@ export function SettingsActions({
 					return to their defaults.
 				</ConfirmationDialog>
 			)}
-		</div>
+		</>
 	);
 }

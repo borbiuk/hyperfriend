@@ -1,7 +1,7 @@
 {
 	"manifest_version": 3,
 	"name": "Hyperfriend",
-	"version": "2.8.0",
+	"version": "2.9.0",
 	"description": "Copy GitHub Pull Request, Issue, Discussion and workflow run links as rich hyperlinks or Markdown, ready to paste into chats.",
 	"homepage_url": "https://github.com/borbiuk/hyperfriend",
 	"permissions": ["storage", "scripting"],

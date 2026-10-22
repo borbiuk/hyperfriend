@@ -11,6 +11,11 @@ import {
 import { DEFAULT_STORED_CONFIG } from './fixtures/defaults';
 import { expect, test } from './fixtures/extension';
 import { PAGES, snapshotItems, snapshotUrl } from './fixtures/github';
+import {
+	selectLinkType,
+	templateEditor,
+	templateField,
+} from './fixtures/templates-tab';
 
 // General tab of the settings popup: the avatars switch, Export, Import and "Reset all settings".
 
@@ -45,7 +50,10 @@ function stored(config: ConfigModel): unknown {
  */
 function settingsSection(options: Page): Locator {
 	return options.locator('section').filter({
-		has: options.getByRole('heading', { name: 'Settings', exact: true }),
+		has: options.getByRole('heading', {
+			name: 'Settings file',
+			exact: true,
+		}),
 	});
 }
 
@@ -101,7 +109,7 @@ async function importFile(options: Page, file: string): Promise<void> {
  */
 function formatRadio(options: Page, name: string): Locator {
 	return options
-		.getByRole('group', { name: 'Copy format' })
+		.getByRole('radiogroup', { name: 'Copy format' })
 		.getByRole('radio', { name, exact: true });
 }
 
@@ -157,18 +165,10 @@ test.describe('Copy format', () => {
 
 		// The popup's sample pull request is #12 of borbiuk/hyperfriend; Markdown shows the source text
 		await expect(
-			options
-				.locator('[data-component="FormControl"]')
-				.filter({
-					has: options.getByRole('textbox', {
-						name: 'Pull Request link template',
-						exact: true,
-					}),
-				})
-				.getByText(
-					'Preview: [PR 12](https://github.com/borbiuk/hyperfriend/pull/12): Add copy button to PR list',
-					{ exact: true }
-				)
+			templateField(options, 'Pull Request link template').getByText(
+				'Preview: [PR 12](https://github.com/borbiuk/hyperfriend/pull/12): Add copy button to PR list',
+				{ exact: true }
+			)
 		).toBeVisible();
 	});
 });
@@ -301,27 +301,32 @@ test.describe('Import', () => {
 			).toHaveAttribute('aria-pressed', 'false');
 			await options.getByRole('tab', { name: 'Templates' }).click();
 			await expect(
-				options.getByRole('textbox', {
-					name: 'Pull Request link template',
-				})
-			).toHaveValue(CUSTOM_SETTINGS.templates[LinkType.PullRequest]);
+				templateEditor(options, 'Pull Request link template')
+			).toHaveAttribute(
+				'data-value',
+				CUSTOM_SETTINGS.templates[LinkType.PullRequest]
+			);
+			await selectLinkType(options, 'Issue');
 			await expect(
-				options.getByRole('textbox', { name: 'Issue link template' })
-			).toHaveValue(CUSTOM_SETTINGS.templates[LinkType.Issue]);
-			// The two other fields sit in a disclosure that was closed when the popup opened
-			await options
-				.getByText('Discussions and workflow runs', { exact: true })
-				.click();
+				templateEditor(options, 'Issue link template')
+			).toHaveAttribute(
+				'data-value',
+				CUSTOM_SETTINGS.templates[LinkType.Issue]
+			);
+			await selectLinkType(options, 'Discussion');
 			await expect(
-				options.getByRole('textbox', {
-					name: 'Discussion link template',
-				})
-			).toHaveValue(CUSTOM_SETTINGS.templates[LinkType.Discussion]);
+				templateEditor(options, 'Discussion link template')
+			).toHaveAttribute(
+				'data-value',
+				CUSTOM_SETTINGS.templates[LinkType.Discussion]
+			);
+			await selectLinkType(options, 'Run');
 			await expect(
-				options.getByRole('textbox', {
-					name: 'Workflow run link template',
-				})
-			).toHaveValue(CUSTOM_SETTINGS.templates[LinkType.WorkflowRun]);
+				templateEditor(options, 'Workflow run link template')
+			).toHaveAttribute(
+				'data-value',
+				CUSTOM_SETTINGS.templates[LinkType.WorkflowRun]
+			);
 		});
 	});
 
@@ -458,7 +463,7 @@ test.describe('Reset all settings', () => {
 	}) => {
 		const options = await openGeneral(openOptions, true);
 
-		await settingsSection(options)
+		await options
 			.getByRole('button', { name: 'Reset all settings' })
 			.click();
 
@@ -480,7 +485,7 @@ test.describe('Reset all settings', () => {
 	}) => {
 		await storage.seedConfig(CUSTOM_SETTINGS);
 		const options = await openGeneral(openOptions, false);
-		await settingsSection(options)
+		await options
 			.getByRole('button', { name: 'Reset all settings' })
 			.click();
 		const dialog = options.getByRole('alertdialog', {
@@ -508,7 +513,7 @@ test.describe('Reset all settings', () => {
 	}) => {
 		await storage.seedConfig(CUSTOM_SETTINGS);
 		const options = await openGeneral(openOptions, false);
-		await settingsSection(options)
+		await options
 			.getByRole('button', { name: 'Reset all settings' })
 			.click();
 		const dialog = options.getByRole('alertdialog', {

@@ -29,11 +29,38 @@ function enterpriseUrl(pagePath: string): string {
 	);
 }
 
-/** The GitHub Enterprise section of the General tab */
+/** The GitHub Enterprise Server screen of the General tab (it is hidden until the row is clicked) */
 function enterpriseSection(options: Page): Locator {
-	return options.locator('details').filter({
-		has: options.getByText('GitHub Enterprise', { exact: true }),
+	return options.locator('.hyperfriend-view').filter({
+		has: options.getByRole('heading', {
+			name: 'GitHub Enterprise Server',
+			exact: true,
+		}),
 	});
+}
+
+/** The row of the General tab that opens the GitHub Enterprise Server screen */
+function enterpriseRow(options: Page): Locator {
+	return options.getByRole('button', { name: /^Enterprise Server domains/ });
+}
+
+/**
+ * Opens the General tab and then the GitHub Enterprise Server screen.
+ *
+ * @param openOptions - The openOptions fixture.
+ */
+async function openEnterpriseScreen(
+	openOptions: (hash?: string) => Promise<Page>
+): Promise<Page> {
+	const options = await openOptions('#general');
+	await enterpriseRow(options).click();
+	await expect(
+		options.getByRole('heading', {
+			name: 'GitHub Enterprise Server',
+			exact: true,
+		})
+	).toBeVisible();
+	return options;
 }
 
 /**
@@ -249,10 +276,18 @@ test('should add author avatars on github.com but not on a granted domain', asyn
 });
 
 test.describe('General tab', () => {
-	test('should list exactly the granted Enterprise domain, not github.com', async ({
+	test('should count the granted Enterprise domain on its row', async ({
 		openOptions,
 	}) => {
 		const options = await openOptions('#general');
+
+		await expect(enterpriseRow(options)).toContainText('1 added');
+	});
+
+	test('should list exactly the granted Enterprise domain, not github.com', async ({
+		openOptions,
+	}) => {
+		const options = await openEnterpriseScreen(openOptions);
 		const list = enterpriseSection(options).getByRole('list', {
 			name: 'Added domains',
 		});
@@ -279,13 +314,11 @@ test.describe('General tab', () => {
 		test(`should refuse "${input}" without asking the browser`, async ({
 			openOptions,
 		}) => {
-			const options = await openOptions('#general');
+			const options = await openEnterpriseScreen(openOptions);
 			const calls = await stubPermissions(options, 'request', true);
 			const section = enterpriseSection(options);
 
-			await section
-				.getByRole('textbox', { name: 'GitHub Enterprise domain' })
-				.fill(input);
+			await section.getByRole('textbox', { name: 'Domain' }).fill(input);
 			await section
 				.getByRole('button', { name: 'Add', exact: true })
 				.click();
@@ -293,7 +326,7 @@ test.describe('General tab', () => {
 			await expect(section.getByRole('alert')).toHaveText(error);
 			await expect(
 				section.getByRole('textbox', {
-					name: 'GitHub Enterprise domain',
+					name: 'Domain',
 				})
 			).toHaveAttribute('aria-invalid', 'true');
 			expect(await calls()).toEqual([]);
@@ -303,11 +336,11 @@ test.describe('General tab', () => {
 	test("should ask the browser for the access to the new domain's origin from the click", async ({
 		openOptions,
 	}) => {
-		const options = await openOptions('#general');
+		const options = await openEnterpriseScreen(openOptions);
 		const calls = await stubPermissions(options, 'request', true);
 		const section = enterpriseSection(options);
 		const field = section.getByRole('textbox', {
-			name: 'GitHub Enterprise domain',
+			name: 'Domain',
 		});
 
 		await field.fill('https://GHE.Other.test/org/repo');
@@ -329,11 +362,11 @@ test.describe('General tab', () => {
 	test('should say so when a broader access makes the browser skip the domain', async ({
 		openOptions,
 	}) => {
-		const options = await openOptions('#general');
+		const options = await openEnterpriseScreen(openOptions);
 		await stubPermissions(options, 'request', 'covered');
 		const section = enterpriseSection(options);
 		const field = section.getByRole('textbox', {
-			name: 'GitHub Enterprise domain',
+			name: 'Domain',
 		});
 
 		await field.fill('ghe.other.test');
@@ -352,7 +385,7 @@ test.describe('General tab', () => {
 	test('should say so when the added domains can not be read', async ({
 		openOptions,
 	}) => {
-		const options = await openOptions('#general');
+		const options = await openEnterpriseScreen(openOptions);
 		await stubPermissions(options, 'request', true);
 		await options.evaluate(() => {
 			chrome.permissions.getAll = async () => {
@@ -362,7 +395,7 @@ test.describe('General tab', () => {
 		const section = enterpriseSection(options);
 
 		await section
-			.getByRole('textbox', { name: 'GitHub Enterprise domain' })
+			.getByRole('textbox', { name: 'Domain' })
 			.fill('ghe.other.test');
 		await section.getByRole('button', { name: 'Add', exact: true }).click();
 
@@ -376,12 +409,12 @@ test.describe('General tab', () => {
 	test('should say so when the browser does not give the access', async ({
 		openOptions,
 	}) => {
-		const options = await openOptions('#general');
+		const options = await openEnterpriseScreen(openOptions);
 		await stubPermissions(options, 'request', false);
 		const section = enterpriseSection(options);
 
 		await section
-			.getByRole('textbox', { name: 'GitHub Enterprise domain' })
+			.getByRole('textbox', { name: 'Domain' })
 			.fill('ghe.other.test');
 		await section.getByRole('button', { name: 'Add', exact: true }).click();
 
@@ -393,12 +426,12 @@ test.describe('General tab', () => {
 	test('should say so when asking the browser fails', async ({
 		openOptions,
 	}) => {
-		const options = await openOptions('#general');
+		const options = await openEnterpriseScreen(openOptions);
 		await stubPermissions(options, 'request', 'rejects');
 		const section = enterpriseSection(options);
 
 		await section
-			.getByRole('textbox', { name: 'GitHub Enterprise domain' })
+			.getByRole('textbox', { name: 'Domain' })
 			.fill('ghe.other.test');
 		await section.getByRole('button', { name: 'Add', exact: true }).click();
 
@@ -410,7 +443,7 @@ test.describe('General tab', () => {
 	test('should take the access of a domain back with Remove', async ({
 		openOptions,
 	}) => {
-		const options = await openOptions('#general');
+		const options = await openEnterpriseScreen(openOptions);
 		const calls = await stubPermissions(options, 'remove', true);
 
 		await enterpriseSection(options)
@@ -430,7 +463,7 @@ test.describe('General tab', () => {
 		test(`should say so when the access could not be removed (${result === false ? 'refused' : 'failed'})`, async ({
 			openOptions,
 		}) => {
-			const options = await openOptions('#general');
+			const options = await openEnterpriseScreen(openOptions);
 			await stubPermissions(options, 'remove', result);
 			const section = enterpriseSection(options);
 
@@ -444,7 +477,7 @@ test.describe('General tab', () => {
 			// The message is about the browser, not about the typed domain
 			await expect(
 				section.getByRole('textbox', {
-					name: 'GitHub Enterprise domain',
+					name: 'Domain',
 				})
 			).not.toHaveAttribute('aria-invalid');
 		});
@@ -454,27 +487,32 @@ test.describe('General tab', () => {
 test.describe('without a granted domain', () => {
 	test.use({ enterpriseHosts: [] });
 
-	test('should keep the GitHub Enterprise section closed until it is opened', async ({
+	test('should open the Enterprise screen from its row and go back to the settings', async ({
 		openOptions,
 	}) => {
 		const options = await openOptions('#general');
-		await expect(enterpriseSection(options)).toBeVisible();
-
+		await expect(enterpriseRow(options)).toContainText('None added');
 		await expect(
-			options.getByRole('textbox', { name: 'GitHub Enterprise domain' })
+			options.getByRole('textbox', { name: 'Domain' })
 		).toBeHidden();
 
-		await enterpriseSection(options)
-			.getByText('GitHub Enterprise', { exact: true })
-			.click();
+		await enterpriseRow(options).click();
 		await expect(
-			options.getByRole('textbox', { name: 'GitHub Enterprise domain' })
+			options.getByRole('textbox', { name: 'Domain' })
 		).toBeVisible();
 		await expect(
 			enterpriseSection(options).getByRole('list', {
 				name: 'Added domains',
 			})
 		).toHaveCount(0);
+
+		await options
+			.getByRole('button', { name: 'General', exact: true })
+			.click();
+		await expect(
+			options.getByRole('textbox', { name: 'Domain' })
+		).toBeHidden();
+		await expect(enterpriseRow(options)).toBeFocused();
 	});
 });
 
@@ -522,14 +560,11 @@ test.describe('GitHub Enterprise Cloud (*.ghe.com) without any setup', () => {
 	test('should refuse to add a ghe.com domain, because it needs no setup', async ({
 		openOptions,
 	}) => {
-		const options = await openOptions('#general');
+		const options = await openEnterpriseScreen(openOptions);
 		const calls = await stubPermissions(options, 'request', true);
 		const section = enterpriseSection(options);
 
-		await section.getByText('GitHub Enterprise', { exact: true }).click();
-		await section
-			.getByRole('textbox', { name: 'GitHub Enterprise domain' })
-			.fill(CLOUD_HOST);
+		await section.getByRole('textbox', { name: 'Domain' }).fill(CLOUD_HOST);
 		await section.getByRole('button', { name: 'Add', exact: true }).click();
 
 		await expect(section.getByRole('alert')).toHaveText(
