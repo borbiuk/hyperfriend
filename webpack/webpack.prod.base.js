@@ -26,9 +26,6 @@ module.exports = merge(common, {
 					format: {
 						comments: false,
 					},
-					mangle: {
-						safari10: true,
-					},
 				},
 				extractComments: false,
 			}),

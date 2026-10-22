@@ -1,7 +1,7 @@
 {
 	"name": "hyperfriend",
-	"version": "2.7.0",
-	"description": "Copy GitHub Pull Request and Issue links as rich hyperlinks, ready to paste into Teams, Slack and other chats.",
+	"version": "2.8.0",
+	"description": "Copy GitHub Pull Request, Issue, Discussion and workflow run links as rich hyperlinks or Markdown, ready to paste into chats.",
 	"private": true,
 	"author": "Nazariy Borbiuk",
 	"license": "MIT",
@@ -10,7 +10,7 @@
 		"url": "https://github.com/borbiuk/hyperfriend"
 	},
 	"engines": {
-		"node": ">=22"
+		"node": ">=22.13.0"
 	},
 	"scripts": {
 		"watch": "webpack --config webpack/webpack.dev.js --watch",
@@ -19,8 +19,8 @@
 		"clean": "rimraf dist dist-firefox",
 		"zip": "./zip.sh",
 		"typecheck": "node node_modules/typescript7/bin/tsc --noEmit && node node_modules/typescript7/bin/tsc --noEmit -p tests",
-		"lint": "eslint \"./**/*.{ts,tsx}\" \"tests/**/*.mjs\" && npm run typecheck",
-		"lint:fix": "eslint --fix \"./**/*.{ts,tsx}\"",
+		"lint": "eslint . && npm run typecheck",
+		"lint:fix": "eslint --fix .",
 		"lint:firefox": "web-ext lint --source-dir dist-firefox",
 		"test": "playwright test --project=unit --project=e2e",
 		"test:unit": "playwright test --project=unit",
@@ -28,6 +28,7 @@
 		"test:live": "HYPERFRIEND_LIVE=1 playwright test --project=live",
 		"test:snapshots": "node tests/e2e/fixtures/capture-pages.mjs",
 		"format": "prettier --write \"./**/*.{ts,tsx,js,mjs,json,md,yml,css,html}\" --config ./.prettierrc.json",
+		"format:check": "prettier --check \"./**/*.{ts,tsx,js,mjs,json,md,yml,css,html}\" --config ./.prettierrc.json",
 		"check:versions": "node scripts/check-versions.mjs",
 		"check:outdated": "npm outdated",
 		"prepare": "husky"

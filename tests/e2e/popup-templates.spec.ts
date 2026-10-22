@@ -75,6 +75,36 @@ test('should save a typed template and show it again after a reload', async ({
 	});
 });
 
+test('should keep a template typed right before the popup closes', async ({
+	context,
+	openOptions,
+	storage,
+}) => {
+	await context.clock.install();
+	const options = await openOptions();
+	const input = options.getByRole('textbox', {
+		name: PULL_REQUEST_LABEL,
+		exact: true,
+	});
+	// Loaded state: the field shows the stored (default) template
+	await expect(input).toHaveValue('[PR {{pr_number}}]: {{pr_name}}');
+
+	// Timers stop, so the 300 ms autosave never fires: only the save on close can store it
+	await options.clock.pauseAt(new Date(Date.now() + 60_000));
+	await input.fill(CUSTOM_TEMPLATE);
+	await options.close();
+
+	await expect
+		.poll(() => storage.getConfig())
+		.toEqual({
+			...DEFAULT_STORED_CONFIG,
+			templates: {
+				...DEFAULT_STORED_CONFIG.templates,
+				[LinkType.PullRequest]: CUSTOM_TEMPLATE,
+			},
+		});
+});
+
 test('should preview only the bracketed part as the link', async ({
 	openOptions,
 }) => {

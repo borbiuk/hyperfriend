@@ -56,12 +56,12 @@ export class CopyLinkShortcutHandler implements ShortcutHandler {
 		const button = this.buttonInjector.getTitleButton();
 		if (button && isVisibleInViewport(button.element)) {
 			// Same path as a click: "Copied!" / "Copy failed" in the button's tooltip
-			button.copy();
+			void button.copy();
 			return;
 		}
 
 		if (button) {
-			button.copy(false).then(showToast);
+			void button.copy(false).then(showToast);
 			return;
 		}
 

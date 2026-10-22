@@ -10,7 +10,7 @@
 		"skipLibCheck": true,
 		"noEmit": true,
 		"jsx": "react-jsx",
-		"types": ["chrome", "node"],
+		"types": ["chrome"],
 		"paths": {
 			"@shared/*": ["./src/shared/*"]
 		}

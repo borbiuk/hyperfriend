@@ -7,16 +7,33 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
+// One project service for every type-aware block (typescript-eslint keeps a single instance)
+const typedParserOptions = {
+	projectService: {
+		allowDefaultProject: ['playwright.config.ts'],
+	},
+	tsconfigRootDir: import.meta.dirname,
+};
+
 export default [
 	{
 		ignores: [
 			'**/node_modules/**',
 			'**/dist/**',
 			'**/dist-firefox/**',
-			'**/webpack/**',
 			'**/test-results/**',
 			'**/playwright-report/**',
+			'**/test-results-live/**',
+			'**/playwright-report-live/**',
+			// Temporary folders zip.sh leaves behind when it stops on an error
+			'**/hyperfriend-build*/**',
 		],
+	},
+	// A stale `eslint-disable` comment fails the run
+	{
+		linterOptions: {
+			reportUnusedDisableDirectives: 'error',
+		},
 	},
 	js.configs.recommended,
 	...tseslint.configs.recommended,
@@ -53,7 +70,6 @@ export default [
 			'@typescript-eslint/no-non-null-assertion': 'warn',
 			'react/prop-types': 'off',
 			'react/react-in-jsx-scope': 'off',
-			'react/jsx-uses-vars': 'error',
 			'react-hooks/rules-of-hooks': 'error',
 			'react-hooks/exhaustive-deps': 'warn',
 			'import/order': [
@@ -73,6 +89,21 @@ export default [
 			],
 		},
 	},
+	// Extension code: type-aware checks for promises that are neither awaited nor handled
+	{
+		files: ['src/**/*.{ts,tsx}'],
+		languageOptions: {
+			parserOptions: typedParserOptions,
+		},
+		rules: {
+			'@typescript-eslint/no-floating-promises': 'error',
+			// React event props may return a promise; the handlers catch their own errors
+			'@typescript-eslint/no-misused-promises': [
+				'error',
+				{ checksVoidReturn: { attributes: false } },
+			],
+		},
+	},
 	// Tests: Node globals, type-aware check for missing awaits, Playwright rules (the review standard maps them to its rule IDs)
 	{
 		files: ['tests/**/*.ts', 'playwright.config.ts'],
@@ -80,12 +111,7 @@ export default [
 			globals: {
 				...globals.node,
 			},
-			parserOptions: {
-				projectService: {
-					allowDefaultProject: ['playwright.config.ts'],
-				},
-				tsconfigRootDir: import.meta.dirname,
-			},
+			parserOptions: typedParserOptions,
 		},
 		rules: {
 			'@typescript-eslint/no-floating-promises': 'error',
@@ -118,9 +144,30 @@ export default [
 			'playwright/prefer-web-first-assertions': 'error',
 		},
 	},
-	// Node scripts next to the tests (snapshot capture); their in-page callbacks use browser globals
+	// Build config (CommonJS) and repository scripts run in Node
 	{
-		files: ['tests/**/*.mjs'],
+		files: ['webpack/**/*.js'],
+		languageOptions: {
+			globals: {
+				...globals.node,
+			},
+			sourceType: 'commonjs',
+		},
+		rules: {
+			'@typescript-eslint/no-require-imports': 'off',
+		},
+	},
+	{
+		files: ['scripts/**/*.mjs', 'eslint.config.mjs'],
+		languageOptions: {
+			globals: {
+				...globals.node,
+			},
+		},
+	},
+	// Node scripts that drive a browser (snapshot and store image capture); their in-page callbacks use browser globals
+	{
+		files: ['tests/**/*.mjs', 'design/**/*.mjs'],
 		languageOptions: {
 			globals: {
 				...globals.node,

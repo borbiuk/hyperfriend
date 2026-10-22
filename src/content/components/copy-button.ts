@@ -223,7 +223,8 @@ export class CopyButton {
 			return;
 		}
 
-		this.copy();
+		// copy() handles its own failure (tooltip and console warning)
+		void this.copy();
 	};
 
 	private readonly handleMouseDown = (event: MouseEvent): void => {

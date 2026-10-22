@@ -30,7 +30,7 @@ GitHub renders pages with React and Turbo. Its CSS class names are **hashed** (f
 
 List paths are deliberately restricted: do not widen them to `.*`, or pages such as `/issues/new` get scanned.
 
-`PageKind.PullRequest` also covers the sub-tabs (the copy button stays there). `isWorkflowRunSummary(location)` is true only for `/{owner}/{repo}/actions/runs/{id}` (no `/job/...` or `/attempts/...`), the only workflow run page where the keyboard shortcut works. `isPullRequestConversation(location)` in the same file is true only for `/{owner}/{repo}/pull/{n}` (optional trailing slash, no sub-path): the Conversation tab, the only Pull Request page where the keyboard shortcut works.
+`PageKind.PullRequest` also covers the sub-tabs (the copy button stays there). `isWorkflowRunSummary(location)` is true only for `/{owner}/{repo}/actions/runs/{id}` and the summary of one attempt, `/attempts/{n}` (no `/job/...` or other sub-pages), the only workflow run pages where the keyboard shortcut works. `isPullRequestConversation(location)` in the same file is true only for `/{owner}/{repo}/pull/{n}` (optional trailing slash, no sub-path): the Conversation tab, the only Pull Request page where the keyboard shortcut works.
 
 ## What the scanner looks for
 
@@ -57,6 +57,7 @@ GitHub navigates without full page loads (Turbo), and React re-renders list rows
 - **Debounce 150 ms, at most 500 ms** of postponing while the DOM keeps changing.
 - Also rescans on `turbo:load`, `turbo:render`, `popstate` and, where available (Chromium), the Navigation API `navigatesuccess` event.
 - Mutations on unsupported pages are ignored (cheap observer) **unless the URL changed** since the last notification, so navigating from an unsupported page to a supported one still triggers a scan.
+- **The extension's own changes are ignored**: a batch in which every record is inside a `[data-hyperfriend]` element (tooltip text, live region, toast, icon swaps) or only adds such elements schedules no rescan. A removed `[data-hyperfriend]` element still counts (GitHub's re-render may have dropped a button that must come back).
 - A scan is cheap and **idempotent**; the initial scan runs after the config has loaded.
 - **Wait for hydration** ([hydration-guard.ts](../../src/content/services/hydration-guard.ts)): nothing is injected into a server-rendered React root (`react-app` / `react-partial` with `data-ssr="true"`) until GitHub marks it with class `loaded`. A node added before hydration makes React's hydration fail, React renders the whole root again on the client and our button disappears for a moment (a click in that gap does nothing). The guard asks the page observer for a (debounced) rescan when the class appears, or after 10 s if it never does. Every injector checks `hydration.isPending(element)` before changing anything inside a React root. Page snapshots keep `class="loaded"`; the issue page spec removes it to test the wait.
 

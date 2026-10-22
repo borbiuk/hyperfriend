@@ -9,7 +9,11 @@ import {
 	ShortcutBindingModel,
 	ShortcutType,
 } from '@shared/models';
-import { normalizeShortcut, shortcutsEqual } from '@shared/utils';
+import {
+	isReservedShortcut,
+	normalizeShortcut,
+	shortcutsEqual,
+} from '@shared/utils';
 
 import { cloneConfig } from './config-service';
 import { convertLegacyTemplate } from './template-service';
@@ -39,6 +43,13 @@ const MAX_FILE_SIZE = 64 * 1024;
 // eslint-disable-next-line no-control-regex
 const CONTROL_CHARS_REGEX = /[\u0000-\u001F\u007F]/;
 
+/** Every control character, to replace them all. */
+// eslint-disable-next-line no-control-regex
+const CONTROL_CHARS_GLOBAL_REGEX = /[\u0000-\u001F\u007F]/g;
+
+/** An escaped link bracket (`\[` or `\]`) of the `[link]` syntax. */
+const ESCAPED_BRACKET_REGEX = /\\([[\]])/g;
+
 /** UTF-8 byte order mark as decoded into a string. */
 const BOM = '\uFEFF';
 
@@ -49,7 +60,19 @@ export type ParseSettingsResult =
 	{ ok: true; settings: SettingsImportModel } | { ok: false; error: string };
 
 /**
+ * Replaces control characters (a pasted tab, for example) with spaces, so a template stays
+ * a single line of text that the settings import accepts.
+ *
+ * @param template - Template text as typed or stored.
+ * @returns The text with every control character replaced by a space.
+ */
+export function toSingleLineTemplate(template: string): string {
+	return template.replace(CONTROL_CHARS_GLOBAL_REGEX, ' ');
+}
+
+/**
  * Serializes the config into the settings file format (schema version 4).
+ * Templates are written as single lines (toSingleLineTemplate), so the file imports again.
  *
  * @param config - Current (merged) config.
  * @param now - Export time; defaults to the current time.
@@ -64,10 +87,18 @@ export function serializeSettings(
 		schemaVersion: SCHEMA_VERSION,
 		exportedAt: now.toISOString(),
 		templates: {
-			[LinkType.PullRequest]: config.templates[LinkType.PullRequest],
-			[LinkType.Issue]: config.templates[LinkType.Issue],
-			[LinkType.Discussion]: config.templates[LinkType.Discussion],
-			[LinkType.WorkflowRun]: config.templates[LinkType.WorkflowRun],
+			[LinkType.PullRequest]: toSingleLineTemplate(
+				config.templates[LinkType.PullRequest]
+			),
+			[LinkType.Issue]: toSingleLineTemplate(
+				config.templates[LinkType.Issue]
+			),
+			[LinkType.Discussion]: toSingleLineTemplate(
+				config.templates[LinkType.Discussion]
+			),
+			[LinkType.WorkflowRun]: toSingleLineTemplate(
+				config.templates[LinkType.WorkflowRun]
+			),
 		},
 		format: config.format,
 		shortcuts: cloneConfig(config).shortcuts,
@@ -97,8 +128,21 @@ function has(object: Record<string, unknown>, key: string): boolean {
 type SectionResult<T> = { ok: true; value: T } | { ok: false; error: string };
 
 /**
+ * Length of a template as the user typed it: in the `[link]` syntax an escaped bracket
+ * (`\[`, `\]`) counts as one character, because converting an old template adds the
+ * backslashes (so an exported converted template imports again).
+ */
+function typedLength(template: string, legacy: boolean): number {
+	if (legacy) {
+		return template.length;
+	}
+
+	return template.replace(ESCAPED_BRACKET_REGEX, '$1').length;
+}
+
+/**
  * Reads the templates of known link types: each trimmed, a single line of at most
- * MAX_TEMPLATE_LENGTH characters.
+ * MAX_TEMPLATE_LENGTH characters (typedLength).
  *
  * @param legacy - The file predates the `[link]` syntax (schema 1 and 2): valid templates
  * are converted with convertLegacyTemplate (escaping may make them a bit longer).
@@ -117,7 +161,7 @@ function parseTemplates(
 		const template = typeof raw === 'string' ? raw.trim() : null;
 		if (
 			template === null ||
-			template.length > MAX_TEMPLATE_LENGTH ||
+			typedLength(template, legacy) > MAX_TEMPLATE_LENGTH ||
 			CONTROL_CHARS_REGEX.test(template)
 		) {
 			return {
@@ -153,6 +197,17 @@ function parseShortcuts(
 		const raw = shortcuts[type];
 		if (!isObject(raw) || typeof raw.enabled !== 'boolean') {
 			return invalid;
+		}
+
+		// A combination the browser uses (the list grows between versions, so a file exported by
+		// an older version can have one) is skipped: the shortcut keeps its current keys and the
+		// rest of the file is still imported
+		if (
+			Array.isArray(raw.keys) &&
+			raw.keys.every((key) => typeof key === 'string') &&
+			isReservedShortcut(raw.keys)
+		) {
+			continue;
 		}
 
 		const keys = normalizeShortcut(raw.keys);

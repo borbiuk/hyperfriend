@@ -414,13 +414,14 @@ test.describe('Import', () => {
 		},
 		{
 			// A parseSettings message reaching the popup; the other messages are unit-tested
-			title: 'a file with a browser shortcut',
+			// (a browser shortcut is skipped instead, see the settings file unit tests)
+			title: 'a file with a shortcut without a modifier',
 			content: JSON.stringify({
 				app: 'hyperfriend',
 				schemaVersion: 3,
 				shortcuts: {
 					[ShortcutType.CopyLink]: {
-						keys: ['Control', 'KeyC'],
+						keys: ['KeyC'],
 						enabled: true,
 					},
 				},

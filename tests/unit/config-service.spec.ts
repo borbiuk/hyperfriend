@@ -11,9 +11,11 @@ import {
 	toStoredConfig,
 } from '@shared/services';
 
-// configService keeps module state: the write queue and the "storage unavailable" warning flag.
-// Every test awaits all of its writes, so the queue is idle between tests; no test asserts on the
-// warning, which is logged once per module instance.
+// configService keeps module state: the write queue, the "storage unavailable" warning flag and
+// the last known config (used only by setTemplateBeforeClose). Every test awaits all of its writes,
+// so the queue is idle between tests; no test asserts on the warning, which is logged once per
+// module instance; the setTemplateBeforeClose tests set the last known config themselves (get,
+// a change event or reset) before they rely on it.
 
 const KEY = 'hyperfriend-config';
 
@@ -35,10 +37,25 @@ class FakeSyncStorage {
 	private readonly listeners = new Set<ChangeListener>();
 	private readonly setFailures: Error[] = [];
 	private readonly getFailures: Error[] = [];
+	private readonly getHolds: Promise<void>[] = [];
 
 	/** Makes the next `set` reject with the given error */
 	failNextSet(error: Error): void {
 		this.setFailures.push(error);
+	}
+
+	/**
+	 * Makes the next `get` read the stored value at once but answer only when the returned
+	 * function is called, as a reply that arrives after later calls
+	 */
+	holdNextGet(): () => void {
+		let release = (): void => {};
+		this.getHolds.push(
+			new Promise<void>((resolve) => {
+				release = resolve;
+			})
+		);
+		return () => release();
 	}
 
 	/** Makes the next `get` reject with the given error */
@@ -79,24 +96,36 @@ class FakeSyncStorage {
 			get: async (
 				keys?: string | string[] | null
 			): Promise<Record<string, unknown>> => {
+				const names =
+					keys === null || keys === undefined
+						? [...this.items.keys()]
+						: [keys].flat();
+				const read = (): Record<string, unknown> => {
+					const result: Record<string, unknown> = {};
+					for (const name of names) {
+						if (this.items.has(name)) {
+							result[name] = structuredClone(
+								this.items.get(name)
+							);
+						}
+					}
+					return result;
+				};
+
+				const hold = this.getHolds.shift();
+				if (hold) {
+					const snapshot = read();
+					await hold;
+					return snapshot;
+				}
+
 				await Promise.resolve();
 				const failure = this.getFailures.shift();
 				if (failure) {
 					throw failure;
 				}
 
-				const names =
-					keys === null || keys === undefined
-						? [...this.items.keys()]
-						: [keys].flat();
-				const result: Record<string, unknown> = {};
-				for (const name of names) {
-					if (this.items.has(name)) {
-						result[name] = structuredClone(this.items.get(name));
-					}
-				}
-
-				return result;
+				return read();
 			},
 			set: async (values: Record<string, unknown>): Promise<void> => {
 				await Promise.resolve();
@@ -931,6 +960,174 @@ test.describe('write queue', () => {
 				},
 				display: { authorAvatars: false },
 				format: 'rich',
+				templateFormat: 2,
+			},
+		});
+	});
+});
+
+test.describe('setTemplateBeforeClose', () => {
+	// The module keeps the last known config across tests: reset() clears it, get() sets it.
+
+	test('should write over the config read last without reading storage again', async () => {
+		storage.seed(
+			KEY,
+			toStoredConfig({
+				...cloneDefaultConfig(),
+				display: { authorAvatars: false },
+			})
+		);
+		await configService.get();
+		// A read now would reject the write
+		storage.failNextGet(new Error('read'));
+
+		await configService.setTemplateBeforeClose(
+			LinkType.Issue,
+			'[#{{issue_number}}]'
+		);
+
+		expect(storage.dump()).toEqual({
+			[KEY]: {
+				templates: {
+					'pull-request': '[PR {{pr_number}}]: {{pr_name}}',
+					issue: '[#{{issue_number}}]',
+					discussion:
+						'[Discussion {{discussion_number}}]: {{discussion_name}}',
+					'workflow-run':
+						'[{{workflow}} #{{run_number}}]: {{run_name}}',
+				},
+				shortcuts: {
+					'copy-link': { keys: ['Shift', 'KeyC'], enabled: true },
+				},
+				display: { authorAvatars: false },
+				format: 'rich',
+				templateFormat: 2,
+			},
+		});
+	});
+
+	test('should write over the config of the last change event', async () => {
+		await configService.get();
+		const unsubscribe = configService.subscribe(() => {});
+		storage.emit(
+			{
+				[KEY]: {
+					newValue: toStoredConfig({
+						...cloneDefaultConfig(),
+						display: { authorAvatars: false },
+					}),
+				},
+			},
+			'sync'
+		);
+		unsubscribe();
+		storage.failNextGet(new Error('read'));
+
+		await configService.setTemplateBeforeClose(
+			LinkType.Issue,
+			'[#{{issue_number}}]'
+		);
+
+		expect(storage.dump()).toEqual({
+			[KEY]: {
+				templates: {
+					'pull-request': '[PR {{pr_number}}]: {{pr_name}}',
+					issue: '[#{{issue_number}}]',
+					discussion:
+						'[Discussion {{discussion_number}}]: {{discussion_name}}',
+					'workflow-run':
+						'[{{workflow}} #{{run_number}}]: {{run_name}}',
+				},
+				shortcuts: {
+					'copy-link': { keys: ['Shift', 'KeyC'], enabled: true },
+				},
+				display: { authorAvatars: false },
+				format: 'rich',
+				templateFormat: 2,
+			},
+		});
+	});
+
+	test('should not take the config of a read that a write overtook', async () => {
+		await configService.get();
+		const release = storage.holdNextGet();
+		// Reads the value before the write below, answers after it
+		const lateRead = configService.get();
+		await configService.setTemplateBeforeClose(
+			LinkType.PullRequest,
+			'[#{{pr_number}}]'
+		);
+		release();
+		// Precondition: the read really answered with the value from before the write
+		expect((await lateRead).templates[LinkType.PullRequest]).toBe(
+			'[PR {{pr_number}}]: {{pr_name}}'
+		);
+
+		await configService.setTemplateBeforeClose(
+			LinkType.Issue,
+			'[#{{issue_number}}]'
+		);
+
+		expect(storage.dump()).toEqual({
+			[KEY]: {
+				templates: {
+					'pull-request': '[#{{pr_number}}]',
+					issue: '[#{{issue_number}}]',
+					discussion:
+						'[Discussion {{discussion_number}}]: {{discussion_name}}',
+					'workflow-run':
+						'[{{workflow}} #{{run_number}}]: {{run_name}}',
+				},
+				shortcuts: {
+					'copy-link': { keys: ['Shift', 'KeyC'], enabled: true },
+				},
+				display: { authorAvatars: true },
+				format: 'rich',
+				templateFormat: 2,
+			},
+		});
+	});
+
+	test('should read storage first when no config is known after reset', async () => {
+		// A known config (avatars off) that a stale write would bring back
+		storage.seed(
+			KEY,
+			toStoredConfig({
+				...cloneDefaultConfig(),
+				display: { authorAvatars: false },
+			})
+		);
+		await configService.get();
+		await configService.reset();
+		// Written by another context after the reset, without a change event here
+		storage.seed(
+			KEY,
+			toStoredConfig({
+				...cloneDefaultConfig(),
+				format: LinkFormat.Markdown,
+			})
+		);
+
+		await configService.setTemplateBeforeClose(
+			LinkType.Issue,
+			'[#{{issue_number}}]'
+		);
+
+		expect(storage.dump()).toEqual({
+			[KEY]: {
+				templates: {
+					'pull-request': '[PR {{pr_number}}]: {{pr_name}}',
+					issue: '[#{{issue_number}}]',
+					discussion:
+						'[Discussion {{discussion_number}}]: {{discussion_name}}',
+					'workflow-run':
+						'[{{workflow}} #{{run_number}}]: {{run_name}}',
+				},
+				shortcuts: {
+					'copy-link': { keys: ['Shift', 'KeyC'], enabled: true },
+				},
+				display: { authorAvatars: true },
+				format: 'markdown',
 				templateFormat: 2,
 			},
 		});

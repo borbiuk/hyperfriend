@@ -79,10 +79,10 @@ Core rules are SCN, AST, DATA, SYNC, MIG, STY and PR. No file in scope → stop 
 
 Run them for a local change, or a checked-out PR, unless hard rule 8 says no:
 
-| Command                           | Proves                                                                                               | Feeds                       |
-| --------------------------------- | ---------------------------------------------------------------------------------------------------- | --------------------------- |
-| `npm run lint`                    | ESLint over all `ts`/`tsx` (tests included), then the TypeScript 7 type check of `src/` and `tests/` | rule map in rules.md, STY-2 |
-| `npx --no playwright test --list` | every project loads: no spec importing a spec, no duplicate titles, no import errors                 | STY-6, STY-4                |
+| Command                           | Proves                                                                                                 | Feeds                       |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------ | --------------------------- |
+| `npm run lint`                    | ESLint over the whole repository (`eslint .`), then the TypeScript 7 type check of `src/` and `tests/` | rule map in rules.md, STY-2 |
+| `npx --no playwright test --list` | every project loads: no spec importing a spec, no duplicate titles, no import errors                   | STY-6, STY-4                |
 
 - The type check runs `tsconfig.json` and `tests/tsconfig.json`; the tests are covered. If a change moves tests out of `tests/**` or drops that config, say "type check does not cover tests" in the header.
 - ESLint exits 0 on warnings: read the output. Keep only messages on changed lines and map them with the table in [rules.md](references/rules.md#tool-messages--rules).

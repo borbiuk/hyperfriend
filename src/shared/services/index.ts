@@ -26,6 +26,7 @@ export {
 	parseSettings,
 	serializeSettings,
 	SETTINGS_FILE_NAME,
+	toSingleLineTemplate,
 } from './settings-transfer-service';
 export type { ParseSettingsResult } from './settings-transfer-service';
 export { renderTemplate, renderTemplateParts } from './template-service';

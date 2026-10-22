@@ -183,6 +183,30 @@ async function injectIntoOpenTabs(host: string): Promise<void> {
 }
 
 /**
+ * Unregisters content scripts. The call is all or nothing, so when it fails (an id that is
+ * already gone, for example) every id is tried on its own; a failure never stops the sync,
+ * so the missing domains are still registered.
+ *
+ * @param ids - Ids of registered content scripts.
+ */
+async function unregisterScripts(ids: string[]): Promise<void> {
+	try {
+		await chrome.scripting.unregisterContentScripts({ ids });
+		return;
+	} catch {
+		// Try each id on its own below
+	}
+
+	for (const id of ids) {
+		try {
+			await chrome.scripting.unregisterContentScripts({ ids: [id] });
+		} catch (error) {
+			console.warn(`[Hyperfriend] Could not unregister ${id}.`, error);
+		}
+	}
+}
+
+/**
  * What syncEnterpriseScripts may do besides matching the registrations to the granted domains.
  */
 export interface SyncOptions {
@@ -214,9 +238,9 @@ export async function syncEnterpriseScripts(
 		? registered
 		: registered.filter((host) => !granted.includes(host));
 	if (stale.length > 0) {
-		await chrome.scripting.unregisterContentScripts({
-			ids: stale.map((host) => `${SCRIPT_ID_PREFIX}${host}`),
-		});
+		await unregisterScripts(
+			stale.map((host) => `${SCRIPT_ID_PREFIX}${host}`)
+		);
 	}
 
 	const missing = options.refresh

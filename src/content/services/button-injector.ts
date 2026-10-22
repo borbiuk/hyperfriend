@@ -107,16 +107,21 @@ export class ButtonInjector {
 	 * @param getKeyShortcuts - Returns the `aria-keyshortcuts` value of the title button
 	 * (the copy link shortcut on this page), or `null` when no shortcut applies.
 	 * @param selection - Collects the items of list rows that are Shift+clicked.
+	 * @param requestScan - Asks for a (debounced) rescan; used when a busy button could not be moved.
 	 */
 	constructor(
 		private readonly configStore: ConfigStore,
 		private readonly hydration: HydrationGuard,
 		private readonly getKeyShortcuts: () => string | null = () => null,
-		private readonly selection: SelectionService | null = null
+		private readonly selection: SelectionService | null = null,
+		private readonly requestScan: () => void = () => {}
 	) {}
 
 	/** Title link each row button belongs to */
 	private readonly rowAnchors = new WeakMap<Element, HTMLAnchorElement>();
+
+	/** Title buttons that wait for the pointer or the focus to leave before they are moved */
+	private readonly waitingToMove = new WeakSet<HTMLButtonElement>();
 
 	/**
 	 * Returns the title copy button of the current detail page.
@@ -421,8 +426,12 @@ export class ButtonInjector {
 			const busy =
 				button.contains(document.activeElement) ||
 				tooltip.isShownFor(button);
-			if (container.lastElementChild !== button && !busy) {
-				container.append(button);
+			if (container.lastElementChild !== button) {
+				if (!busy) {
+					container.append(button);
+				} else {
+					this.moveWhenFree(button);
+				}
 			}
 
 			return button;
@@ -433,6 +442,27 @@ export class ButtonInjector {
 		container.append(button);
 
 		return button;
+	}
+
+	/**
+	 * Asks for a rescan once the pointer or the focus leaves the button. The extension's own
+	 * changes (tooltip, icon) do not trigger a scan, so without this the button would stay out
+	 * of place until GitHub changes the page again.
+	 */
+	private moveWhenFree(button: HTMLButtonElement): void {
+		if (this.waitingToMove.has(button)) {
+			return;
+		}
+
+		this.waitingToMove.add(button);
+		const handleLeave = (): void => {
+			button.removeEventListener('mouseleave', handleLeave);
+			button.removeEventListener('focusout', handleLeave);
+			this.waitingToMove.delete(button);
+			this.requestScan();
+		};
+		button.addEventListener('mouseleave', handleLeave);
+		button.addEventListener('focusout', handleLeave);
 	}
 
 	private createButton(

@@ -58,7 +58,8 @@ export const SHORTCUT_MAIN_KEYS: readonly string[] = [
  * Keys that browsers and text fields use with `Control` / `Meta`, alone or with `Shift`:
  * copy, paste, cut, select all, undo, redo, find, print, save, new / reopen tab, close tab,
  * reload, address bar, new window, quit, hide / history, bookmark, downloads, open file,
- * view source, find next, search, switch to tab 1–9 and zoom (`Digit0`, `Equal`, `Minus`).
+ * view source, find next, search, page info / developer tools (`KeyI`), bookmarks
+ * (`KeyB`), switch to tab 1–9 and zoom (`Digit0`, `Equal`, `Minus`).
  */
 const CONTROL_META_RESERVED_KEYS = [
 	'KeyC',
@@ -83,6 +84,8 @@ const CONTROL_META_RESERVED_KEYS = [
 	'KeyU',
 	'KeyG',
 	'KeyE',
+	'KeyI',
+	'KeyB',
 	...DIGIT_CODES,
 	'Equal',
 	'Minus',
@@ -95,7 +98,9 @@ const CONTROL_META_RESERVED_KEYS = [
  *   (covers `Meta+Shift+KeyZ` redo and `Control/Meta+Shift+KeyT` reopen tab);
  * - `Alt+ArrowLeft/ArrowRight` and `Meta+BracketLeft/BracketRight` (back / forward);
  * - `Shift+Meta+BracketLeft/BracketRight`, `Control+PageUp/PageDown` (switch tab) and
- *   `Control+Shift+PageUp/PageDown` (move tab).
+ *   `Control+Shift+PageUp/PageDown` (move tab);
+ * - `Alt+Meta+KeyI/KeyJ/KeyC` (developer tools, console and inspect on macOS),
+ *   `Control+Shift+Delete` and `Shift+Meta+Backspace` (clear browsing data).
  */
 export const BROWSER_RESERVED_SHORTCUTS: readonly (readonly string[])[] = [
 	...CONTROL_META_RESERVED_KEYS.flatMap((code) => [
@@ -114,6 +119,11 @@ export const BROWSER_RESERVED_SHORTCUTS: readonly (readonly string[])[] = [
 	['Control', 'PageDown'],
 	['Control', 'Shift', 'PageUp'],
 	['Control', 'Shift', 'PageDown'],
+	['Alt', 'Meta', 'KeyI'],
+	['Alt', 'Meta', 'KeyJ'],
+	['Alt', 'Meta', 'KeyC'],
+	['Control', 'Shift', 'Delete'],
+	['Shift', 'Meta', 'Backspace'],
 ];
 
 /**

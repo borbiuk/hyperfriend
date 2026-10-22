@@ -8,3 +8,6 @@ package-lock.json
 tests/e2e/fixtures/pages
 test-results
 playwright-report
+test-results-live
+playwright-report-live
+hyperfriend-build*

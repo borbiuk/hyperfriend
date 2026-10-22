@@ -32,6 +32,26 @@ let warnedUnavailable = false;
 let writeQueue: Promise<void> = Promise.resolve();
 
 /**
+ * Last config this context read, wrote or got from a change notification (`null` when
+ * unknown). Only `setTemplateBeforeClose` uses it, to skip the storage read.
+ */
+let lastKnownConfig: ConfigModel | null = null;
+
+/**
+ * Number of writes (and resets) this context started. A read that a write overtook brings an
+ * older value, so it must not replace lastKnownConfig.
+ */
+let writeCount = 0;
+
+/**
+ * Remembers the config of a write that is about to be sent (`null` when the stored value is unknown).
+ */
+function rememberWrite(config: ConfigModel | null): void {
+	writeCount++;
+	lastKnownConfig = config ? cloneConfig(config) : null;
+}
+
+/**
  * Runs `task` after all previously queued writes have settled.
  *
  * @returns Settles with the task's own result.
@@ -210,24 +230,46 @@ function mergeWithDefaults(stored: unknown): ConfigModel {
 async function readConfig(
 	storage: chrome.storage.SyncStorageArea
 ): Promise<ConfigModel> {
+	const writesBefore = writeCount;
 	const result = await storage.get(CONFIG_STORAGE_KEY);
-	return mergeWithDefaults(result[CONFIG_STORAGE_KEY]);
+	const config = mergeWithDefaults(result[CONFIG_STORAGE_KEY]);
+	if (writeCount === writesBefore) {
+		lastKnownConfig = cloneConfig(config);
+	}
+	return config;
 }
 
 /**
  * Reads the stored config, lets `change` modify it and writes it back in a single write,
  * queued after earlier writes. Does nothing when chrome.storage is unavailable.
+ *
+ * @param change - Modifies the config in place.
+ * @param useLastKnown - Start from the last known config instead of reading storage (when one
+ *   is known), so `storage.set` is called in the same task when the queue is idle.
  */
-function updateConfig(change: (config: ConfigModel) => void): Promise<void> {
+function updateConfig(
+	change: (config: ConfigModel) => void,
+	useLastKnown = false
+): Promise<void> {
 	return enqueueWrite(async () => {
 		const storage = getStorage();
 		if (!storage) {
 			return;
 		}
 
-		const config = await readConfig(storage);
+		const config =
+			useLastKnown && lastKnownConfig
+				? cloneConfig(lastKnownConfig)
+				: await readConfig(storage);
 		change(config);
-		await storage.set({ [CONFIG_STORAGE_KEY]: toStoredConfig(config) });
+		rememberWrite(config);
+		try {
+			await storage.set({ [CONFIG_STORAGE_KEY]: toStoredConfig(config) });
+		} catch (error) {
+			// The stored value is unknown now; the next write reads it again
+			rememberWrite(null);
+			throw error;
+		}
 	});
 }
 
@@ -273,6 +315,25 @@ export const configService = {
 		templates: Partial<Record<LinkType, string>>
 	): Promise<void> {
 		await updateConfig((config) => applyTemplates(config, templates));
+	},
+
+	/**
+	 * Saves one template when the page is about to close (pagehide, hidden popup). It skips
+	 * the storage read and starts from the last config this context knows, so the write is
+	 * sent before the page is torn down (a read reply would arrive too late). Still queued
+	 * after earlier writes; without a known config it works like setTemplate.
+	 *
+	 * @param type - Link type whose template is updated.
+	 * @param template - New template text.
+	 */
+	async setTemplateBeforeClose(
+		type: LinkType,
+		template: string
+	): Promise<void> {
+		await updateConfig(
+			(config) => applyTemplates(config, { [type]: template }),
+			true
+		);
 	},
 
 	/**
@@ -336,6 +397,7 @@ export const configService = {
 				return;
 			}
 
+			rememberWrite(null);
 			await storage.remove(CONFIG_STORAGE_KEY);
 		});
 	},
@@ -359,7 +421,11 @@ export const configService = {
 				return;
 			}
 
-			listener(mergeWithDefaults(changes[CONFIG_STORAGE_KEY].newValue));
+			const config = mergeWithDefaults(
+				changes[CONFIG_STORAGE_KEY].newValue
+			);
+			lastKnownConfig = cloneConfig(config);
+			listener(config);
 		};
 
 		chrome.storage.onChanged.addListener(handler);

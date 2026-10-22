@@ -59,13 +59,15 @@ async function waitForRegistration(options: Page): Promise<void> {
  *
  * @param options - The settings page.
  * @param method - The call to replace.
- * @param result - What the call does: resolves with a value, or rejects.
+ * @param result - What the call does: resolves with a value, or rejects. A granted `request` adds
+ *   its origins to what `getAll` returns, as the browser does; `covered` resolves with `true` but
+ *   adds nothing, as when a broader access (all sites) is already granted.
  * @returns Reads the calls the page made, as `{ request, userActive }`.
  */
 async function stubPermissions(
 	options: Page,
 	method: 'request' | 'remove',
-	result: boolean | 'rejects'
+	result: boolean | 'rejects' | 'covered'
 ): Promise<() => Promise<{ request: unknown; userActive: boolean }[]>> {
 	await options.evaluate(
 		([name, outcome]) => {
@@ -73,14 +75,31 @@ async function stubPermissions(
 			Object.defineProperty(window, '__permissionCalls', {
 				value: calls,
 			});
+			const granted: string[] = [];
+			const getAll = chrome.permissions.getAll.bind(chrome.permissions);
+			chrome.permissions.getAll = async () => {
+				const all = await getAll();
+				return {
+					...all,
+					origins: [...(all.origins ?? []), ...granted],
+				};
+			};
 			(chrome.permissions as unknown as Record<string, unknown>)[name] =
-				async (request: unknown) => {
+				async (request: chrome.permissions.Permissions) => {
 					calls.push({
 						request,
 						userActive: navigator.userActivation.isActive,
 					});
 					if (outcome === 'rejects') {
 						throw new Error('The prompt failed');
+					}
+
+					if (outcome === 'covered') {
+						return true;
+					}
+
+					if (name === 'request' && outcome) {
+						granted.push(...(request.origins ?? []));
 					}
 
 					return outcome;
@@ -307,6 +326,53 @@ test.describe('General tab', () => {
 		]);
 	});
 
+	test('should say so when a broader access makes the browser skip the domain', async ({
+		openOptions,
+	}) => {
+		const options = await openOptions('#general');
+		await stubPermissions(options, 'request', 'covered');
+		const section = enterpriseSection(options);
+		const field = section.getByRole('textbox', {
+			name: 'GitHub Enterprise domain',
+		});
+
+		await field.fill('ghe.other.test');
+		await section.getByRole('button', { name: 'Add', exact: true }).click();
+
+		await expect(section.getByRole('alert')).toHaveText(
+			"The browser already gives access to all sites, so ghe.other.test was not added. Turn off the access to all sites in the browser's extension settings, then add the domain again."
+		);
+		await expect(section.getByRole('status')).toHaveText('');
+		// The message is about the browser, not about the typed domain
+		await expect(field).not.toHaveAttribute('aria-invalid');
+		// The domain stays in the field for the next try
+		await expect(field).toHaveValue('ghe.other.test');
+	});
+
+	test('should say so when the added domains can not be read', async ({
+		openOptions,
+	}) => {
+		const options = await openOptions('#general');
+		await stubPermissions(options, 'request', true);
+		await options.evaluate(() => {
+			chrome.permissions.getAll = async () => {
+				throw new Error('The read failed');
+			};
+		});
+		const section = enterpriseSection(options);
+
+		await section
+			.getByRole('textbox', { name: 'GitHub Enterprise domain' })
+			.fill('ghe.other.test');
+		await section.getByRole('button', { name: 'Add', exact: true }).click();
+
+		await expect(section.getByRole('alert')).toHaveText(
+			'Could not read the added domains.'
+		);
+		// No "Added" notice next to the error
+		await expect(section.getByRole('status')).toHaveText('');
+	});
+
 	test('should say so when the browser does not give the access', async ({
 		openOptions,
 	}) => {
@@ -354,6 +420,10 @@ test.describe('General tab', () => {
 		await expect
 			.poll(async () => (await calls()).map(({ request }) => request))
 			.toEqual([{ origins: [`https://${HOST}/*`] }]);
+		// Open tabs of the domain keep the buttons until they are reloaded
+		await expect(enterpriseSection(options).getByRole('status')).toHaveText(
+			`Removed ${HOST}. Reload its open tabs to remove the buttons there.`
+		);
 	});
 
 	for (const result of [false, 'rejects'] as const) {
@@ -371,6 +441,12 @@ test.describe('General tab', () => {
 			await expect(section.getByRole('alert')).toHaveText(
 				'Could not remove the access.'
 			);
+			// The message is about the browser, not about the typed domain
+			await expect(
+				section.getByRole('textbox', {
+					name: 'GitHub Enterprise domain',
+				})
+			).not.toHaveAttribute('aria-invalid');
 		});
 	}
 });

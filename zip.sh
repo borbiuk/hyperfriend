@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# stop at the first failing command, so a failed build or zip never reports success
+set -euo pipefail
+
 # Files that will be included to .zip (paths are relative to the build directory)
 include_files=(
 	"assets/logo-16.png"
@@ -40,9 +43,11 @@ create_package() {
 	local zip_filename="hyperfriend-build-${browser}_${current_date_time}_${version}.zip"
 	local temp_dir="hyperfriend-build-${browser}"
 
-	# Create a temporary directory
+	# Create a temporary directory (removed again when a later step fails)
 	rm -rf "$temp_dir"
 	mkdir "$temp_dir"
+	# Expanded now: the local variable is gone when the trap runs
+	trap "rm -rf '${temp_dir}'" EXIT
 
 	# Copy to the temporary directory
 	for file in "${include_files[@]}"; do
@@ -58,10 +63,11 @@ create_package() {
 
 	# Create a .zip file with the extension files at the archive root
 	# (required by addons.mozilla.org, accepted by Chrome Web Store)
-	(cd "$temp_dir" && zip -r "../$zip_filename" .)
+	(cd "$temp_dir" && zip -r "../$zip_filename" .) || exit 1
 
 	# Clean up the temporary directory
 	rm -r "$temp_dir"
+	trap - EXIT
 
 	echo "'$zip_filename' was created."
 }

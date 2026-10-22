@@ -40,6 +40,9 @@ export function unpackedExtensionId(extensionPath: string): string {
 		.join('');
 }
 
+/** How long a failed load waits for the extension's service worker, to tell a wrong id from a missing build */
+const SERVICE_WORKER_WAIT_MS = 5_000;
+
 export interface ClipboardContent {
 	/** `text/html` as Chromium serializes it on read (wrapper removed, quotes in text not escaped) */
 	html: string;
@@ -189,8 +192,21 @@ export const test = base.extend<ExtensionFixtures & ExtensionOptions>({
 			.goto(`${extensionOrigin}manifest.json`)
 			.catch(() => null);
 		if (!manifest?.ok()) {
+			// The id is computed: when the extension did load, its service worker shows the real one
+			const worker =
+				context.serviceWorkers()[0] ??
+				(await context
+					.waitForEvent('serviceworker', {
+						timeout: SERVICE_WORKER_WAIT_MS,
+					})
+					.catch(() => null));
+			const loadedId = worker ? new URL(worker.url()).host : null;
+			// Do not leave the browser running until the worker exits
+			await context.close();
 			throw new Error(
-				`The extension did not load from ${extensionPath} (id ${extensionId}); run npm run build`
+				loadedId && loadedId !== extensionId
+					? `The extension loaded with id ${loadedId}, but the tests computed ${extensionId} from ${extensionPath}: Chromium's id of unpacked extensions differs on this system`
+					: `The extension did not load from ${extensionPath} (id ${extensionId}); run npm run build`
 			);
 		}
 		await probe.close();

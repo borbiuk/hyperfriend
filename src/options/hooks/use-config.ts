@@ -25,7 +25,8 @@ export function useConfig(): {
 			}
 		});
 
-		configService.get().then((value) => {
+		// configService.get never rejects
+		void configService.get().then((value) => {
 			// A change notification that arrived meanwhile is newer than this read.
 			if (active && !changed) {
 				setConfig(value);

@@ -15,6 +15,10 @@ export default defineConfig<ExtensionOptions>({
 	fullyParallel: true,
 	// Flaky tests are fixed, not retried
 	retries: 0,
+	// In CI a hanging run ends as a test failure before the job timeout cancels the job, so the report is still uploaded
+	globalTimeout: process.env.CI ? 10 * 60_000 : undefined,
+	// Fixed parallelism in CI, so run times do not depend on the runner's core count
+	workers: process.env.CI ? 2 : undefined,
 	reporter: process.env.CI
 		? [['list'], ['html', { open: 'never' }], ['github']]
 		: [['list'], ['html', { open: 'never' }]],

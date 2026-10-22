@@ -50,7 +50,8 @@ function start(): void {
 		configStore,
 		hydrationGuard,
 		() => shortcutService.getAriaKeyShortcuts(ShortcutType.CopyLink),
-		selectionService
+		selectionService,
+		() => pageObserver.requestScan()
 	);
 
 	shortcutService.register(
@@ -74,7 +75,8 @@ function start(): void {
 
 	// run core services (the config is loaded first, so button labels use the user's templates
 	// and a disabled or changed shortcut never runs with the default keys):
-	configStore.start(scan).finally(() => {
+	// configService.get never rejects, so the services always start
+	void configStore.start(scan).finally(() => {
 		shortcutService.start();
 		selectionService.start();
 		pageObserver.start(scan);

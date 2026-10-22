@@ -12,7 +12,11 @@ import {
 	TEMPLATE_PLACEHOLDERS,
 } from '@shared/constants';
 import { LinkFormat, LinkTargetModel, LinkType } from '@shared/models';
-import { buildLinkPayload, configService } from '@shared/services';
+import {
+	buildLinkPayload,
+	configService,
+	toSingleLineTemplate,
+} from '@shared/services';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 /** Delay before a change is written to storage. */
@@ -84,55 +88,79 @@ export function TemplateField({
 		}
 	}, [value]);
 
-	/** Writes the unsaved text to storage right away (the call starts synchronously). */
-	const flush = useCallback((): void => {
-		window.clearTimeout(saveTimer.current);
-		if (unsaved.current === null) {
-			return;
-		}
+	/**
+	 * Writes the unsaved text to storage right away.
+	 *
+	 * @param closing - The page is about to close: skip the storage read, so the write is sent
+	 *   before the page is torn down.
+	 */
+	const flush = useCallback(
+		(closing = false): void => {
+			window.clearTimeout(saveTimer.current);
+			if (unsaved.current === null) {
+				return;
+			}
 
-		const text = unsaved.current;
-		const current = revision.current;
-		unsaved.current = null;
+			const text = unsaved.current;
+			const current = revision.current;
+			unsaved.current = null;
 
-		const save = configService
-			.setTemplate(type, text)
-			.then(() => {
-				setSaved(true);
-				window.clearTimeout(savedTimer.current);
-				savedTimer.current = window.setTimeout(
-					() => setSaved(false),
-					SAVED_VISIBLE_MS
-				);
-			})
-			.catch(() => {
-				setError('Could not save. Try again.');
-			})
-			.finally(() => {
-				// A newer change may have been typed while this save was in flight.
-				if (current === revision.current) {
-					pending.current = false;
-				}
-				if (inFlight.current === save) {
-					inFlight.current = null;
-				}
-			});
-		inFlight.current = save;
-	}, [type]);
+			const write = closing
+				? configService.setTemplateBeforeClose(type, text)
+				: configService.setTemplate(type, text);
+			const save = write
+				.then(() => {
+					setSaved(true);
+					window.clearTimeout(savedTimer.current);
+					savedTimer.current = window.setTimeout(
+						() => setSaved(false),
+						SAVED_VISIBLE_MS
+					);
+				})
+				.catch(() => {
+					// Keep the text, so the next blur, pagehide or export tries again
+					// (unless a newer edit or a reset replaced it meanwhile).
+					if (
+						current === revision.current &&
+						unsaved.current === null
+					) {
+						unsaved.current = text;
+					}
+					setError('Could not save. Try again.');
+				})
+				.finally(() => {
+					// A newer change may have been typed while this save was in flight.
+					if (
+						current === revision.current &&
+						unsaved.current === null
+					) {
+						pending.current = false;
+					}
+					if (inFlight.current === save) {
+						inFlight.current = null;
+					}
+				});
+			inFlight.current = save;
+		},
+		[type]
+	);
 
 	// Do not lose the last edit when the popup closes right after typing.
 	useEffect(() => {
+		const handlePageHide = (): void => {
+			flush(true);
+		};
 		const handleVisibility = (): void => {
 			if (document.visibilityState === 'hidden') {
-				flush();
+				flush(true);
 			}
 		};
 
-		window.addEventListener('pagehide', flush);
+		window.addEventListener('pagehide', handlePageHide);
 		document.addEventListener('visibilitychange', handleVisibility);
 
 		return () => {
-			window.removeEventListener('pagehide', flush);
+			window.removeEventListener('pagehide', handlePageHide);
 			document.removeEventListener('visibilitychange', handleVisibility);
 			flush();
 			window.clearTimeout(savedTimer.current);
@@ -167,7 +195,9 @@ export function TemplateField({
 		setError(null);
 	}, [syncEpoch]);
 
-	const handleChange = (next: string): void => {
+	const handleChange = (input: string): void => {
+		// A pasted tab would make the exported settings file fail to import
+		const next = toSingleLineTemplate(input);
 		setDraft(next);
 		setSaved(false);
 		setError(null);
@@ -176,7 +206,7 @@ export function TemplateField({
 		unsaved.current = next;
 
 		window.clearTimeout(saveTimer.current);
-		saveTimer.current = window.setTimeout(flush, SAVE_DELAY_MS);
+		saveTimer.current = window.setTimeout(() => flush(), SAVE_DELAY_MS);
 	};
 
 	// Same split as the pasted link: only `parts.link` is the hyperlink.
@@ -221,7 +251,7 @@ export function TemplateField({
 				maxLength={MAX_TEMPLATE_LENGTH}
 				aria-describedby={describedBy}
 				onChange={(event) => handleChange(event.target.value)}
-				onBlur={flush}
+				onBlur={() => flush()}
 				spellCheck={false}
 				autoComplete="off"
 			/>
@@ -282,6 +312,7 @@ export function TemplateField({
 						</>
 					)}
 				</Text>
+				{/* Hidden with `visibility` to keep its space; the status region below announces it */}
 				<Text
 					size="small"
 					style={{
@@ -289,11 +320,16 @@ export function TemplateField({
 						flexShrink: 0,
 						visibility: saved ? 'visible' : 'hidden',
 					}}
-					aria-live="polite"
+					aria-hidden="true"
 				>
 					<CheckIcon size={12} /> Saved
 				</Text>
 			</div>
+			{/* Always mounted, so screen readers announce the text when it changes */}
+			<VisuallyHidden role="status">
+				{saved ? `${label} saved` : ''}
+			</VisuallyHidden>
+			<VisuallyHidden role="alert">{error ?? ''}</VisuallyHidden>
 		</FormControl>
 	);
 }

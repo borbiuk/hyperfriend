@@ -31,6 +31,8 @@ interface Fake {
 	failing: number[];
 	/** Script ids whose registration is rejected */
 	rejecting: string[];
+	/** Script ids whose removal is rejected (the call is all or nothing, as in the browser) */
+	unregisterRejecting: string[];
 	/** Everything that was called, in order */
 	calls: string[];
 	/** First arguments of the console warnings the code logged */
@@ -53,6 +55,7 @@ test.beforeEach(() => {
 		tabs: {},
 		failing: [],
 		rejecting: [],
+		unregisterRejecting: [],
 		calls: [],
 		warnings: [],
 		granted: true,
@@ -85,6 +88,14 @@ test.beforeEach(() => {
 			},
 			unregisterContentScripts: async (filter: { ids: string[] }) => {
 				fake.calls.push(`unregister ${filter.ids.join(',')}`);
+				if (
+					filter.ids.some((id) =>
+						fake.unregisterRejecting.includes(id)
+					)
+				) {
+					throw new Error('Nonexistent script ID');
+				}
+
 				fake.scripts = fake.scripts.filter(
 					(script) => !filter.ids.includes(script.id)
 				);
@@ -393,6 +404,33 @@ test('should unregister the script of a domain whose access was taken back and k
 	]);
 	expect(fake.scripts.map((script) => script.id)).toEqual([
 		'hyperfriend-enterprise:hosts.example.org',
+	]);
+});
+
+test('should unregister the other scripts one by one and still register the missing domain when an unregister fails', async () => {
+	fake.origins = [
+		'https://github.example.com/*',
+		'https://hosts.example.org/*',
+	];
+	await syncEnterpriseScripts();
+	fake.calls = [];
+	fake.origins = ['https://new.example.net/*'];
+	fake.unregisterRejecting = ['hyperfriend-enterprise:github.example.com'];
+
+	await syncEnterpriseScripts();
+
+	expect(fake.calls).toEqual([
+		'unregister hyperfriend-enterprise:github.example.com,hyperfriend-enterprise:hosts.example.org',
+		'unregister hyperfriend-enterprise:github.example.com',
+		'unregister hyperfriend-enterprise:hosts.example.org',
+		'register hyperfriend-enterprise:new.example.net',
+	]);
+	expect(fake.scripts.map((script) => script.id)).toEqual([
+		'hyperfriend-enterprise:github.example.com',
+		'hyperfriend-enterprise:new.example.net',
+	]);
+	expect(fake.warnings).toEqual([
+		'[Hyperfriend] Could not unregister hyperfriend-enterprise:github.example.com.',
 	]);
 });
 

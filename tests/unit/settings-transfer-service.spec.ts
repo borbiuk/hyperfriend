@@ -78,6 +78,84 @@ test('should serialize the config as pretty schema 4 JSON with the given export 
 	);
 });
 
+test('should export a stored template with a tab as one line that imports again', () => {
+	const config: ConfigModel = {
+		...CUSTOM_CONFIG,
+		templates: {
+			...CUSTOM_CONFIG.templates,
+			[LinkType.Issue]: '[#{{issue_number}}]\t{{issue_name}}',
+		},
+	};
+
+	const result = parseSettings(serializeSettings(config, EXPORTED_AT));
+
+	expect(result).toEqual({
+		ok: true,
+		settings: {
+			templates: {
+				[LinkType.PullRequest]: '{{pr_name}} [#{{pr_number}}] "draft"',
+				[LinkType.Issue]: '[#{{issue_number}}] {{issue_name}}',
+				[LinkType.Discussion]: '{{category}} [#{{discussion_number}}]',
+				[LinkType.WorkflowRun]: '[{{workflow}}] {{run_name}}',
+			},
+			format: LinkFormat.Markdown,
+			shortcuts: {
+				[ShortcutType.CopyLink]: {
+					keys: ['Alt', 'Shift', 'KeyL'],
+					enabled: false,
+				},
+			},
+			display: { authorAvatars: false },
+		},
+	});
+});
+
+test('should import an exported old template whose escaped brackets make it longer than 500 characters', () => {
+	// An old (2.0.0) template converted on read: every bracket gets a backslash
+	const template = `${'\\['.repeat(50)}${'x'.repeat(450)}`;
+	expect(template).toHaveLength(550);
+	const config: ConfigModel = {
+		...CUSTOM_CONFIG,
+		templates: { ...CUSTOM_CONFIG.templates, [LinkType.Issue]: template },
+	};
+
+	const result = parseSettings(serializeSettings(config, EXPORTED_AT));
+
+	expect(result).toEqual({
+		ok: true,
+		settings: {
+			templates: {
+				[LinkType.PullRequest]: '{{pr_name}} [#{{pr_number}}] "draft"',
+				[LinkType.Issue]: template,
+				[LinkType.Discussion]: '{{category}} [#{{discussion_number}}]',
+				[LinkType.WorkflowRun]: '[{{workflow}}] {{run_name}}',
+			},
+			format: LinkFormat.Markdown,
+			shortcuts: {
+				[ShortcutType.CopyLink]: {
+					keys: ['Alt', 'Shift', 'KeyL'],
+					enabled: false,
+				},
+			},
+			display: { authorAvatars: false },
+		},
+	});
+});
+
+test('should reject a template that is longer than 500 characters without the escapes', () => {
+	const result = parseSettings(
+		settingsFile({
+			schemaVersion: 4,
+			templates: { [LinkType.Issue]: `\\[${'x'.repeat(500)}` },
+		})
+	);
+
+	expect(result).toEqual({
+		ok: false,
+		error: 'Template "issue" must be a single line of text up to 500 characters.',
+	});
+});
+
 test('should read back every setting of an exported file', () => {
 	expect(
 		parseSettings(serializeSettings(CUSTOM_CONFIG, EXPORTED_AT))
@@ -113,6 +191,22 @@ const BRACKETS_AT_LIMIT = '['.repeat(250) + ']'.repeat(250);
 const BRACKETS_AT_LIMIT_CONVERTED = '\\['.repeat(250) + '\\]'.repeat(250);
 
 const SUCCESS_CASES: ParseCase[] = [
+	{
+		title: 'should skip browser-reserved shortcut keys and import the rest of the file',
+		text: settingsFile({
+			schemaVersion: 3,
+			templates: { issue: '[#{{issue_number}}]' },
+			shortcuts: {
+				'copy-link': { keys: ['Alt', 'Meta', 'KeyI'], enabled: true },
+			},
+		}),
+		expected: {
+			ok: true,
+			settings: {
+				templates: { [LinkType.Issue]: '[#{{issue_number}}]' },
+			},
+		},
+	},
 	{
 		title: 'should read every section of a schema 3 file, trimming templates and normalizing keys',
 		text: settingsFile({
@@ -654,14 +748,17 @@ const ERROR_CASES: ParseCase[] = [
 		expected: SHORTCUT_ERROR,
 	},
 	{
-		title: 'should reject browser-reserved shortcut keys, even when disabled',
+		title: 'should report no settings when the only one is a browser-reserved shortcut, even when disabled',
 		text: settingsFile({
 			schemaVersion: 3,
 			shortcuts: {
 				'copy-link': { keys: ['Control', 'KeyV'], enabled: false },
 			},
 		}),
-		expected: SHORTCUT_ERROR,
+		expected: {
+			ok: false,
+			error: 'The file does not contain any settings.',
+		},
 	},
 	{
 		title: 'should reject shortcut keys with a disallowed main key',

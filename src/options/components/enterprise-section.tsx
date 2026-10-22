@@ -1,4 +1,4 @@
-import { Button, Text, TextInput } from '@primer/react';
+import { Button, Text, TextInput, VisuallyHidden } from '@primer/react';
 import {
 	listEnterpriseHosts,
 	parseEnterpriseHost,
@@ -29,31 +29,60 @@ export function EnterpriseSection({ viewMode }: EnterpriseSectionProps) {
 	const [hosts, setHosts] = useState<string[]>([]);
 	const [input, setInput] = useState('');
 	const [error, setError] = useState<string | null>(null);
+	/** The error is about the typed domain (the field is marked invalid), not about the browser. */
+	const [inputInvalid, setInputInvalid] = useState(false);
 	const [notice, setNotice] = useState<string | null>(null);
 	const [open, setOpen] = useState(false);
 	const inputId = useId();
+	const descriptionId = useId();
 	const errorId = useId();
 
-	const refresh = useCallback((): void => {
-		listEnterpriseHosts().then(setHosts, () => setHosts([]));
-	}, []);
-
+	/** Number of the latest list request: an older answer that arrives later is dropped. */
+	const latestRequest = useRef(0);
+	const mounted = useRef(true);
 	// Closed at first, so the popup stays short; opened once when domains were added before
 	// (not again after the user closed it)
 	const openedForHosts = useRef(false);
-	useEffect(() => {
-		if (hosts.length > 0 && !openedForHosts.current) {
-			openedForHosts.current = true;
-			setOpen(true);
-		}
-	}, [hosts.length]);
+
+	const showError = (message: string, forInput = false): void => {
+		setError(message);
+		setInputInvalid(forInput);
+	};
+
+	const refresh = useCallback((): void => {
+		const request = ++latestRequest.current;
+		listEnterpriseHosts().then(
+			(list) => {
+				if (!mounted.current || request !== latestRequest.current) {
+					return;
+				}
+
+				setHosts(list);
+				if (list.length > 0 && !openedForHosts.current) {
+					openedForHosts.current = true;
+					setOpen(true);
+				}
+			},
+			() => {
+				if (!mounted.current || request !== latestRequest.current) {
+					return;
+				}
+
+				setHosts([]);
+				setError('Could not read the added domains.');
+				setInputInvalid(false);
+			}
+		);
+	}, []);
 
 	useEffect(() => {
+		mounted.current = true;
 		refresh();
 		// The access can also be changed elsewhere (the browser's extension settings)
 		chrome.permissions?.onAdded?.addListener(refresh);
 		chrome.permissions?.onRemoved?.addListener(refresh);
 		return () => {
+			mounted.current = false;
 			chrome.permissions?.onAdded?.removeListener(refresh);
 			chrome.permissions?.onRemoved?.removeListener(refresh);
 		};
@@ -89,21 +118,22 @@ export function EnterpriseSection({ viewMode }: EnterpriseSectionProps) {
 				})
 			)
 			.then(() => window.close())
-			.catch(() => setError('Could not open the settings page.'));
+			.catch(() => showError('Could not open the settings page.'));
 		return true;
 	};
 
 	const handleAdd = (): void => {
 		setError(null);
+		setInputInvalid(false);
 		setNotice(null);
 		const parsed = parseEnterpriseHost(input);
 		if (!parsed.ok) {
-			setError(parsed.error);
+			showError(parsed.error, true);
 			return;
 		}
 
 		if (hosts.includes(parsed.host)) {
-			setError('This domain is already added.');
+			showError('This domain is already added.', true);
 			return;
 		}
 
@@ -115,29 +145,53 @@ export function EnterpriseSection({ viewMode }: EnterpriseSectionProps) {
 		requestEnterpriseHost(parsed.host).then(
 			(granted) => {
 				if (!granted) {
-					setError('The browser did not give the access.');
+					showError('The browser did not give the access.');
 					return;
 				}
 
-				setInput('');
-				setNotice(`Added ${parsed.host}.`);
 				refresh();
+				// A broader access (all sites) makes the browser say yes without storing this
+				// domain, and then no content script is registered for it
+				listEnterpriseHosts().then(
+					(list) => {
+						if (!mounted.current) {
+							return;
+						}
+
+						if (list.includes(parsed.host)) {
+							setInput('');
+							setNotice(`Added ${parsed.host}.`);
+							return;
+						}
+
+						showError(
+							`The browser already gives access to all sites, so ${parsed.host} was not added. Turn off the access to all sites in the browser's extension settings, then add the domain again.`
+						);
+					},
+					() => showError('Could not read the added domains.')
+				);
 			},
-			() => setError('Could not ask the browser for the access.')
+			() => showError('Could not ask the browser for the access.')
 		);
 	};
 
 	const handleRemove = (host: string): void => {
 		setError(null);
+		setInputInvalid(false);
 		setNotice(null);
 		removeEnterpriseHost(host).then(
 			(removed) => {
 				if (!removed) {
-					setError('Could not remove the access.');
+					showError('Could not remove the access.');
+				} else {
+					// Tabs of the domain that are already open keep the content script until a reload
+					setNotice(
+						`Removed ${host}. Reload its open tabs to remove the buttons there.`
+					);
 				}
 				refresh();
 			},
-			() => setError('Could not remove the access.')
+			() => showError('Could not remove the access.')
 		);
 	};
 
@@ -164,7 +218,11 @@ export function EnterpriseSection({ viewMode }: EnterpriseSectionProps) {
 					marginTop: 8,
 				}}
 			>
-				<Text size="small" style={{ color: 'var(--fgColor-muted)' }}>
+				<Text
+					id={descriptionId}
+					size="small"
+					style={{ color: 'var(--fgColor-muted)' }}
+				>
 					GitHub Enterprise Cloud sites (*.ghe.com) work without any
 					setup. For a GitHub Enterprise Server on its own domain, add
 					that domain, such as github.example.com, to get the copy
@@ -177,14 +235,23 @@ export function EnterpriseSection({ viewMode }: EnterpriseSectionProps) {
 						handleAdd();
 					}}
 				>
+					{/* Absolutely positioned, so it takes no place in the row */}
+					<VisuallyHidden>
+						<label htmlFor={inputId}>
+							GitHub Enterprise domain
+						</label>
+					</VisuallyHidden>
 					<TextInput
 						id={inputId}
 						block
 						size="small"
 						value={input}
-						aria-label="GitHub Enterprise domain"
-						aria-describedby={error ? errorId : undefined}
-						aria-invalid={error ? true : undefined}
+						aria-describedby={
+							inputInvalid
+								? `${descriptionId} ${errorId}`
+								: descriptionId
+						}
+						aria-invalid={inputInvalid ? true : undefined}
 						placeholder="github.example.com"
 						onChange={(event) => setInput(event.target.value)}
 						spellCheck={false}

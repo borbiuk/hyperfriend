@@ -6,6 +6,32 @@ const DEBOUNCE_MS = 150;
 /** Upper bound for postponing a rescan while the DOM keeps changing */
 const MAX_WAIT_MS = 500;
 
+/** Marker attribute of every element the extension adds (button, avatar, tooltip, toast, bar) */
+const OWN_ELEMENT_SELECTOR = '[data-hyperfriend]';
+
+/**
+ * True for a DOM change the extension made itself: inside one of its elements (tooltip text,
+ * icon swap, live region) or only adding its elements. Removals of its elements still count as
+ * page changes, because GitHub's re-render may have removed a button that must come back.
+ */
+function isOwnChange(record: MutationRecord): boolean {
+	if (
+		record.target instanceof Element &&
+		record.target.closest(OWN_ELEMENT_SELECTOR)
+	) {
+		return true;
+	}
+
+	return (
+		record.removedNodes.length === 0 &&
+		record.addedNodes.length > 0 &&
+		[...record.addedNodes].every(
+			(node) =>
+				node instanceof Element && node.matches(OWN_ELEMENT_SELECTOR)
+		)
+	);
+}
+
 /** Navigation events of GitHub's SPA (Turbo) and of the history API */
 const NAVIGATION_EVENTS = ['turbo:load', 'turbo:render', 'popstate'];
 
@@ -48,7 +74,12 @@ export class PageObserver {
 		this.notify();
 	}
 
-	private readonly handleMutations = (): void => {
+	private readonly handleMutations = (records: MutationRecord[]): void => {
+		// The extension's own writes (tooltip, live region, icons) need no rescan
+		if (records.every(isOwnChange)) {
+			return;
+		}
+
 		if (
 			window.location.href === this.lastUrl &&
 			detectPageKind() === PageKind.Unsupported

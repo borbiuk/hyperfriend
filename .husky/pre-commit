@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
 
+# stop the commit at the first failing step
+set -e
+
 # update package.json and manifest.firefox.json version from ./public/manifest.json
 . "$(dirname -- "$0")/set-version.sh"
 

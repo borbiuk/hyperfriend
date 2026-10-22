@@ -79,5 +79,5 @@ module.exports = {
 		}),
 	],
 	// Browser extension specific settings
-	target: ['web', 'es2020'],
+	target: ['web', 'es2021'],
 };

@@ -23,6 +23,8 @@ CLAUDE.local.md
 # Playwright
 test-results/
 playwright-report/
+test-results-live/
+playwright-report-live/
 blob-report/
 playwright/.cache/
 tests/e2e/fixtures/.pages-*/

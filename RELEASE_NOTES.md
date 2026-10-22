@@ -1,5 +1,19 @@
 # Release Notes
 
+## 2.8.0
+
+Fixes and more reliable settings.
+
+- **Templates**: a template you type right before the popup closes is now always saved. Before, closing the popup quickly could lose the last change.
+- **Keyboard shortcut**: Shift+C now also works on the summary of one attempt of a workflow run (`/actions/runs/123/attempts/2`).
+- **More browser shortcuts are reserved**: developer tools and bookmarks (`Ctrl/⌘+I`, `Ctrl/⌘+B`, `⌥⌘I`, `⌥⌘J`, `⌥⌘C`) and clear browsing data (`Ctrl+Shift+Delete`, `⇧⌘Backspace`). A saved shortcut that uses one of them goes back to Shift+C.
+- **Import**: a settings file with a shortcut the browser uses still imports. The shortcut keeps its current keys and the rest of the file is applied. Exported templates are always single-line text.
+- **Copy buttons**: a title button that GitHub was busy with (hover or focus) moves to its place once you leave it, instead of staying in the wrong spot.
+- **GitHub Enterprise**: when the browser already gives access to all sites, **Add** now says the domain was not added and keeps the typed domain in the field.
+- **Popup**: an unexpected error now shows a short message instead of an empty popup.
+- The extension description in the store and the browser now mentions Discussions, workflow runs and Markdown.
+- Settings and settings files are unchanged.
+
 ## 2.7.0
 
 GitHub Enterprise Cloud works without setup.
