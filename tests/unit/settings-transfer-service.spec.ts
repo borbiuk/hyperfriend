@@ -1,5 +1,10 @@
 import { expect, test } from '@playwright/test';
-import { ConfigModel, LinkType, ShortcutType } from '@shared/models';
+import {
+	ConfigModel,
+	LinkFormat,
+	LinkType,
+	ShortcutType,
+} from '@shared/models';
 import {
 	parseSettings,
 	ParseSettingsResult,
@@ -13,6 +18,7 @@ const CUSTOM_CONFIG: ConfigModel = {
 		[LinkType.PullRequest]: '{{pr_name}} [#{{pr_number}}] "draft"',
 		[LinkType.Issue]: '\\[{{issue_number}}\\] {{issue_name}}',
 	},
+	format: LinkFormat.Markdown,
 	shortcuts: {
 		[ShortcutType.CopyLink]: {
 			keys: ['Alt', 'Shift', 'KeyL'],
@@ -37,17 +43,18 @@ test('should name the exported file hyperfriend-settings.json', () => {
 	expect(SETTINGS_FILE_NAME).toBe('hyperfriend-settings.json');
 });
 
-test('should serialize the config as pretty schema 3 JSON with the given export time', () => {
+test('should serialize the config as pretty schema 4 JSON with the given export time', () => {
 	expect(serializeSettings(CUSTOM_CONFIG, EXPORTED_AT)).toBe(
 		[
 			'{',
 			'  "app": "hyperfriend",',
-			'  "schemaVersion": 3,',
+			'  "schemaVersion": 4,',
 			'  "exportedAt": "2026-10-21T08:30:00.000Z",',
 			'  "templates": {',
 			'    "pull-request": "{{pr_name}} [#{{pr_number}}] \\"draft\\"",',
 			'    "issue": "\\\\[{{issue_number}}\\\\] {{issue_name}}"',
 			'  },',
+			'  "format": "markdown",',
 			'  "shortcuts": {',
 			'    "copy-link": {',
 			'      "keys": [',
@@ -77,6 +84,7 @@ test('should read back every setting of an exported file', () => {
 				[LinkType.PullRequest]: '{{pr_name}} [#{{pr_number}}] "draft"',
 				[LinkType.Issue]: '\\[{{issue_number}}\\] {{issue_name}}',
 			},
+			format: LinkFormat.Markdown,
 			shortcuts: {
 				[ShortcutType.CopyLink]: {
 					keys: ['Alt', 'Shift', 'KeyL'],
@@ -148,6 +156,44 @@ const SUCCESS_CASES: ParseCase[] = [
 		title: 'should read a schema 3 file with the display section only',
 		text: settingsFile({
 			schemaVersion: 3,
+			display: { authorAvatars: false },
+		}),
+		expected: { ok: true, settings: { display: { authorAvatars: false } } },
+	},
+	{
+		title: 'should read the format of a schema 4 file together with the other sections',
+		text: settingsFile({
+			schemaVersion: 4,
+			format: 'markdown',
+			display: { authorAvatars: false },
+		}),
+		expected: {
+			ok: true,
+			settings: {
+				format: LinkFormat.Markdown,
+				display: { authorAvatars: false },
+			},
+		},
+	},
+	{
+		title: 'should read a schema 4 file with the format only',
+		text: settingsFile({ schemaVersion: 4, format: 'rich' }),
+		expected: { ok: true, settings: { format: LinkFormat.Rich } },
+	},
+	{
+		title: 'should ignore the format of a schema 3 file, which has none',
+		text: settingsFile({
+			schemaVersion: 3,
+			format: 'markdown',
+			display: { authorAvatars: false },
+		}),
+		expected: { ok: true, settings: { display: { authorAvatars: false } } },
+	},
+	{
+		title: 'should not validate the format of a schema 3 file, which has none',
+		text: settingsFile({
+			schemaVersion: 3,
+			format: 'html',
 			display: { authorAvatars: false },
 		}),
 		expected: { ok: true, settings: { display: { authorAvatars: false } } },
@@ -314,9 +360,25 @@ const ERROR_CASES: ParseCase[] = [
 		},
 	},
 	{
-		title: 'should reject schema 4 as created by a newer version',
+		title: 'should reject an unknown format in a schema 4 file',
+		text: settingsFile({ schemaVersion: 4, format: 'html' }),
+		expected: {
+			ok: false,
+			error: 'Format must be "rich" or "markdown".',
+		},
+	},
+	{
+		title: 'should reject a format that is not a string in a schema 4 file',
+		text: settingsFile({ schemaVersion: 4, format: true }),
+		expected: {
+			ok: false,
+			error: 'Format must be "rich" or "markdown".',
+		},
+	},
+	{
+		title: 'should reject schema 5 as created by a newer version',
 		text: settingsFile({
-			schemaVersion: 4,
+			schemaVersion: 5,
 			display: { authorAvatars: false },
 		}),
 		expected: {

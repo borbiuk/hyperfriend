@@ -11,6 +11,7 @@ export const DEFAULT_STORED_CONFIG = {
 	shortcuts: {
 		'copy-link': { keys: ['Shift', 'KeyC'], enabled: true },
 	},
+	format: 'rich',
 	display: { authorAvatars: true },
 	templateFormat: 2,
 } as const;

@@ -1,5 +1,10 @@
 import { expect, test } from '@playwright/test';
-import { ConfigModel, LinkType, ShortcutType } from '@shared/models';
+import {
+	ConfigModel,
+	LinkFormat,
+	LinkType,
+	ShortcutType,
+} from '@shared/models';
 import {
 	cloneDefaultConfig,
 	configService,
@@ -186,6 +191,7 @@ test.afterEach(() => {
 
 /** The defaults, written out as the oracle */
 const DEFAULTS: ConfigModel = {
+	format: LinkFormat.Rich,
 	templates: {
 		[LinkType.PullRequest]: '[PR {{pr_number}}]: {{pr_name}}',
 		[LinkType.Issue]: '[Issue {{issue_number}}]: {{issue_name}}',
@@ -202,6 +208,7 @@ const CUSTOM_STORED = {
 		'pull-request': '#{{pr_number}} [{{pr_name}}]',
 		issue: '[#{{issue_number}}] {{issue_name}}',
 	},
+	format: 'markdown',
 	shortcuts: {
 		'copy-link': { keys: ['Alt', 'Shift', 'KeyL'], enabled: false },
 	},
@@ -215,6 +222,7 @@ test.describe('get', () => {
 			title: 'should return the stored config in the current format as is',
 			stored: CUSTOM_STORED,
 			expected: {
+				format: LinkFormat.Markdown,
 				templates: {
 					[LinkType.PullRequest]: '#{{pr_number}} [{{pr_name}}]',
 					[LinkType.Issue]: '[#{{issue_number}}] {{issue_name}}',
@@ -229,6 +237,21 @@ test.describe('get', () => {
 			},
 		},
 		{
+			title: 'should read the stored copy format "markdown"',
+			stored: { format: 'markdown', templateFormat: 2 },
+			expected: { ...DEFAULTS, format: LinkFormat.Markdown },
+		},
+		{
+			title: 'should use the default format for an unknown stored format',
+			stored: { format: 'html', templateFormat: 2 },
+			expected: DEFAULTS,
+		},
+		{
+			title: 'should use the default format when none is stored (data of 2.2.x and older)',
+			stored: { display: { authorAvatars: true }, templateFormat: 2 },
+			expected: DEFAULTS,
+		},
+		{
 			title: 'should load 1.0.0 data (templates only) with converted templates and default shortcuts and display',
 			stored: {
 				templates: {
@@ -237,6 +260,7 @@ test.describe('get', () => {
 				},
 			},
 			expected: {
+				format: LinkFormat.Rich,
 				templates: {
 					[LinkType.PullRequest]: '[PR {{pr_number}}]: {{pr_name}}',
 					[LinkType.Issue]: '#{{issue_number}} \\[{{issue_name}}\\]',
@@ -260,6 +284,7 @@ test.describe('get', () => {
 				display: { authorAvatars: false },
 			},
 			expected: {
+				format: LinkFormat.Rich,
 				templates: {
 					[LinkType.PullRequest]: '[PR {{pr_number}}]: {{pr_name}}',
 					[LinkType.Issue]:
@@ -278,6 +303,7 @@ test.describe('get', () => {
 			title: 'should convert the templates when the format marker is the string "2"',
 			stored: { ...CUSTOM_STORED, templateFormat: '2' },
 			expected: {
+				format: LinkFormat.Markdown,
 				templates: {
 					[LinkType.PullRequest]: '#{{pr_number}} \\[{{pr_name}}\\]',
 					[LinkType.Issue]: '\\[#{{issue_number}}\\] {{issue_name}}',
@@ -476,6 +502,7 @@ test.describe('template format marker', () => {
 					'copy-link': { keys: ['Shift', 'KeyC'], enabled: true },
 				},
 				display: { authorAvatars: false },
+				format: 'rich',
 				templateFormat: 2,
 			},
 		});
@@ -509,6 +536,7 @@ test.describe('writers', () => {
 					'copy-link': { keys: ['Shift', 'KeyC'], enabled: true },
 				},
 				display: { authorAvatars: true },
+				format: 'rich',
 				templateFormat: 2,
 			},
 		});
@@ -530,6 +558,24 @@ test.describe('writers', () => {
 		});
 	});
 
+	test('should store the copy format and keep the rest of the config', async () => {
+		storage.seed(KEY, CUSTOM_STORED);
+
+		await configService.setFormat(LinkFormat.Rich);
+
+		expect(storage.dump()).toEqual({
+			[KEY]: { ...CUSTOM_STORED, format: 'rich' },
+		});
+	});
+
+	test('should ignore an unknown copy format', async () => {
+		storage.seed(KEY, CUSTOM_STORED);
+
+		await configService.setFormat('html' as LinkFormat);
+
+		expect(storage.dump()).toEqual({ [KEY]: CUSTOM_STORED });
+	});
+
 	test('should store several templates with a single write', async () => {
 		await configService.setTemplates({
 			[LinkType.PullRequest]: '[#{{pr_number}}]',
@@ -547,6 +593,7 @@ test.describe('writers', () => {
 					'copy-link': { keys: ['Shift', 'KeyC'], enabled: true },
 				},
 				display: { authorAvatars: true },
+				format: 'rich',
 				templateFormat: 2,
 			},
 		});
@@ -570,6 +617,7 @@ test.describe('writers', () => {
 					},
 				},
 				display: { authorAvatars: true },
+				format: 'rich',
 				templateFormat: 2,
 			},
 		});
@@ -637,6 +685,7 @@ test.describe('writers', () => {
 					enabled: false,
 				},
 			},
+			format: LinkFormat.Markdown,
 			display: { authorAvatars: false },
 		});
 
@@ -651,6 +700,7 @@ test.describe('writers', () => {
 					'copy-link': { keys: ['Alt', 'KeyL'], enabled: false },
 				},
 				display: { authorAvatars: false },
+				format: 'markdown',
 				templateFormat: 2,
 			},
 		});
@@ -708,6 +758,7 @@ test.describe('write queue', () => {
 					'copy-link': { keys: ['Alt', 'KeyL'], enabled: true },
 				},
 				display: { authorAvatars: false },
+				format: 'rich',
 				templateFormat: 2,
 			},
 		});
@@ -742,6 +793,7 @@ test.describe('write queue', () => {
 					'copy-link': { keys: ['Shift', 'KeyC'], enabled: true },
 				},
 				display: { authorAvatars: false },
+				format: 'rich',
 				templateFormat: 2,
 			},
 		});
@@ -769,6 +821,7 @@ test.describe('write queue', () => {
 					'copy-link': { keys: ['Shift', 'KeyC'], enabled: true },
 				},
 				display: { authorAvatars: false },
+				format: 'rich',
 				templateFormat: 2,
 			},
 		});
@@ -847,6 +900,7 @@ test.describe('subscribe', () => {
 					[LinkType.PullRequest]: '#{{pr_number}} [{{pr_name}}]',
 					[LinkType.Issue]: '[#{{issue_number}}] {{issue_name}}',
 				},
+				format: LinkFormat.Markdown,
 				shortcuts: {
 					[ShortcutType.CopyLink]: {
 						keys: ['Alt', 'Shift', 'KeyL'],
@@ -877,6 +931,7 @@ test.describe('subscribe', () => {
 test('should build the stored value from the config plus the format marker', () => {
 	expect(
 		toStoredConfig({
+			format: LinkFormat.Rich,
 			templates: {
 				[LinkType.PullRequest]: '[#{{pr_number}}]',
 				[LinkType.Issue]: '[#{{issue_number}}]',
@@ -896,6 +951,7 @@ test('should build the stored value from the config plus the format marker', () 
 		},
 		shortcuts: { 'copy-link': { keys: ['Alt', 'KeyL'], enabled: false } },
 		display: { authorAvatars: false },
+		format: 'rich',
 		templateFormat: 2,
 	});
 });

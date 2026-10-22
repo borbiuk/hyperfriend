@@ -18,9 +18,10 @@ Chrome Web Store and Firefox Add-ons listings are coming soon.
 ### Copy button
 
 - **Pull Requests and Issues**: a button next to the title of every item in list views and next to the title on the detail pages.
-- **Rich hyperlink**: the clipboard gets both formats at once, so every chat app picks the best one.
+- **Rich hyperlink** (the default copy format): the clipboard gets both formats at once, so every chat app picks the best one.
     - `text/html`: `<a href="https://github.com/OWNER/REPO/pull/12">PR 12</a>: Add copy button to PR list` (with the default template only `PR 12` is the link, see [Customizable templates](#customizable-templates))
     - `text/plain`: `PR 12: Add copy button to PR list — https://github.com/OWNER/REPO/pull/12`
+- **Markdown** (optional): choose **Markdown** under **Copy format** in the **General** tab and the clipboard gets one `text/plain` format with a Markdown link: `[PR 12](https://github.com/OWNER/REPO/pull/12): Add copy button to PR list`. Only the part of the template in square brackets is the link text (the whole text without brackets). Inside the link text `[`, `]` and `\` get a backslash, so `[WIP] Fix` stays one link. There is no `text/html` format in this mode, so chats and editors paste the Markdown source, not a link. The button, the keyboard shortcut and the template preview all follow the setting.
 - **Looks like GitHub**: styled like GitHub's own icon buttons (Primer "invisible" icon button, 24 px in lists and 32 px in page headers), with GitHub-style tooltips ("Copy link to pull request" / "Copy link to issue"). On detail pages it sits right after the `#number` of the title.
 - **Clear feedback**: after a click the icon changes to a check mark and the tooltip shows "Copied!", or a cross and "Copy failed", for 1.5 seconds. Screen readers announce the result, and the accessible label is, for example, "Copy link to pull request #12".
 - **Works with GitHub navigation**: buttons appear on pages that GitHub loads without a full page refresh and are never duplicated.
@@ -105,7 +106,7 @@ On Mac the keys are shown as symbols (⌃ ⌥ ⇧ ⌘); on Windows and Linux as 
 
 ### Sharing settings with your team
 
-Export your settings to a file and let teammates import it, so everybody pastes links in the same format. The file holds the templates, the shortcuts and the display settings.
+Export your settings to a file and let teammates import it, so everybody pastes links in the same format. The file holds the templates, the copy format, the shortcuts and the display settings.
 
 1. Open the Hyperfriend popup, go to the **General** tab and click **Export**. The browser downloads `hyperfriend-settings.json`.
 2. Share the file (chat, repository, wiki).
@@ -113,17 +114,18 @@ Export your settings to a file and let teammates import it, so everybody pastes 
 
 In Chrome, Export and Import work right in the popup. In **Firefox** the popup closes when the download panel or the file picker opens, so **both Export and Import** open the settings page in a browser tab (`options_ui` with `open_in_tab`, on the General tab), where they work the same way. The settings page is also available from the extension's options in the browser's extensions manager.
 
-File format (schema version 3):
+File format (schema version 4):
 
 ```json
 {
 	"app": "hyperfriend",
-	"schemaVersion": 3,
+	"schemaVersion": 4,
 	"exportedAt": "2026-10-20T18:00:00.000Z",
 	"templates": {
 		"pull-request": "[PR {{pr_number}}]: {{pr_name}}",
 		"issue": "[Issue {{issue_number}}]: {{issue_name}}"
 	},
+	"format": "rich",
 	"shortcuts": {
 		"copy-link": {
 			"keys": ["Shift", "KeyC"],
@@ -138,7 +140,7 @@ File format (schema version 3):
 
 `keys` lists the modifiers in the order `Control`, `Alt`, `Shift`, `Meta`, followed by one [`KeyboardEvent.code`](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code) value of the main key (`KeyC`, `Digit1`, `F5`, `ArrowUp`, ...). A disabled shortcut keeps its `keys`.
 
-Schema version 3 is the first one with the square bracket syntax in templates. Files exported by Hyperfriend 2.0.0 use schema version 2 (the same layout, templates without brackets). Files exported by Hyperfriend 1.0.0 use schema version 1 and contain `templates` only:
+Schema version 4 is the first one with the copy `format` (`rich` or `markdown`). Schema version 3 (Hyperfriend 2.1.0 to 2.2.1) has the same layout without `format`, and is the first one with the square bracket syntax in templates. Files exported by Hyperfriend 2.0.0 use schema version 2 (the same layout, templates without brackets). Files exported by Hyperfriend 1.0.0 use schema version 1 and contain `templates` only:
 
 ```json
 {
@@ -152,15 +154,16 @@ Schema version 3 is the first one with the square bracket syntax in templates. F
 }
 ```
 
-Version 1 and 2 files still import, and their templates are converted the same way as saved templates (the old default becomes the new default, other templates get their brackets escaped). A version 1 file applies the templates only; the shortcuts and display settings keep their current values. Hyperfriend 2.0.0 does not read version 3 files ("created by a newer version of Hyperfriend").
+Version 1, 2 and 3 files still import. The templates of version 1 and 2 files are converted the same way as saved templates (the old default becomes the new default, other templates get their brackets escaped). A version 1 file applies the templates only; the shortcuts and display settings keep their current values. A version 3 file has no format, so the current copy format stays (a `format` field in it is not read). Hyperfriend 2.2.1 and older do not read version 4 files ("created by a newer version of Hyperfriend").
 
 Import rules:
 
-- The file must be up to 64 KB (larger files are rejected before they are read) and valid JSON, with `"app": "hyperfriend"` and `"schemaVersion"` 1, 2 or 3. A higher version is rejected as "created by a newer version of Hyperfriend".
+- The file must be up to 64 KB (larger files are rejected before they are read) and valid JSON, with `"app": "hyperfriend"` and `"schemaVersion"` 1, 2, 3 or 4. A higher version is rejected as "created by a newer version of Hyperfriend".
 - `templates` must be an object. Only the keys `pull-request` and `issue` are read; other keys are ignored. Values are trimmed, and each must be a single line of text (no line breaks or control characters) of at most 500 characters; otherwise the error reads `Template "<key>" must be a single line of text up to 500 characters.` (In a version 1 file at least one known template must be present.)
+- `format` (version 4 only) must be `"rich"` or `"markdown"`; otherwise the error reads `Format must be "rich" or "markdown".`
 - `shortcuts` must be an object. Only the key `copy-link` is read. Its value needs `keys` that form a valid combination (at least one modifier, exactly one main key, not a combination the browser uses; a valid combination in another order is accepted and normalized) and a boolean `enabled`; otherwise the error reads `Shortcut "copy-link" is not valid.`
 - `display` must be an object. Only `authorAvatars` is read, and it must be `true` or `false`; otherwise the error reads `Display setting "authorAvatars" must be true or false.`
-- In a version 2 or 3 file every section is optional, but at least one setting must be present ("The file does not contain any settings.").
+- In a version 2, 3 or 4 file every section is optional, but at least one setting must be present ("The file does not contain any settings.").
 - A setting missing from the file keeps its current value. Everything is applied with one write to the sync storage.
 - Problems are shown as a short message under the buttons, and nothing is changed.
 - `exportedAt` is informational only.
@@ -174,9 +177,10 @@ The popup has three tabs and a footer with a link to the GitHub repository. The 
 - **Templates**: each template field is marked with a Pull Request or Issue icon, lists the available placeholders and shows the resulting link text for a sample item (live preview). Changes are saved about 300 ms after you stop typing, with a "Saved" status.
 - **Shortcuts**: change, turn off or reset the keyboard shortcut (see above). Shortcuts don't work while you type in a text field.
 - **General**:
+    - **Copy format**: **Rich link** (default) or **Markdown**, saved at once. The Templates preview shows what is pasted in the chosen format.
     - **Show author avatars** (on by default), applied immediately.
     - **Export** and **Import** share the settings as a file (see above).
-    - **Reset all settings** restores the default templates, shortcuts and display settings after a confirmation ("Reset all settings?").
+    - **Reset all settings** restores the default templates, copy format, shortcuts and display settings after a confirmation ("Reset all settings?").
 - **Light and dark themes**: the popup follows the operating system theme.
 
 <hr/>

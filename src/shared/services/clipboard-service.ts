@@ -1,4 +1,4 @@
-import { ConfigModel, LinkTargetModel } from '@shared/models';
+import { ConfigModel, LinkFormat, LinkTargetModel } from '@shared/models';
 import { escapeHtml } from '@shared/utils';
 
 import { renderTemplateParts, TemplateParts } from './template-service';
@@ -18,6 +18,24 @@ export interface LinkPayload {
 
 	/** `TEXT — URL` */
 	plain: string;
+
+	/** `BEFORE[LINK](URL)AFTER`; `\`, `[` and `]` in the link text and a trailing `!` or `\` of BEFORE are escaped */
+	markdown: string;
+}
+
+/**
+ * Escapes the characters that would end or change a Markdown link text.
+ */
+function escapeMarkdownLinkText(text: string): string {
+	return text.replace(/[\\[\]]/g, '\\$&');
+}
+
+/**
+ * Escapes a trailing `!` or `\` of the text before a Markdown link: `![` would make an image and
+ * `\[` would escape the link's own bracket. The rest of the text stays as typed.
+ */
+function escapeBeforeLink(before: string): string {
+	return before.replace(/[!\\]$/, '\\$&');
 }
 
 /**
@@ -40,6 +58,7 @@ export function buildLinkPayload(
 		parts,
 		html: `${escapeHtml(parts.before)}${anchor}${escapeHtml(parts.after)}`,
 		plain: `${text} — ${target.url}`,
+		markdown: `${escapeBeforeLink(parts.before)}[${escapeMarkdownLinkText(parts.link)}](${target.url})${parts.after}`,
 	};
 }
 
@@ -55,23 +74,41 @@ function isClipboardApiAvailable(): boolean {
 }
 
 /**
- * Writes both formats with the async Clipboard API.
+ * Clipboard flavors (MIME type to content) of a link in the given format: rich is HTML plus the
+ * plain-text fallback, Markdown is the Markdown source as plain text only (with an HTML flavor,
+ * chats and editors would paste the link instead of the Markdown).
  */
-async function writeWithClipboardApi(payload: LinkPayload): Promise<void> {
-	await navigator.clipboard.write([
-		new ClipboardItem({
-			'text/html': new Blob([payload.html], { type: 'text/html' }),
-			'text/plain': new Blob([payload.plain], { type: 'text/plain' }),
-		}),
-	]);
+function getFlavors(
+	payload: LinkPayload,
+	format: LinkFormat
+): Record<string, string> {
+	if (format === LinkFormat.Markdown) {
+		return { 'text/plain': payload.markdown };
+	}
+
+	return { 'text/html': payload.html, 'text/plain': payload.plain };
 }
 
 /**
- * Writes both formats via a one-shot `copy` event and `document.execCommand('copy')`.
+ * Writes the flavors with the async Clipboard API.
+ */
+async function writeWithClipboardApi(
+	flavors: Record<string, string>
+): Promise<void> {
+	const items: Record<string, Blob> = {};
+	for (const [type, content] of Object.entries(flavors)) {
+		items[type] = new Blob([content], { type });
+	}
+
+	await navigator.clipboard.write([new ClipboardItem(items)]);
+}
+
+/**
+ * Writes the flavors via a one-shot `copy` event and `document.execCommand('copy')`.
  * The listener is registered on `window` in the capture phase and stops propagation,
  * so page-level copy handlers cannot override the payload.
  */
-function writeWithExecCommand(payload: LinkPayload): void {
+function writeWithExecCommand(flavors: Record<string, string>): void {
 	const onCopy = (event: ClipboardEvent): void => {
 		event.stopImmediatePropagation();
 		if (!event.clipboardData) {
@@ -79,8 +116,9 @@ function writeWithExecCommand(payload: LinkPayload): void {
 		}
 
 		event.preventDefault();
-		event.clipboardData.setData('text/html', payload.html);
-		event.clipboardData.setData('text/plain', payload.plain);
+		for (const [type, content] of Object.entries(flavors)) {
+			event.clipboardData.setData(type, content);
+		}
 	};
 	const options: AddEventListenerOptions = { capture: true };
 
@@ -95,8 +133,8 @@ function writeWithExecCommand(payload: LinkPayload): void {
 }
 
 /**
- * Copies the link to the clipboard as rich HTML plus plain text.
- * Uses the async Clipboard API, falling back to `execCommand('copy')`.
+ * Copies the link to the clipboard in the configured format: rich HTML plus plain text, or
+ * Markdown as plain text. Uses the async Clipboard API, falling back to `execCommand('copy')`.
  *
  * Must be called directly from a user gesture (click handler). When the Clipboard API
  * is missing, the fallback runs synchronously, still inside the gesture. When the API
@@ -105,26 +143,26 @@ function writeWithExecCommand(payload: LinkPayload): void {
  * Firefox 127+ (ClipboardItem support), so this only affects edge cases.
  *
  * @param target - The Pull Request or Issue to link.
- * @param config - Config holding the templates.
+ * @param config - Config holding the templates and the format.
  * @returns Resolves when copied; rejects if both methods fail.
  */
 export async function copyLink(
 	target: LinkTargetModel,
 	config: ConfigModel
 ): Promise<void> {
-	const payload = buildLinkPayload(target, config);
+	const flavors = getFlavors(buildLinkPayload(target, config), config.format);
 
 	if (!isClipboardApiAvailable()) {
-		writeWithExecCommand(payload);
+		writeWithExecCommand(flavors);
 		return;
 	}
 
 	try {
-		await writeWithClipboardApi(payload);
+		await writeWithClipboardApi(flavors);
 		return;
 	} catch {
 		// Fall through to the execCommand fallback.
 	}
 
-	writeWithExecCommand(payload);
+	writeWithExecCommand(flavors);
 }

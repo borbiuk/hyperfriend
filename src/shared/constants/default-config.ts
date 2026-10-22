@@ -1,4 +1,9 @@
-import { ConfigModel, LinkType, ShortcutType } from '@shared/models';
+import {
+	ConfigModel,
+	LinkFormat,
+	LinkType,
+	ShortcutType,
+} from '@shared/models';
 
 /**
  * Key under which the config is stored in chrome.storage.sync.
@@ -13,6 +18,7 @@ export const DEFAULT_CONFIG: ConfigModel = {
 		[LinkType.PullRequest]: '[PR {{pr_number}}]: {{pr_name}}',
 		[LinkType.Issue]: '[Issue {{issue_number}}]: {{issue_name}}',
 	},
+	format: LinkFormat.Rich,
 	shortcuts: {
 		[ShortcutType.CopyLink]: { keys: ['Shift', 'KeyC'], enabled: true },
 	},

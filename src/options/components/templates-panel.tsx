@@ -73,6 +73,7 @@ export function TemplatesPanel({
 					icon={GitPullRequestIcon}
 					value={config.templates[LinkType.PullRequest]}
 					sample={SAMPLE_PULL_REQUEST}
+					format={config.format}
 					syncEpoch={syncEpoch}
 					registerField={registerField}
 					noteId={noteId}
@@ -83,6 +84,7 @@ export function TemplatesPanel({
 					icon={IssueOpenedIcon}
 					value={config.templates[LinkType.Issue]}
 					sample={SAMPLE_ISSUE}
+					format={config.format}
 					syncEpoch={syncEpoch}
 					registerField={registerField}
 					noteId={noteId}

@@ -1,4 +1,5 @@
 import { DisplayModel } from './display-model';
+import { LinkFormat } from './link-format';
 import { LinkType } from './link-type';
 import { ShortcutBindingModel } from './shortcut-binding-model';
 import { ShortcutType } from './shortcut-type';
@@ -9,6 +10,9 @@ import { ShortcutType } from './shortcut-type';
 export interface ConfigModel {
 	/** Link text template per link type, with {{placeholder}} tokens */
 	templates: Record<LinkType, string>;
+
+	/** Clipboard format of a copied link */
+	format: LinkFormat;
 
 	/** Keyboard shortcut per action */
 	shortcuts: Record<ShortcutType, ShortcutBindingModel>;

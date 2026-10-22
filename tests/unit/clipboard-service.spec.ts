@@ -1,6 +1,11 @@
 import { expect, test } from '@playwright/test';
 import { DEFAULT_CONFIG } from '@shared/constants';
-import { ConfigModel, LinkTargetModel, LinkType } from '@shared/models';
+import {
+	ConfigModel,
+	LinkFormat,
+	LinkTargetModel,
+	LinkType,
+} from '@shared/models';
 import {
 	buildLinkPayload,
 	cloneDefaultConfig,
@@ -46,6 +51,7 @@ test('should escape tags and quotes of the title in the default pull request pay
 		parts: { before: '', link: 'PR 9713', after: `: ${title}` },
 		html: '<a href="https://github.com/react/react/pull/9713">PR 9713</a>: [#9712] fix &lt;input type=&quot;number&quot; /&gt; value &#39;.98&#39; should not be equal to &#39;0.98&#39;.',
 		plain: `PR 9713: ${title} — https://github.com/react/react/pull/9713`,
+		markdown: `[PR 9713](https://github.com/react/react/pull/9713): ${title}`,
 	});
 });
 
@@ -57,6 +63,7 @@ test('should escape an ampersand of the title once in the default pull request p
 		parts: { before: '', link: 'PR 9713', after: `: ${title}` },
 		html: '<a href="https://github.com/react/react/pull/9713">PR 9713</a>: Docs: R&amp;D notes &amp;amp; links',
 		plain: `PR 9713: ${title} — https://github.com/react/react/pull/9713`,
+		markdown: `[PR 9713](https://github.com/react/react/pull/9713): ${title}`,
 	});
 });
 
@@ -75,6 +82,8 @@ test('should build the default issue payload from the issue template', () => {
 		parts: { before: '', link: 'Issue 10', after: ': Crash on <select>' },
 		html: '<a href="https://github.com/react/react/issues/10">Issue 10</a>: Crash on &lt;select&gt;',
 		plain: 'Issue 10: Crash on <select> — https://github.com/react/react/issues/10',
+		markdown:
+			'[Issue 10](https://github.com/react/react/issues/10): Crash on <select>',
 	});
 });
 
@@ -88,6 +97,8 @@ test('should build the payload from a custom template with text on both sides of
 		parts: { before: 'react/react#', link: '9713', after: ' Fix input' },
 		html: 'react/react#<a href="https://github.com/react/react/pull/9713">9713</a> Fix input',
 		plain: 'react/react#9713 Fix input — https://github.com/react/react/pull/9713',
+		markdown:
+			'react/react#[9713](https://github.com/react/react/pull/9713) Fix input',
 	});
 });
 
@@ -99,6 +110,8 @@ test('should link the whole text when the custom template has no link segment', 
 		parts: { before: '', link: 'Fix input (#9713)', after: '' },
 		html: '<a href="https://github.com/react/react/pull/9713">Fix input (#9713)</a>',
 		plain: 'Fix input (#9713) — https://github.com/react/react/pull/9713',
+		markdown:
+			'[Fix input (#9713)](https://github.com/react/react/pull/9713)',
 	});
 });
 
@@ -114,6 +127,8 @@ test('should put the URL as the link text when the template is "[{{url}}] {{pr_n
 		},
 		html: '<a href="https://github.com/react/react/pull/9713">https://github.com/react/react/pull/9713</a> Fix input',
 		plain: 'https://github.com/react/react/pull/9713 Fix input — https://github.com/react/react/pull/9713',
+		markdown:
+			'[https://github.com/react/react/pull/9713](https://github.com/react/react/pull/9713) Fix input',
 	});
 });
 
@@ -125,6 +140,8 @@ test('should fall back to the default pull request template when the stored one 
 		parts: { before: '', link: 'PR 9713', after: ': Fix input' },
 		html: '<a href="https://github.com/react/react/pull/9713">PR 9713</a>: Fix input',
 		plain: 'PR 9713: Fix input — https://github.com/react/react/pull/9713',
+		markdown:
+			'[PR 9713](https://github.com/react/react/pull/9713): Fix input',
 	});
 });
 
@@ -142,6 +159,8 @@ test('should escape the text before, inside and after the link', () => {
 		},
 		html: '&lt;b&gt;&quot;<a href="https://github.com/react/react/pull/9713">9713 &amp; &#39;x&#39;</a>&lt;/b&gt; It&#39;s &lt;ok&gt;',
 		plain: "<b>\"9713 & 'x'</b> It's <ok> — https://github.com/react/react/pull/9713",
+		markdown:
+			"<b>\"[9713 & 'x'](https://github.com/react/react/pull/9713)</b> It's <ok>",
 	});
 });
 
@@ -156,6 +175,62 @@ test('should escape the URL in the href and keep it raw in the plain text', () =
 		parts: { before: '', link: 'PR 9713', after: ': Fix input' },
 		html: '<a href="https://github.com/react/react/pull/9713?a=1&amp;b=&quot;2&quot;">PR 9713</a>: Fix input',
 		plain: 'PR 9713: Fix input — https://github.com/react/react/pull/9713?a=1&b="2"',
+		markdown:
+			'[PR 9713](https://github.com/react/react/pull/9713?a=1&b="2"): Fix input',
+	});
+});
+
+test('should escape brackets and backslashes in the Markdown link text only', () => {
+	const config = withPullRequestTemplate('[{{pr_name}}] [{{pr_number}}]\\x');
+
+	expect(buildLinkPayload(pullRequest('[WIP] Fix a\\b'), config)).toEqual({
+		text: '[WIP] Fix a\\b [9713]\\x',
+		parts: {
+			before: '',
+			link: '[WIP] Fix a\\b',
+			after: ' [9713]\\x',
+		},
+		html: '<a href="https://github.com/react/react/pull/9713">[WIP] Fix a\\b</a> [9713]\\x',
+		plain: '[WIP] Fix a\\b [9713]\\x — https://github.com/react/react/pull/9713',
+		markdown:
+			'[\\[WIP\\] Fix a\\\\b](https://github.com/react/react/pull/9713) [9713]\\x',
+	});
+});
+
+test('should escape a trailing "!" before the Markdown link', () => {
+	const config = withPullRequestTemplate('Look![{{pr_number}}]');
+
+	expect(buildLinkPayload(pullRequest('Fix'), config)).toEqual({
+		text: 'Look!9713',
+		parts: { before: 'Look!', link: '9713', after: '' },
+		html: 'Look!<a href="https://github.com/react/react/pull/9713">9713</a>',
+		plain: 'Look!9713 — https://github.com/react/react/pull/9713',
+		markdown: 'Look\\![9713](https://github.com/react/react/pull/9713)',
+	});
+});
+
+test('should escape a trailing backslash before the Markdown link', () => {
+	const config = withPullRequestTemplate('{{pr_name}}[{{pr_number}}]');
+
+	expect(buildLinkPayload(pullRequest('Fix\\'), config)).toEqual({
+		text: 'Fix\\9713',
+		parts: { before: 'Fix\\', link: '9713', after: '' },
+		html: 'Fix\\<a href="https://github.com/react/react/pull/9713">9713</a>',
+		plain: 'Fix\\9713 — https://github.com/react/react/pull/9713',
+		markdown: 'Fix\\\\[9713](https://github.com/react/react/pull/9713)',
+	});
+});
+
+test('should leave backticks in the Markdown link text unescaped', () => {
+	const config = withPullRequestTemplate('{{pr_name}} (#{{pr_number}})');
+
+	expect(buildLinkPayload(pullRequest('Fix `input`'), config)).toEqual({
+		text: 'Fix `input` (#9713)',
+		parts: { before: '', link: 'Fix `input` (#9713)', after: '' },
+		html: '<a href="https://github.com/react/react/pull/9713">Fix `input` (#9713)</a>',
+		plain: 'Fix `input` (#9713) — https://github.com/react/react/pull/9713',
+		markdown:
+			'[Fix `input` (#9713)](https://github.com/react/react/pull/9713)',
 	});
 });
 
@@ -388,5 +463,47 @@ test.describe('copyLink', () => {
 			copyLink(pullRequest('Fix <input>'), DEFAULT_CONFIG)
 		).rejects.toThrow('document.execCommand("copy") failed');
 		expect(log.copyListeners).toBe(0);
+	});
+
+	/** Config that copies Markdown */
+	const MARKDOWN_CONFIG: ConfigModel = {
+		...cloneDefaultConfig(),
+		format: LinkFormat.Markdown,
+	};
+
+	/** Markdown payload of pullRequest('Fix <input>') with the default template */
+	const MARKDOWN_DATA = {
+		'text/plain':
+			'[PR 9713](https://github.com/react/react/pull/9713): Fix <input>',
+	};
+
+	test('should write only the Markdown source as plain text with the Clipboard API', async () => {
+		const log = installFakeBrowser({ clipboardApi: true });
+
+		await copyLink(pullRequest('Fix <input>'), MARKDOWN_CONFIG);
+
+		expect(log).toEqual({
+			apiWrites: [MARKDOWN_DATA],
+			copyEvents: [],
+			copyListeners: 0,
+		});
+	});
+
+	test('should set only the Markdown source as plain text through execCommand', async () => {
+		const log = installFakeBrowser({ clipboardApi: false });
+
+		await copyLink(pullRequest('Fix <input>'), MARKDOWN_CONFIG);
+
+		expect(log).toEqual({
+			apiWrites: [],
+			copyEvents: [
+				{
+					data: MARKDOWN_DATA,
+					defaultPrevented: true,
+					propagationStopped: true,
+				},
+			],
+			copyListeners: 0,
+		});
 	});
 });

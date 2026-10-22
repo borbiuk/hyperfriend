@@ -2,6 +2,7 @@ import { CONFIG_STORAGE_KEY, DEFAULT_CONFIG } from '@shared/constants';
 import {
 	ConfigModel,
 	DisplayModel,
+	LinkFormat,
 	LinkType,
 	SettingsImportModel,
 	ShortcutBindingModel,
@@ -74,6 +75,7 @@ export function cloneConfig(config: ConfigModel): ConfigModel {
 
 	return {
 		templates: { ...config.templates },
+		format: config.format,
 		shortcuts,
 		display: { ...config.display },
 	};
@@ -125,6 +127,15 @@ function applyTemplates(
 				? convertLegacyTemplate(value, type)
 				: value;
 		}
+	}
+}
+
+/**
+ * Copies the copy format into the config when it is a known value; anything else is ignored.
+ */
+function applyFormat(config: ConfigModel, format: unknown): void {
+	if (Object.values(LinkFormat).includes(format as LinkFormat)) {
+		config.format = format as LinkFormat;
 	}
 }
 
@@ -187,6 +198,7 @@ function mergeWithDefaults(stored: unknown): ConfigModel {
 	const format = stored[TEMPLATE_FORMAT_KEY];
 	const legacy = typeof format !== 'number' || format < TEMPLATE_FORMAT;
 	applyTemplates(config, stored.templates, legacy);
+	applyFormat(config, stored.format);
 	applyShortcuts(config, stored.shortcuts);
 	applyDisplay(config, stored.display);
 	return config;
@@ -264,6 +276,16 @@ export const configService = {
 	},
 
 	/**
+	 * Saves the copy format (writes the full merged config).
+	 * An unknown value is ignored.
+	 *
+	 * @param format - New clipboard format.
+	 */
+	async setFormat(format: LinkFormat): Promise<void> {
+		await updateConfig((config) => applyFormat(config, format));
+	},
+
+	/**
 	 * Saves the binding of one shortcut (writes the full merged config).
 	 * Invalid `keys` (see normalizeShortcut) are ignored; missing fields keep their value.
 	 *
@@ -298,6 +320,7 @@ export const configService = {
 	async importSettings(settings: SettingsImportModel): Promise<void> {
 		await updateConfig((config) => {
 			applyTemplates(config, settings.templates);
+			applyFormat(config, settings.format);
 			applyShortcuts(config, settings.shortcuts);
 			applyDisplay(config, settings.display);
 		});

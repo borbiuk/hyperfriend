@@ -69,7 +69,7 @@ const LABELS: Record<LinkType, string> = {
 const FALLBACK_LABEL = 'Copy link';
 
 /**
- * Icon button that copies a rich link to a Pull Request or Issue.
+ * Icon button that copies a link to a Pull Request or Issue in the configured format.
  */
 export class CopyButton {
 	private static readonly instances = new WeakMap<Element, CopyButton>();

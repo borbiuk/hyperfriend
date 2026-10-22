@@ -1,7 +1,12 @@
 import { readFile, writeFile } from 'node:fs/promises';
 
 import { Locator, Page } from '@playwright/test';
-import { ConfigModel, LinkType, ShortcutType } from '@shared/models';
+import {
+	ConfigModel,
+	LinkFormat,
+	LinkType,
+	ShortcutType,
+} from '@shared/models';
 
 import { DEFAULT_STORED_CONFIG } from './fixtures/defaults';
 import { expect, test } from './fixtures/extension';
@@ -15,6 +20,7 @@ const CUSTOM_SETTINGS: ConfigModel = {
 		[LinkType.PullRequest]: '{{repo}}#[{{pr_number}}] {{pr_name}}',
 		[LinkType.Issue]: '{{repo}}#[{{issue_number}}] {{issue_name}}',
 	},
+	format: LinkFormat.Markdown,
 	shortcuts: {
 		[ShortcutType.CopyLink]: { keys: ['Shift', 'KeyJ'], enabled: false },
 	},
@@ -85,6 +91,86 @@ async function importFile(options: Page, file: string): Promise<void> {
 	await (await chooser).setFiles(file);
 }
 
+/**
+ * The radio button of one copy format.
+ *
+ * @param options - Settings page on the General tab.
+ * @param name - Label of the format ("Rich link" or "Markdown").
+ */
+function formatRadio(options: Page, name: string): Locator {
+	return options
+		.getByRole('group', { name: 'Copy format' })
+		.getByRole('radio', { name, exact: true });
+}
+
+test.describe('Copy format', () => {
+	test('should start with the rich link selected', async ({
+		openOptions,
+	}) => {
+		const options = await openGeneral(openOptions, true);
+
+		await expect(formatRadio(options, 'Rich link')).toBeChecked();
+		await expect(formatRadio(options, 'Markdown')).not.toBeChecked();
+	});
+
+	test('should save the Markdown format and show it again after a reload', async ({
+		openOptions,
+		storage,
+	}) => {
+		const options = await openGeneral(openOptions, true);
+
+		await formatRadio(options, 'Markdown').check();
+
+		await expect
+			.poll(() => storage.getConfig())
+			.toEqual({ ...DEFAULT_STORED_CONFIG, format: 'markdown' });
+
+		await test.step('after a reload Markdown is still selected', async () => {
+			await options.reload();
+			await expect(formatRadio(options, 'Markdown')).toBeChecked();
+		});
+	});
+
+	test('should switch back to the rich link', async ({
+		openOptions,
+		storage,
+	}) => {
+		await storage.seedConfig({ format: LinkFormat.Markdown });
+		const options = await openGeneral(openOptions, true);
+
+		await formatRadio(options, 'Rich link').check();
+
+		await expect
+			.poll(() => storage.getConfig())
+			.toEqual(DEFAULT_STORED_CONFIG);
+	});
+
+	test('should show the pasted text of the format in the Templates preview', async ({
+		openOptions,
+	}) => {
+		const options = await openGeneral(openOptions, true);
+		await formatRadio(options, 'Markdown').check();
+
+		await options.getByRole('tab', { name: 'Templates' }).click();
+
+		// The popup's sample pull request is #12 of borbiuk/hyperfriend; Markdown shows the source text
+		await expect(
+			options
+				.locator('[data-component="FormControl"]')
+				.filter({
+					has: options.getByRole('textbox', {
+						name: 'Pull Request link template',
+						exact: true,
+					}),
+				})
+				.getByText(
+					'Preview: [PR 12](https://github.com/borbiuk/hyperfriend/pull/12): Add copy button to PR list',
+					{ exact: true }
+				)
+		).toBeVisible();
+	});
+});
+
 test.describe('Display', () => {
 	test('should turn author avatars off and keep them off after a reload', async ({
 		openOptions,
@@ -153,7 +239,7 @@ test.describe('Export', () => {
 		const content = JSON.parse(await readFile(savedPath, 'utf8'));
 		expect(content).toEqual({
 			app: 'hyperfriend',
-			schemaVersion: 3,
+			schemaVersion: 4,
 			exportedAt: expect.any(String),
 			...CUSTOM_SETTINGS,
 		});
@@ -165,16 +251,16 @@ test.describe('Export', () => {
 });
 
 test.describe('Import', () => {
-	test('should import a version 3 file and show its settings on every tab', async ({
+	test('should import a version 4 file and show its settings on every tab', async ({
 		openOptions,
 		storage,
 	}, testInfo) => {
-		const file = testInfo.outputPath('settings-v3.json');
+		const file = testInfo.outputPath('settings-v4.json');
 		await writeFile(
 			file,
 			JSON.stringify({
 				app: 'hyperfriend',
-				schemaVersion: 3,
+				schemaVersion: 4,
 				exportedAt: '2026-01-02T03:04:05.000Z',
 				...CUSTOM_SETTINGS,
 			})
@@ -197,6 +283,7 @@ test.describe('Import', () => {
 				'aria-pressed',
 				'false'
 			);
+			await expect(formatRadio(options, 'Markdown')).toBeChecked();
 			await options.getByRole('tab', { name: 'Shortcuts' }).click();
 			await expect(
 				options.getByRole('button', {
@@ -220,6 +307,43 @@ test.describe('Import', () => {
 				options.getByRole('textbox', { name: 'Issue link template' })
 			).toHaveValue(CUSTOM_SETTINGS.templates[LinkType.Issue]);
 		});
+	});
+
+	test('should import a version 3 file without a format and keep the stored format', async ({
+		openOptions,
+		storage,
+	}, testInfo) => {
+		await storage.seedConfig(CUSTOM_SETTINGS);
+		const file = testInfo.outputPath('settings-v3.json');
+		await writeFile(
+			file,
+			JSON.stringify({
+				app: 'hyperfriend',
+				schemaVersion: 3,
+				exportedAt: '2026-01-02T03:04:05.000Z',
+				templates: { [LinkType.Issue]: '[#{{issue_number}}]' },
+				// Version 3 has no format: a `format` field in such a file is not read
+				format: 'rich',
+			})
+		);
+		const options = await openGeneral(openOptions, false);
+
+		await importFile(options, file);
+
+		await expect(settingsSection(options).getByRole('status')).toHaveText(
+			'Settings imported.'
+		);
+		await expect
+			.poll(() => storage.getConfig())
+			.toEqual(
+				stored({
+					...CUSTOM_SETTINGS,
+					templates: {
+						...CUSTOM_SETTINGS.templates,
+						[LinkType.Issue]: '[#{{issue_number}}]',
+					},
+				})
+			);
 	});
 
 	test('should convert the templates of a version 1 file', async ({
@@ -386,5 +510,6 @@ test.describe('Reset all settings', () => {
 			'aria-pressed',
 			'true'
 		);
+		await expect(formatRadio(options, 'Rich link')).toBeChecked();
 	});
 });

@@ -242,8 +242,8 @@ export function SettingsActions({
 					confirmButtonContent="Reset"
 					confirmButtonType="danger"
 				>
-					Templates, shortcuts and display settings return to their
-					defaults.
+					Templates, copy format, shortcuts and display settings
+					return to their defaults.
 				</ConfirmationDialog>
 			)}
 		</div>

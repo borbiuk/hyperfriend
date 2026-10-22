@@ -1,5 +1,16 @@
 # Release Notes
 
+## 2.3.0
+
+Copy links as Markdown.
+
+- New **Copy format** setting in the **General** tab: **Rich link** (the default, as before) or **Markdown**. It applies at once to the copy buttons and to Shift+C.
+- In Markdown mode the clipboard gets one `text/plain` format with a Markdown link, for example `[PR 12](https://github.com/OWNER/REPO/pull/12): Add copy button to PR list`. Only the part of the template in square brackets is the link text (the whole text when there are none). `[`, `]` and `\` inside the link text get a backslash, so a title such as `[WIP] Fix` stays one link. There is no `text/html` format in this mode, so chats and editors paste the Markdown source and not a link.
+- The live preview in the **Templates** tab shows the text that will be pasted in the chosen format.
+- Settings files are now schema version 4 (a new `format` field, `"rich"` or `"markdown"`). Files of versions 1 to 3 still import and keep the current copy format. Version 4 files can't be imported by 2.2.1 and older ("created by a newer version"). **Reset all settings** also resets the copy format.
+- Older versions of the extension in other browsers on the same sync account don't know the copy format and reset it to **Rich link** the next time they save a setting.
+- The extension still needs only the `storage` permission and has no new network traffic.
+
 ## 2.2.1
 
 Dependency update.

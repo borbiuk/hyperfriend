@@ -11,7 +11,7 @@ import {
 	MAX_TEMPLATE_LENGTH,
 	TEMPLATE_PLACEHOLDERS,
 } from '@shared/constants';
-import { LinkTargetModel, LinkType } from '@shared/models';
+import { LinkFormat, LinkTargetModel, LinkType } from '@shared/models';
 import { buildLinkPayload, configService } from '@shared/services';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -38,6 +38,8 @@ interface TemplateFieldProps {
 	value: string;
 	/** Sample item used for the live preview. */
 	sample: LinkTargetModel;
+	/** Copy format; the preview shows what is pasted in it. */
+	format: LinkFormat;
 	/** Increments every time the settings are replaced from outside (reset, import). */
 	syncEpoch: number;
 	/** Registers this field's save controls with the parent. Returns an unregister function. */
@@ -55,6 +57,7 @@ export function TemplateField({
 	icon: LabelIcon,
 	value,
 	sample,
+	format,
 	syncEpoch,
 	registerField,
 	noteId,
@@ -177,10 +180,12 @@ export function TemplateField({
 	};
 
 	// Same split as the pasted link: only `parts.link` is the hyperlink.
-	const preview = buildLinkPayload(sample, {
+	const payload = buildLinkPayload(sample, {
 		...DEFAULT_CONFIG,
+		format,
 		templates: { ...DEFAULT_CONFIG.templates, [type]: draft },
-	}).parts;
+	});
+	const preview = payload.parts;
 	const inputId = `template-${type}`;
 	const placeholdersId = `${inputId}-placeholders`;
 	const errorId = `${inputId}-error`;
@@ -255,18 +260,27 @@ export function TemplateField({
 					style={{ overflowWrap: 'anywhere', minWidth: 0 }}
 				>
 					<VisuallyHidden>Preview: </VisuallyHidden>
-					{preview.before}
-					<span
-						style={{
-							color: 'var(--fgColor-accent)',
-							textDecoration: 'underline',
-						}}
-					>
-						{preview.link}
-					</span>
-					{/* The styling alone does not tell screen reader users which part is the link. */}
-					{preview.link && <VisuallyHidden> (link)</VisuallyHidden>}
-					{preview.after}
+					{format === LinkFormat.Markdown ? (
+						// Markdown is pasted as source text: no link to underline
+						payload.markdown
+					) : (
+						<>
+							{preview.before}
+							<span
+								style={{
+									color: 'var(--fgColor-accent)',
+									textDecoration: 'underline',
+								}}
+							>
+								{preview.link}
+							</span>
+							{/* The styling alone does not tell screen reader users which part is the link. */}
+							{preview.link && (
+								<VisuallyHidden> (link)</VisuallyHidden>
+							)}
+							{preview.after}
+						</>
+					)}
 				</Text>
 				<Text
 					size="small"
