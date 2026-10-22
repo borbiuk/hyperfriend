@@ -8,8 +8,10 @@ import {
 } from '@shared/models';
 import {
 	buildLinkPayload,
+	buildLinksPayload,
 	cloneDefaultConfig,
 	copyLink,
+	copyLinks,
 } from '@shared/services';
 
 // Byte-exact payload: the e2e tests compare clipboard HTML after Chromium re-serializes it, which
@@ -283,7 +285,43 @@ test('should leave backticks in the Markdown link text unescaped', () => {
 	});
 });
 
-test.describe('copyLink', () => {
+test('should build one list item per link, in the given order, for every format', () => {
+	const issue: LinkTargetModel = {
+		type: LinkType.Issue,
+		owner: 'react',
+		repo: 'react',
+		number: 10,
+		title: 'Crash on <select>',
+		url: 'https://github.com/react/react/issues/10',
+	};
+
+	expect(
+		buildLinksPayload([pullRequest('Fix [input]'), issue], DEFAULT_CONFIG)
+	).toEqual({
+		html: '<ul><li><a href="https://github.com/react/react/pull/9713">PR 9713</a>: Fix [input]</li><li><a href="https://github.com/react/react/issues/10">Issue 10</a>: Crash on &lt;select&gt;</li></ul>',
+		plain: '- PR 9713: Fix [input] — https://github.com/react/react/pull/9713\n- Issue 10: Crash on <select> — https://github.com/react/react/issues/10',
+		markdown:
+			'- [PR 9713](https://github.com/react/react/pull/9713): Fix [input]\n- [Issue 10](https://github.com/react/react/issues/10): Crash on <select>',
+	});
+});
+
+test('should build a list of one link', () => {
+	expect(buildLinksPayload([pullRequest('Fix')], DEFAULT_CONFIG)).toEqual({
+		html: '<ul><li><a href="https://github.com/react/react/pull/9713">PR 9713</a>: Fix</li></ul>',
+		plain: '- PR 9713: Fix — https://github.com/react/react/pull/9713',
+		markdown: '- [PR 9713](https://github.com/react/react/pull/9713): Fix',
+	});
+});
+
+test('should build an empty list for no links', () => {
+	expect(buildLinksPayload([], DEFAULT_CONFIG)).toEqual({
+		html: '<ul></ul>',
+		plain: '',
+		markdown: '',
+	});
+});
+
+test.describe('copyLink and copyLinks', () => {
 	/** Payload of pullRequest('Fix <input>') with the default template */
 	const EXPECTED_DATA = {
 		'text/html':
@@ -548,6 +586,52 @@ test.describe('copyLink', () => {
 			copyEvents: [
 				{
 					data: MARKDOWN_DATA,
+					defaultPrevented: true,
+					propagationStopped: true,
+				},
+			],
+			copyListeners: 0,
+		});
+	});
+
+	test('should write the HTML list and the plain lines of several links with the Clipboard API', async () => {
+		const log = installFakeBrowser({ clipboardApi: true });
+
+		await copyLinks(
+			[pullRequest('Fix <input>'), pullRequest('Add button')],
+			DEFAULT_CONFIG
+		);
+
+		expect(log).toEqual({
+			apiWrites: [
+				{
+					'text/html':
+						'<ul><li><a href="https://github.com/react/react/pull/9713">PR 9713</a>: Fix &lt;input&gt;</li><li><a href="https://github.com/react/react/pull/9713">PR 9713</a>: Add button</li></ul>',
+					'text/plain':
+						'- PR 9713: Fix <input> — https://github.com/react/react/pull/9713\n- PR 9713: Add button — https://github.com/react/react/pull/9713',
+				},
+			],
+			copyEvents: [],
+			copyListeners: 0,
+		});
+	});
+
+	test('should write only the Markdown lines of several links as plain text through execCommand', async () => {
+		const log = installFakeBrowser({ clipboardApi: false });
+
+		await copyLinks(
+			[pullRequest('Fix <input>'), pullRequest('Add button')],
+			MARKDOWN_CONFIG
+		);
+
+		expect(log).toEqual({
+			apiWrites: [],
+			copyEvents: [
+				{
+					data: {
+						'text/plain':
+							'- [PR 9713](https://github.com/react/react/pull/9713): Fix <input>\n- [PR 9713](https://github.com/react/react/pull/9713): Add button',
+					},
 					defaultPrevented: true,
 					propagationStopped: true,
 				},

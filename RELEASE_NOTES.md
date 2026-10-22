@@ -1,5 +1,15 @@
 # Release Notes
 
+## 2.5.0
+
+Copy several items as one list.
+
+- **Shift+click** on the copy buttons of a list (pull requests, issues, discussions, workflow runs, search results) selects items instead of copying them. A selected button is highlighted and a small bar at the bottom of the page shows how many items are selected, with **Copy links** and **Clear**.
+- **Copy links** puts all selected items on the clipboard as one list, in the order they have on the page, in your copy format. With **Rich link**: an HTML bulleted list with one link per item, and plain-text lines `- TEXT — URL`. With **Markdown**: plain text only, one `- [LINK](URL)` line per item. Every item uses the template of its own type.
+- The selection is cleared after a successful copy, with **Clear** or **Esc** (not while you type in a text field or a dialog is open), when you move to another page, and when GitHub replaces the rows. A plain click on a button still copies one item and keeps the selection; **Shift+Enter** on a focused button works like Shift+click. The tooltip of a list button now says "Shift+click to select several".
+- Detail pages are unchanged: Shift+click on a title button copies that item like a click.
+- Settings and settings files are unchanged. The extension still needs only the `storage` permission and has no new network traffic.
+
 ## 2.4.0
 
 Copy links to Discussions and GitHub Actions workflow runs.

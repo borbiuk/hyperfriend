@@ -119,7 +119,9 @@ export class ShortcutService {
  * Returns whether key presses on the target are handled by it: typing into a text field,
  * or navigating a composite widget such as a menu or a listbox.
  */
-function isKeyboardTarget(target: EventTarget | null | undefined): boolean {
+export function isKeyboardTarget(
+	target: EventTarget | null | undefined
+): boolean {
 	if (!(target instanceof Element)) {
 		return false;
 	}
@@ -137,7 +139,7 @@ function isKeyboardTarget(target: EventTarget | null | undefined): boolean {
 /**
  * Returns the focused element, looking into open shadow roots (e.g. web components).
  */
-function getDeepActiveElement(): Element | null {
+export function getDeepActiveElement(): Element | null {
 	let active = document.activeElement;
 	while (active?.shadowRoot?.activeElement) {
 		active = active.shadowRoot.activeElement;
@@ -149,7 +151,7 @@ function getDeepActiveElement(): Element | null {
 /**
  * Returns whether a modal dialog is open (rendered, not just present in the DOM).
  */
-function isModalDialogOpen(): boolean {
+export function isModalDialogOpen(): boolean {
 	for (const dialog of document.querySelectorAll(MODAL_DIALOG_SELECTOR)) {
 		if (dialog.getClientRects().length > 0) {
 			return true;

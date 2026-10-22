@@ -27,6 +27,15 @@ Chrome Web Store and Firefox Add-ons listings are coming soon.
 - **Works with GitHub navigation**: buttons appear on pages that GitHub loads without a full page refresh and are never duplicated.
 - **Light and dark**: the button uses GitHub's own theme colors, so it follows the GitHub theme you use.
 
+### Copy several items as a list
+
+In a list (pull requests, issues, discussions, workflow runs, search results) hold **Shift** and click the copy buttons of the items you want. Shift+click only selects: the button is highlighted and a small bar appears at the bottom of the page ("3 selected", **Copy links**, **Clear**). Click **Copy links** to put all selected items on the clipboard as one list, in the order they have on the page, in the copy format of the **General** tab (a template is applied to every item):
+
+- **Rich link**: `text/html` is a bulleted list with one link per item, and `text/plain` has one line `- TEXT — URL` per item.
+- **Markdown**: `text/plain` only, one `- [LINK](URL)` line per item (with the text around the link from the template).
+
+The selection is cleared after a successful copy, with **Clear**, with **Esc** (not while you type in a text field or a dialog is open), when you move to another page and when GitHub replaces the rows. A plain click on a button still copies that one item and keeps the selection. **Shift+Enter** on a focused button works like Shift+click. The tooltip of a list button says "Shift+click to select several". The title button of a detail page has no selection: Shift+click copies like a click there.
+
 ### Keyboard shortcut
 
 - **Copy the open item**: press **Shift+C** (⇧C on Mac) on an open Pull Request, Issue, Discussion or workflow run to copy its link. It copies exactly what the title copy button copies (same template, same clipboard formats).

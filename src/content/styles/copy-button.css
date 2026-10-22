@@ -94,6 +94,21 @@
 	outline-offset: -2px;
 }
 
+/* A list row's item that is part of the selection to copy as one list */
+.hyperfriend-copy-button[data-selected],
+.hyperfriend-copy-button[data-selected]:hover {
+	background-color: var(--bgColor-accent-muted, rgba(84, 174, 255, 0.4));
+	box-shadow: inset 0 0 0 1px var(--fgColor-accent, #0969da);
+	color: var(--fgColor-accent, #0969da);
+}
+
+@media (forced-colors: active) {
+	.hyperfriend-copy-button[data-selected] {
+		outline: 2px solid Highlight;
+		outline-offset: -2px;
+	}
+}
+
 .hyperfriend-copy-button[data-state='copied'],
 .hyperfriend-copy-button[data-state='copied']:hover {
 	color: var(--fgColor-success, #1a7f37);

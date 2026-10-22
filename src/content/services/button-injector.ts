@@ -21,6 +21,7 @@ import {
 	isDiscussionOrActionsList,
 	PageKind,
 } from './page-detector';
+import { SelectionService } from './selection-service';
 
 /** Keyboard shortcut of the title button for assistive technologies */
 const KEY_SHORTCUTS_ATTRIBUTE = 'aria-keyshortcuts';
@@ -105,11 +106,13 @@ export class ButtonInjector {
 	 * @param hydration - Keeps buttons out of React roots that are not hydrated yet.
 	 * @param getKeyShortcuts - Returns the `aria-keyshortcuts` value of the title button
 	 * (the copy link shortcut on this page), or `null` when no shortcut applies.
+	 * @param selection - Collects the items of list rows that are Shift+clicked.
 	 */
 	constructor(
 		private readonly configStore: ConfigStore,
 		private readonly hydration: HydrationGuard,
-		private readonly getKeyShortcuts: () => string | null = () => null
+		private readonly getKeyShortcuts: () => string | null = () => null,
+		private readonly selection: SelectionService | null = null
 	) {}
 
 	/** Title link each row button belongs to */
@@ -151,13 +154,17 @@ export class ButtonInjector {
 		tooltip.hideIfDetached();
 
 		const kind = detectPageKind();
-		if (kind === PageKind.Unsupported) {
-			return;
+		if (kind !== PageKind.Unsupported) {
+			// Before any button can be clicked, so the first "Copied!" is announced
+			tooltip.attach();
+			this.scanKind(kind);
 		}
 
-		// Before any button can be clicked, so the first "Copied!" is announced
-		tooltip.attach();
+		// After the scan: the selection follows the buttons GitHub (re)created
+		this.selection?.sync(this.getRowButtons());
+	}
 
+	private scanKind(kind: PageKind): void {
 		switch (kind) {
 			case PageKind.List:
 				this.scanList();
@@ -171,6 +178,15 @@ export class ButtonInjector {
 			default:
 				return;
 		}
+	}
+
+	/**
+	 * Returns the row copy buttons of the page, in page order.
+	 */
+	private getRowButtons(): CopyButton[] {
+		return Array.from(document.querySelectorAll(ROW_BUTTON_SELECTOR))
+			.map((element) => CopyButton.from(element))
+			.filter((button): button is CopyButton => button !== null);
 	}
 
 	private scanList(): void {
@@ -423,8 +439,18 @@ export class ButtonInjector {
 		resolver: TargetResolver,
 		placement: CopyButtonPlacement
 	): HTMLButtonElement {
-		return new CopyButton(resolver, () => this.configStore.get(), placement)
-			.element;
+		const selection = this.selection;
+		const onSelect =
+			selection && placement === CopyButtonPlacement.Row
+				? (button: CopyButton): void => selection.toggle(button)
+				: undefined;
+
+		return new CopyButton(
+			resolver,
+			() => this.configStore.get(),
+			placement,
+			onSelect
+		).element;
 	}
 
 	/**

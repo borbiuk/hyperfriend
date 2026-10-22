@@ -86,11 +86,14 @@ export class CopyButton {
 	 * @param resolveTarget - Resolves the item to copy.
 	 * @param getConfig - Returns the current config synchronously.
 	 * @param placement - Where the button is placed.
+	 * @param onSelect - Called instead of copying when the button is Shift+clicked (list rows
+	 * collect items to copy as one list); without it Shift+click copies like a click.
 	 */
 	constructor(
 		private resolveTarget: TargetResolver,
 		private readonly getConfig: () => ConfigModel,
-		placement: CopyButtonPlacement
+		placement: CopyButtonPlacement,
+		private readonly onSelect?: (button: CopyButton) => void
 	) {
 		const button = document.createElement('button');
 		button.type = 'button';
@@ -99,6 +102,7 @@ export class CopyButton {
 
 		button.addEventListener('click', this.handleClick);
 		button.addEventListener('auxclick', this.stopEvent);
+		button.addEventListener('mousedown', this.handleMouseDown);
 		button.addEventListener('keydown', this.handleKey);
 		button.addEventListener('keyup', this.handleKey);
 		button.addEventListener('mouseenter', this.showTooltip);
@@ -123,6 +127,51 @@ export class CopyButton {
 		}
 
 		return CopyButton.instances.get(element) ?? null;
+	}
+
+	/**
+	 * Resolves the item the button links to, with the details the placeholders need.
+	 *
+	 * @returns The item, or `null` if it can not be resolved.
+	 */
+	public getTarget(): LinkTargetModel | null {
+		return this.resolveTarget(true);
+	}
+
+	/**
+	 * Returns the canonical URL of the item the button links to (no details are read).
+	 *
+	 * @returns The URL, or `null` if the item can not be resolved.
+	 */
+	public getUrl(): string | null {
+		return this.resolveTarget()?.url ?? null;
+	}
+
+	/**
+	 * Shows or hides the "selected" look (the item is part of the list to copy) and says so to
+	 * assistive technologies.
+	 *
+	 * @param selected - Whether the item is selected.
+	 */
+	public setSelected(selected: boolean): void {
+		if (this.element.hasAttribute('data-selected') === selected) {
+			return;
+		}
+
+		if (selected) {
+			this.element.dataset.selected = '';
+		} else {
+			delete this.element.dataset.selected;
+		}
+
+		this.renderDescription();
+		// A visible tooltip shows the new hint at once
+		if (
+			tooltip.isShownFor(this.element) &&
+			this.state === CopyButtonState.Idle
+		) {
+			tooltip.show(this.element, this.getHint(this.getLabel()), true);
+		}
 	}
 
 	/**
@@ -169,7 +218,19 @@ export class CopyButton {
 		event.preventDefault();
 		event.stopPropagation();
 
+		if (event.shiftKey && this.onSelect) {
+			this.onSelect(this);
+			return;
+		}
+
 		this.copy();
+	};
+
+	private readonly handleMouseDown = (event: MouseEvent): void => {
+		// Shift+mousedown would extend the page's text selection to the button
+		if (event.shiftKey && this.onSelect) {
+			event.preventDefault();
+		}
 	};
 
 	private readonly handleKey = (event: KeyboardEvent): void => {
@@ -232,7 +293,7 @@ export class CopyButton {
 		}
 
 		if (button.matches(':hover') || button.matches(':focus-visible')) {
-			tooltip.show(button, this.getLabel(), true);
+			tooltip.show(button, this.getHint(this.getLabel()), true);
 			return;
 		}
 
@@ -241,10 +302,25 @@ export class CopyButton {
 
 	private getTooltipText(): string {
 		if (this.state === CopyButtonState.Idle) {
-			return this.getLabel();
+			return this.getHint(this.getLabel());
 		}
 
 		return FEEDBACK_MESSAGES[this.state];
+	}
+
+	/**
+	 * Adds how to select several items to the tooltip of a list row button.
+	 */
+	private getHint(label: string): string {
+		if (!this.onSelect) {
+			return label;
+		}
+
+		if (this.element.hasAttribute('data-selected')) {
+			return `${label} (selected, Shift+click to remove)`;
+		}
+
+		return `${label} (Shift+click to select several)`;
 	}
 
 	private getLabel(): string {
@@ -270,6 +346,22 @@ export class CopyButton {
 		return `${LABELS[target.type]}${workflow} #${target.number}`;
 	}
 
+	/**
+	 * Tells assistive technologies about the selection of list rows (the tooltip is aria-hidden).
+	 */
+	private renderDescription(): void {
+		if (!this.onSelect) {
+			return;
+		}
+
+		const description = this.element.hasAttribute('data-selected')
+			? 'Selected. Shift+click to remove'
+			: 'Shift+click to select several';
+		if (this.element.getAttribute('aria-description') !== description) {
+			this.element.setAttribute('aria-description', description);
+		}
+	}
+
 	private render(): void {
 		const button = this.element;
 		if (button.dataset.state !== this.state) {
@@ -281,5 +373,7 @@ export class CopyButton {
 		if (button.getAttribute('aria-label') !== label) {
 			button.setAttribute('aria-label', label);
 		}
+
+		this.renderDescription();
 	}
 }

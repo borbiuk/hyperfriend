@@ -1,0 +1,129 @@
+/*
+	Hyperfriend selection bar: a compact floating bar (count, Copy, Clear) centered at the bottom
+	of the viewport, in the look of GitHub's overlays. Colors come from GitHub's Primer CSS
+	variables with light-theme fallbacks, so it follows GitHub's light and dark themes.
+*/
+
+.hyperfriend-selection-bar {
+	position: fixed;
+	/* Above sticky headers, below GitHub's dialogs and overlays */
+	z-index: 90;
+	bottom: var(--base-size-24, 24px);
+	left: 50%;
+	display: none;
+	box-sizing: border-box;
+	align-items: center;
+	gap: var(--base-size-8, 8px);
+	max-width: calc(100vw - 2 * var(--base-size-16, 16px));
+	margin: 0;
+	padding: var(--base-size-8, 8px) var(--base-size-8, 8px)
+		var(--base-size-8, 8px) var(--base-size-16, 16px);
+	border-radius: var(--borderRadius-medium, 6px);
+	background-color: var(--overlay-bgColor, var(--bgColor-default, #ffffff));
+	box-shadow:
+		inset 0 0 0 1px var(--borderColor-default, #d1d9e0),
+		var(
+			--shadow-floating-large,
+			0 0 0 1px #d1d9e0,
+			0 40px 80px 0 rgba(37, 41, 46, 0.24)
+		);
+	color: var(--fgColor-default, #1f2328);
+	font: var(
+		--text-body-shorthand-medium,
+		400 14px / 1.4285 -apple-system,
+		BlinkMacSystemFont,
+		'Segoe UI',
+		'Noto Sans',
+		Helvetica,
+		Arial,
+		sans-serif
+	);
+	transform: translateX(-50%);
+}
+
+.hyperfriend-selection-bar[data-visible] {
+	display: flex;
+}
+
+.hyperfriend-selection-bar__text {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.hyperfriend-selection-bar[data-state='done'] .hyperfriend-selection-bar__text {
+	color: var(--fgColor-success, #1a7f37);
+}
+
+.hyperfriend-selection-bar[data-state='failed']
+	.hyperfriend-selection-bar__text {
+	color: var(--fgColor-danger, #d1242f);
+}
+
+/* Primer medium button (default and primary) */
+.hyperfriend-selection-bar__button {
+	box-sizing: border-box;
+	height: var(--control-medium-size, 32px);
+	padding: 0 var(--base-size-12, 12px);
+	border: 1px solid var(--button-default-borderColor-rest, #d1d9e0);
+	border-radius: var(--borderRadius-medium, 6px);
+	background-color: var(--button-default-bgColor-rest, #f6f8fa);
+	color: var(--button-default-fgColor-rest, var(--fgColor-default, #1f2328));
+	font: inherit;
+	font-weight: 500;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.hyperfriend-selection-bar__button:hover:not([aria-disabled='true']) {
+	background-color: var(--button-default-bgColor-hover, #eff2f5);
+}
+
+.hyperfriend-selection-bar__button--primary {
+	border-color: var(
+		--button-primary-borderColor-rest,
+		rgba(31, 35, 40, 0.15)
+	);
+	background-color: var(--button-primary-bgColor-rest, #1f883d);
+	color: var(--button-primary-fgColor-rest, #ffffff);
+}
+
+.hyperfriend-selection-bar__button--primary:hover:not([aria-disabled='true']) {
+	background-color: var(--button-primary-bgColor-hover, #1c8139);
+}
+
+.hyperfriend-selection-bar__button[aria-disabled='true'] {
+	opacity: 0.6;
+	cursor: default;
+}
+
+.hyperfriend-selection-bar__button:focus-visible {
+	outline: 2px solid
+		var(--focus-outline-color, var(--focus-outlineColor, #0969da));
+	outline-offset: 2px;
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+	.hyperfriend-selection-bar[data-visible] {
+		animation: hyperfriend-selection-bar-appear 0.2s
+			cubic-bezier(0.33, 1, 0.68, 1) forwards;
+	}
+}
+
+@keyframes hyperfriend-selection-bar-appear {
+	from {
+		opacity: 0;
+		transform: translate(-50%, 8px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translate(-50%, 0);
+	}
+}
+
+@media (forced-colors: active) {
+	.hyperfriend-selection-bar {
+		outline: 1px solid transparent;
+	}
+}

@@ -1,7 +1,12 @@
 // @shared/services/index.ts
 
-export { buildLinkPayload, copyLink } from './clipboard-service';
-export type { LinkPayload } from './clipboard-service';
+export {
+	buildLinkPayload,
+	buildLinksPayload,
+	copyLink,
+	copyLinks,
+} from './clipboard-service';
+export type { LinkPayload, LinksPayload } from './clipboard-service';
 export {
 	cloneConfig,
 	cloneDefaultConfig,

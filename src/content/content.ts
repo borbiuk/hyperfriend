@@ -11,10 +11,12 @@ import { ConfigStore } from './services/config-store';
 import { HydrationGuard } from './services/hydration-guard';
 import { detectPageKind, PageKind } from './services/page-detector';
 import { PageObserver } from './services/page-observer';
+import { SelectionService } from './services/selection-service';
 import { ShortcutService } from './services/shortcut-service';
 import { CopyLinkShortcutHandler } from './shortcut/copy-link-shortcut-handler';
 import './styles/avatar.css';
 import './styles/copy-button.css';
+import './styles/selection-bar.css';
 import './styles/toast.css';
 import './styles/tooltip.css';
 
@@ -37,9 +39,15 @@ const pageObserver = new PageObserver();
 /** Defers the injectors until GitHub's server-rendered React roots are hydrated, then rescans */
 const hydrationGuard = new HydrationGuard(() => pageObserver.requestScan());
 
+/** Collects the list rows that are Shift+clicked and copies them as one list */
+const selectionService = new SelectionService(configStore);
+
 /** Finds titles and injects the copy buttons (the title button announces the copy link shortcut) */
-const buttonInjector = new ButtonInjector(configStore, hydrationGuard, () =>
-	shortcutService.getAriaKeyShortcuts(ShortcutType.CopyLink)
+const buttonInjector = new ButtonInjector(
+	configStore,
+	hydrationGuard,
+	() => shortcutService.getAriaKeyShortcuts(ShortcutType.CopyLink),
+	selectionService
 );
 
 shortcutService.register(
@@ -65,5 +73,6 @@ const scan = (): void => {
 // and a disabled or changed shortcut never runs with the default keys):
 configStore.start(scan).finally(() => {
 	shortcutService.start();
+	selectionService.start();
 	pageObserver.start(scan);
 });

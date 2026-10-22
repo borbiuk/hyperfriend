@@ -39,6 +39,40 @@ function escapeBeforeLink(before: string): string {
 }
 
 /**
+ * Clipboard contents for several links in every supported format.
+ */
+export interface LinksPayload {
+	/** `<ul><li>LINK_HTML</li>...</ul>` */
+	html: string;
+
+	/** One `- TEXT — URL` line per link */
+	plain: string;
+
+	/** One `- [LINK](URL)` line per link (with the text around it) */
+	markdown: string;
+}
+
+/**
+ * Builds the clipboard payload for a list of links, one list item per link, in the given order.
+ *
+ * @param targets - The items to link.
+ * @param config - Config holding the templates.
+ * @returns HTML list, plain-text lines and Markdown lines.
+ */
+export function buildLinksPayload(
+	targets: LinkTargetModel[],
+	config: ConfigModel
+): LinksPayload {
+	const payloads = targets.map((target) => buildLinkPayload(target, config));
+
+	return {
+		html: `<ul>${payloads.map((payload) => `<li>${payload.html}</li>`).join('')}</ul>`,
+		plain: payloads.map((payload) => `- ${payload.plain}`).join('\n'),
+		markdown: payloads.map((payload) => `- ${payload.markdown}`).join('\n'),
+	};
+}
+
+/**
  * Builds the clipboard payload for a link. Pure; used by copyLink, the popup preview and tests.
  *
  * @param target - The item (Pull Request, Issue, Discussion or workflow run) to link.
@@ -79,7 +113,7 @@ function isClipboardApiAvailable(): boolean {
  * chats and editors would paste the link instead of the Markdown).
  */
 function getFlavors(
-	payload: LinkPayload,
+	payload: Pick<LinkPayload, 'html' | 'plain' | 'markdown'>,
 	format: LinkFormat
 ): Record<string, string> {
 	if (format === LinkFormat.Markdown) {
@@ -150,8 +184,33 @@ export async function copyLink(
 	target: LinkTargetModel,
 	config: ConfigModel
 ): Promise<void> {
-	const flavors = getFlavors(buildLinkPayload(target, config), config.format);
+	await writeFlavors(
+		getFlavors(buildLinkPayload(target, config), config.format)
+	);
+}
 
+/**
+ * Copies several links to the clipboard as a list in the configured format: an HTML list plus
+ * plain-text lines, or Markdown lines as plain text. Same gesture rules as copyLink.
+ *
+ * @param targets - The items to link, in the order of the list.
+ * @param config - Config holding the templates and the format.
+ * @returns Resolves when copied; rejects if both methods fail.
+ */
+export async function copyLinks(
+	targets: LinkTargetModel[],
+	config: ConfigModel
+): Promise<void> {
+	await writeFlavors(
+		getFlavors(buildLinksPayload(targets, config), config.format)
+	);
+}
+
+/**
+ * Writes the flavors: the async Clipboard API, falling back to `execCommand('copy')`.
+ * The write starts before the first `await`, so it keeps the user activation.
+ */
+async function writeFlavors(flavors: Record<string, string>): Promise<void> {
 	if (!isClipboardApiAvailable()) {
 		writeWithExecCommand(flavors);
 		return;
