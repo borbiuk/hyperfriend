@@ -9,7 +9,8 @@
 	when every page succeeded.
 
 	pages/index.json maps each GitHub path to its file and lists the items (number and title) the page
-	shows, so tests take expected values from the fixture data instead of the page under test.
+	shows, so tests take expected values from the fixture data instead of the page under test. An older
+	run list page that holds the captured run (see the `run` page) has its items but no file.
 
 	Usage: npm run test:snapshots   (needs network access; review the diff before committing)
 	       node tests/e2e/fixtures/capture-pages.mjs discussion-list discussion   (only these pages, the others stay as they are)
@@ -92,6 +93,7 @@ const PAGES = [
 	},
 	{
 		// Runs are deleted after a while, so the page is that of the first finished, named run of the list above
+		// (or of its next pages)
 		file: 'run',
 		kind: 'run',
 	},
@@ -470,17 +472,45 @@ try {
 			// The first finished run of the run list (captured before this page) whose name differs from
 			// its workflow (a scheduled run is named after its workflow, which would hide a mix-up
 			// of the two) and that ran on a branch
-			const finished = index.items['/react/react/actions']?.find(
-				(item) =>
-					/^(completed|failed|cancel)/i.test(item.status ?? '') &&
-					item.title !== item.workflow &&
-					item.branch
-			);
+			const isCandidate = (item) =>
+				/^(completed|failed|cancel)/i.test(item.status ?? '') &&
+				item.title !== item.workflow &&
+				item.branch;
+			// Rows of older list pages from an earlier capture are not kept
+			for (const key of Object.keys(index.items)) {
+				if (key.startsWith('/react/react/actions?page=')) {
+					delete index.items[key];
+				}
+			}
+			let listKey = '/react/react/actions';
+			let finished = index.items[listKey]?.find(isCandidate);
+			// The first page can hold no such run (for example, only fork pull request runs that wait
+			// for approval), so older pages of the list are read too. Their HTML is not saved, but the
+			// rows of the page with the run are, so tests can check the run against its list row
+			for (let listPage = 2; !finished && listPage <= 5; listPage++) {
+				listKey = `/react/react/actions?page=${listPage}`;
+				await page.goto(`https://github.com${listKey}`, {
+					waitUntil: 'domcontentloaded',
+				});
+				await page
+					.locator(
+						'[data-listview-item-title-container] a[href*="/actions/runs/"]'
+					)
+					.first()
+					.waitFor({ state: 'attached' });
+				await waitForStableDom(page);
+				const items = await page.evaluate(readRunItems);
+				finished = items.find(isCandidate);
+				if (finished) {
+					index.items[listKey] = items;
+				}
+			}
 			if (!finished) {
 				throw new Error(
 					'run: no finished run with its own name in the run list'
 				);
 			}
+			index.runListPage = listKey;
 			url = `https://github.com/react/react/actions/runs/${finished.runId}`;
 			index.runPage = new URL(url).pathname;
 		}

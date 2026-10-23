@@ -505,10 +505,13 @@ test('should select discussions and copy them as a list', async ({
 	writeClipboardSentinel,
 	normalizeHtml,
 }) => {
-	// The first item is the pinned card, whose discussion is also a row of the list
-	const rows = snapshotItems(PAGES.discussionList)
-		.slice(1)
-		.filter(({ title }) => !/[&<>"']/.test(title));
+	// The first item is the pinned card, whose discussion can also be a row of the list: its title
+	// would match two rows, so the pinned discussion is left out
+	const [pinned, ...items] = snapshotItems(PAGES.discussionList);
+	const rows = items.filter(
+		({ number, title }) =>
+			number !== pinned.number && !/[&<>"']/.test(title)
+	);
 	test.skip(rows.length < 2, 'fewer than two discussions with plain titles');
 	const [one, two] = rows;
 	const url = (number: number): string =>

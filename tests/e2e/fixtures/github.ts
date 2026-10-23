@@ -43,6 +43,11 @@ interface SnapshotIndex {
 	items: Record<string, SnapshotItem[]>;
 	/** Path of the workflow run page snapshot: the first finished run of the run list at capture time */
 	runPage: string;
+	/**
+	 * Path + query of the run list page whose rows hold that run: the run list, or an older page of it
+	 * (rows recorded, no snapshot) when the first page had no fitting run
+	 */
+	runListPage: string;
 }
 
 const INDEX: SnapshotIndex = JSON.parse(
@@ -55,13 +60,15 @@ export const REPOSITORY = '/react/react';
 /** Repository of the Discussion snapshots */
 export const DISCUSSIONS_REPOSITORY = '/vercel/next.js';
 
-/** GitHub paths (with the query for search pages) that have a snapshot */
+/** GitHub paths (with the query for search pages) that have a snapshot, except `runListPage` (it can have rows only) */
 export const PAGES = {
 	discussionList: `${DISCUSSIONS_REPOSITORY}/discussions`,
 	discussion: `${DISCUSSIONS_REPOSITORY}/discussions/10640`,
 	runList: `${REPOSITORY}/actions`,
 	/** Changes with every snapshot refresh (see `INDEX.runPage`) */
 	runPage: INDEX.runPage,
+	/** Rows (no snapshot when it is an older page) that hold the run of `runPage` */
+	runListPage: INDEX.runListPage,
 	pullList: `${REPOSITORY}/pulls`,
 	pull: `${REPOSITORY}/pull/9713`,
 	pullFiles: `${REPOSITORY}/pull/9713/files`,

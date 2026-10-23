@@ -10,7 +10,8 @@ import {
 	titleButton,
 } from './fixtures/github';
 
-// Workflow run page (the first finished, named run of the react/react run list at capture time):
+// Workflow run page (the first finished, named run of the react/react run list at capture time,
+// from an older list page when the first has none):
 // the title button, Shift+C and the details of the header.
 
 const [RUN] = snapshotItems(PAGES.runPage);
@@ -24,7 +25,7 @@ const escapeText = (text: string): string =>
 test.beforeAll(() => {
 	// The page and the list are captured apart and read with different cues (the header, the row's
 	// visible texts): they must agree on the run, and the run must have a name of its own
-	const [listed] = snapshotItems(PAGES.runList).filter(
+	const [listed] = snapshotItems(PAGES.runListPage).filter(
 		(item) => item.runId === RUN.runId
 	);
 	expect(RUN).toEqual(listed);
