@@ -439,6 +439,7 @@ There is no backend. "Data" is the extension's settings in `chrome.storage.sync`
 **UNIT-4 — Unit tests import from `@shared/*` and stay DOM-free unless the unit needs it.** · Minor
 
 - `src/content` and `src/options` are covered through the build in e2e. Globals a unit needs (`navigator.clipboard`, `ClipboardItem`, `document.execCommand` for `copyLink`) are minimal per-test stubs, removed afterwards; no full DOM emulation for pure functions.
+- Exception: `tests/unit/manifest.spec.ts` reads the source manifests and `package.json` from disk and imports no source code; it is a repository guard, not a unit test of `src/`.
 
 **UNIT-5 — The fake behaves like `chrome.storage.sync` where the code depends on it.** · Major
 

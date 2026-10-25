@@ -352,7 +352,7 @@ How to write tests and the review standard: [.claude/skills/playwright/SKILL.md]
     - `types/`: Ambient type declarations (`global.d.ts` allows `*.css` imports).
 - `webpack/`: Configuration of webpack for the Chrome (`dist/`) and Firefox (`dist-firefox/`) builds.
 - `tests/`: Playwright tests, see [Testing](#testing).
-    - `unit/`: Unit tests of `src/shared` (templates, clipboard payload, shortcuts, settings file, config).
+    - `unit/`: Unit tests of `src/shared` (templates, clipboard payload, shortcuts, settings file, config) and a guard for the manifests and versions.
     - `setup/`: The `dist` setup project that builds `dist/` before `e2e` and `live`.
     - `e2e/`: End-to-end specs (copy button, keyboard shortcut, avatars, navigation, search, settings upgrade and the popup tabs); `seed.spec.ts` is the seed for the Playwright test agents.
         - `fixtures/`: The `test` / `expect` fixtures that load the extension (`extension.ts`), the GitHub routing and snapshot lookups (`github.ts`), the literal default settings (`defaults.ts`), the snapshot capture script (`capture-pages.mjs`) and the snapshots with their index (`pages/`, also the item numbers and titles the tests expect).

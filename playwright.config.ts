@@ -4,7 +4,7 @@ import { ExtensionOptions } from './tests/e2e/fixtures/extension';
 
 /**
  * Playwright projects:
- * - unit: pure logic from src/shared, no browser.
+ * - unit: pure logic from src/shared and a guard for the manifests, no browser.
  * - e2e: the built extension (dist/) in Playwright's bundled Chromium, GitHub pages served from snapshots, no network.
  * - live: smoke checks against real github.com. Defined only when HYPERFRIEND_LIVE is set (npm run test:live),
  *   so a plain `playwright test` never reaches the network.

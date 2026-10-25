@@ -85,7 +85,7 @@ The context fixture fails the test **after it ends** when the extension logged a
 
 ## Spec layout
 
-`tests/unit` (`template-service`, `clipboard-service`, `shortcut-utils`, `settings-transfer-service`, `config-service`), `tests/e2e` (`harness` for the fixtures themselves, `seed`, then per feature: `pull-request-list`, `pull-request-page`, `issue-list`, `issue-page`, `search`, `navigation`, `avatars`, `shortcut-settings`, `upgrade`, `popup-tabs`, `popup-templates`, `popup-shortcuts`, `popup-general`) and `tests/live/smoke.spec.ts`. The Pull Request specs are the reference for new specs.
+`tests/unit` (`template-service`, `clipboard-service`, `shortcut-utils`, `settings-transfer-service`, `config-service`, `page-detector`, `manifest` (reads the source manifests, not `src/`)), `tests/e2e` (`harness` for the fixtures themselves, `seed`, then per feature: `pull-request-list`, `pull-request-page`, `issue-list`, `issue-page`, `search`, `navigation`, `avatars`, `shortcut-settings`, `upgrade`, `popup-tabs`, `popup-templates`, `popup-shortcuts`, `popup-general`) and `tests/live/smoke.spec.ts`. The Pull Request specs are the reference for new specs.
 
 ## Clipboard and keyboard
 
