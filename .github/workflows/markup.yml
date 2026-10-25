@@ -5,7 +5,7 @@ name: github-markup
 # 2. commit them to master when they changed,
 # 3. run the e2e tests on them and the live smoke tests on github.com.
 # When any step fails, one open issue labelled `markup-drift` tracks it: it is created once and
-# later failures add a comment to it. Close the issue after fixing the selectors.
+# later failures add a comment to it. The first run where every step passes closes it again.
 on:
     schedule:
         # Not at minute 0, the busiest time of the GitHub scheduler (runs there are delayed or dropped more often)
@@ -102,4 +102,16 @@ jobs:
                       --title "Tests fail on the current GitHub markup" \
                       --body "The daily markup check failed: $RUN_URL
 
-                  GitHub probably changed the markup of a page the extension or its tests depend on. Open the run, download the \`playwright-report-markup\` artifact (\`npx playwright show-report\`), update the selectors in \`src/content\` (see \`.claude/rules/github-dom-selectors.md\`) and the tests, then close this issue. Later failures are added here as comments until it is closed."
+                  GitHub probably changed the markup of a page the extension or its tests depend on. Open the run, download the \`playwright-report-markup\` artifact (\`npx playwright show-report\`), update the selectors in \`src/content\` (see \`.claude/rules/github-dom-selectors.md\`) and the tests, then wait for the next daily run: this issue is closed automatically by the first run where everything passes. Later failures are added here as comments until then."
+
+            # Every step passed, so the drift is gone: close the open issue (a failed run keeps it open)
+            - name: Close the markup-drift issue
+              if: success()
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+              run: |
+                  for number in $(gh issue list --label markup-drift --state open --json number --jq '.[].number'); do
+                      gh issue close "$number" --reason completed \
+                          --comment "The daily markup check passed again, so the markup problem is gone: $RUN_URL"
+                  done
