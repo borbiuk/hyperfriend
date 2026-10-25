@@ -1,5 +1,14 @@
 # Release Notes
 
+<!--
+Format of a release (checked by `npm run lint:docs`, read by scripts/tag-releases.sh):
+- One `## x.y.z` heading per release, newest first. Nothing else uses that heading pattern.
+- One summary sentence, then bullets that start with a bold lead and are written for users.
+- A bullet starting with **Permissions** whenever the manifest permissions or content script matches change
+  (for example Chrome disables the extension on update until the user accepts the new access).
+- End with a line about the settings and the settings file when they are unchanged.
+-->
+
 ## 2.9.0
 
 A redesigned settings popup.
