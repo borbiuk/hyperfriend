@@ -13,22 +13,19 @@ Users are strongly encouraged to always run the most recent version available in
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in this project, please report it using **GitHub Issues**.
+Please report a vulnerability **privately**, not in a public issue:
 
-When reporting a vulnerability, please include as much information as possible:
+1. Open <https://github.com/borbiuk/hyperfriend/security/advisories/new> (GitHub private vulnerability reporting).
+2. Include as much information as possible:
+    - Description of the issue
+    - Steps to reproduce
+    - Potential impact
+    - Suggested fix (if available)
 
-- Description of the issue
-- Steps to reproduce
-- Potential impact
-- Suggested fix (if available)
-
-You can open a report here:
-<https://github.com/borbiuk/hyperfriend/issues>
+Do not publish the details before the issue has been reviewed and fixed. A problem that is not a vulnerability (a bug, a missing button) belongs in a normal [issue](https://github.com/borbiuk/hyperfriend/issues).
 
 ### Response Process
 
-1. The issue will be reviewed as soon as possible.
-2. If the vulnerability is confirmed, a fix will be prepared and released in the next update.
-3. Once the fix is available, the issue may be closed and referenced in the release notes.
-
-Please avoid publicly disclosing security vulnerabilities before they are reviewed and addressed.
+1. The report is reviewed as soon as possible and the reporter gets an answer in the advisory.
+2. If the vulnerability is confirmed, a fix is prepared and released in the next update.
+3. After the fix is available, the advisory is published and the fix is named in the [release notes](RELEASE_NOTES.md).

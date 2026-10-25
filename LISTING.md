@@ -22,6 +22,7 @@ One click on GitHub copies a clean, readable link, ready to paste into Microsoft
 - No data collection. No analytics. The extension sends nothing anywhere and has no servers of its own.
 - The only network traffic it causes: author avatar images in Pull Request lists, loaded from GitHub's own avatar server (avatars.githubusercontent.com), the same images GitHub itself shows.
 - Your settings (templates, shortcuts and display options) are stored in the browser sync storage, so they follow your browser account. Export and import use local files only.
+- Privacy policy: https://github.com/borbiuk/hyperfriend/blob/master/PRIVACY.md
 - Open source: https://github.com/borbiuk/hyperfriend
 
 🧾 Permissions (what and why)
