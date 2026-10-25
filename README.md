@@ -367,7 +367,7 @@ How to write tests and the review standard: [.claude/skills/playwright/SKILL.md]
 - `.husky/`: Git pre-commit hook: syncs the version, formats files, stages changes of tracked files and builds both browsers into `.zip` packages (see [AGENTS.md](AGENTS.md)).
 - `.claude/`: Agent context for AI-assisted development (rules, skills, subagents, shared settings; the Playwright planner, generator and healer agents are generated), see [AGENTS.md](AGENTS.md).
 - `.mcp.json`: Project MCP servers for AI-assisted development (Chrome DevTools MCP and the Playwright test MCP server).
-- `zip.sh`: A script for creating `.zip` files with builds for publishing.
+- `zip.sh`: A script for creating `.zip` files with builds for publishing; it writes them to `artifacts/` (gitignored).
 
 The only background code is `src/background/background.ts` (a service worker in Chrome, an event page in Firefox): it keeps the content script registered for the GitHub Enterprise Server domains the user added (`*.ghe.com` sites are covered by the manifest). The content script talks to `chrome.storage` directly.
 
@@ -398,8 +398,8 @@ The version lives in `public/manifest.json`. The pre-commit hook copies it to `p
 ### Store submission notes
 
 - **Store assets** (promo tiles, screenshots and their sources) live in `design/store/`; see [design/store/README.md](design/store/README.md) for which file goes where in the Chrome Web Store dashboard and how to regenerate them.
-- **Chrome Web Store**: upload the `hyperfriend-build-chrome_*.zip` created by `npm run zip`. The 128×128 icon the store requires is part of the package (`assets/logo-128.png`; see [design/icon](design/icon/README.md)).
-- **Firefox Add-ons (AMO)**: upload `hyperfriend-build-firefox_*.zip`. Because the code is bundled and minified, AMO also needs a **source archive**: the repository without `node_modules/`, `dist/` and `dist-firefox/`. Build steps for the reviewer:
+- **Chrome Web Store**: upload the `artifacts/hyperfriend-build-chrome_*.zip` created by `npm run zip`. The 128×128 icon the store requires is part of the package (`assets/logo-128.png`; see [design/icon](design/icon/README.md)).
+- **Firefox Add-ons (AMO)**: upload `artifacts/hyperfriend-build-firefox_*.zip`. Because the code is bundled and minified, AMO also needs a **source archive**: the repository without `node_modules/`, `dist/`, `dist-firefox/` and `artifacts/`. Build steps for the reviewer:
     1. Use Node.js 22 or newer.
     2. Run `npm ci`.
     3. Run `npm run build:firefox`.

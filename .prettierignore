@@ -3,6 +3,7 @@ dist
 dist-firefox
 package-lock.json
 *.zip
+artifacts
 
 # Page snapshots are saved as captured
 tests/e2e/fixtures/pages

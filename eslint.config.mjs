@@ -25,8 +25,7 @@ export default [
 			'**/playwright-report/**',
 			'**/test-results-live/**',
 			'**/playwright-report-live/**',
-			// Temporary folders zip.sh leaves behind when it stops on an error
-			'**/hyperfriend-build*/**',
+			'**/artifacts/**',
 		],
 	},
 	// A stale `eslint-disable` comment fails the run

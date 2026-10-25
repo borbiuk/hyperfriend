@@ -46,7 +46,7 @@ See also [extension-architecture.md](.claude/rules/extension-architecture.md), [
 
 - `npm run build` / `npm run build:firefox` — production bundles for Chrome / Firefox.
 - `npm run watch` — dev watch mode (Chrome, `dist/`).
-- `npm run zip` — build both browsers and create `.zip` packages (see `zip.sh`; needs `jq` and `zip`).
+- `npm run zip` — build both browsers and create `.zip` packages in `artifacts/` (see `zip.sh`; needs `jq` and `zip`).
 - `npm run lint` — ESLint on the whole repository (`eslint .`; type-aware promise rules on `src/` and `tests/`) + TypeScript 7 type check (`src/` and `tests/`); `npm run lint:firefox` — `web-ext lint` on `dist-firefox/`; `npm run lint:docs` — markdownlint (`.markdownlint-cli2.jsonc`) plus `scripts/check-docs.mjs` (relative links, `RELEASE_NOTES.md` headings); `npm run lint:unused` — knip (`knip.jsonc`); both run in CI job `checks`.
 - `npm run format` — Prettier. `npm run check:versions`, `npm run check:outdated` — dependency checks.
 - `npm test` — Playwright `unit` + `e2e`; `npm run test:unit` (no browser), `npm run test:e2e` (Playwright's bundled Chromium, GitHub snapshots, no network), `npm run test:live` (real github.com `react/react`, on demand only; sets `HYPERFRIEND_LIVE`), `npm run test:snapshots` (refresh the page snapshots, needs network). A `dist` setup project builds `dist/` before `e2e` and `live`, so the scripts do not build themselves. First time: `npx playwright install chromium`. Chromium only. CI runs `test:unit` (job `build`) and `test:e2e` (job `e2e`) on pushes and pull requests, and `.github/workflows/markup.yml` refreshes the snapshots, runs `test:e2e` and `test:live` daily and opens a `markup-drift` issue on failure (snapshots that break the tests land on `master`, so push CI stays red until the selectors are fixed, by design). See [testing.md](.claude/rules/testing.md).
@@ -58,7 +58,7 @@ The Husky pre-commit hook (`.husky/pre-commit`) runs on **every commit**:
 1. Copies the version from `public/manifest.json` to `package.json` and `public/manifest.firefox.json` (`.husky/set-version.sh`).
 2. Runs `npm run format`.
 3. Runs `git add -u`, which **stages all modified tracked files** (formatting and version changes). **Partial commits (staging only some files or hunks) are therefore not supported**: everything modified is committed.
-4. Runs `./zip.sh`, which rebuilds **both browsers** (`dist/`, `dist-firefox/`) and creates the `.zip` packages. A commit needs `jq`, `zip` and a working build, and takes as long as two production builds.
+4. Runs `./zip.sh`, which rebuilds **both browsers** (`dist/`, `dist-firefox/`) and creates the `.zip` packages in `artifacts/` (gitignored). A commit needs `jq`, `zip` and a working build, and takes as long as two production builds.
 
 ## Documentation
 

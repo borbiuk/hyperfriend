@@ -6,6 +6,7 @@ dist/
 dist-firefox/
 *.zip
 hyperfriend-build*
+artifacts/
 
 # JetBrains IDE
 .idea
