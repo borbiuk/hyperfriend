@@ -4,7 +4,7 @@ Thanks for helping. Hyperfriend is a small browser extension for Chrome and Fire
 
 ## Set up
 
-Requirements: Node.js 22 or newer, plus `jq` and `zip` (the pre-commit hook builds and zips both browsers).
+Requirements: Node.js 24.22.1 or newer, plus `jq` and `zip` (the pre-commit hook builds and zips both browsers).
 
 ```bash
 npm install
