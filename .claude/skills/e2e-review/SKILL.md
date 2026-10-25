@@ -29,7 +29,7 @@ Reviews one change to the Playwright test suite against the standard in [referen
 
 Copy this checklist into the response and check it off:
 
-```
+```text
 Review progress:
 - [ ] 1. Resolve the change
 - [ ] 2. Scope gate

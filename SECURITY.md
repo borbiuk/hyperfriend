@@ -23,7 +23,7 @@ When reporting a vulnerability, please include as much information as possible:
 - Suggested fix (if available)
 
 You can open a report here:
-https://github.com/borbiuk/hyperfriend/issues
+<https://github.com/borbiuk/hyperfriend/issues>
 
 ### Response Process
 

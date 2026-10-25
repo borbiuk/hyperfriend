@@ -1,0 +1,34 @@
+// Markdown lint for the repository docs. Prettier formats the files, so the Prettier preset turns off
+// the style rules it owns. Anchors inside a file are checked by MD051.
+{
+	"config": {
+		"extends": "markdownlint/style/prettier",
+		// Long lines are fine (README and rules are written one paragraph per line)
+		"MD013": false,
+		// The README starts with centered HTML (banner, screenshot)
+		"MD033": false,
+		"MD041": false,
+		// Some code spans keep a trailing space on purpose (text that is matched on a page)
+		"MD038": false,
+		// Release notes repeat sub-headings in every release
+		"MD024": { "siblings_only": true },
+	},
+	"globs": [
+		"*.md",
+		"docs/**/*.md",
+		".github/**/*.md",
+		"design/**/*.md",
+		".claude/rules/*.md",
+		".claude/skills/**/*.md",
+		".claude/agents/code-reviewer.md",
+		".claude/agents/e2e-reviewer.md",
+		".claude/agents/qa-engineer.md",
+	],
+	"ignores": [
+		"node_modules/**",
+		// Boilerplate text
+		"CODE_OF_CONDUCT.md",
+		// Store plain text with emoji bullets on purpose, not Markdown
+		"LISTING.md",
+	],
+}

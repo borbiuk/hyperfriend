@@ -294,6 +294,7 @@ Firefox 140 or newer is required (Firefox for Android: 142 or newer).
 | `npm run lint`           | ESLint for the whole repository (code, tests, scripts, webpack config), followed by the type check.  |
 | `npm run lint:fix`       | ESLint with automatic fixes.                                                                         |
 | `npm run lint:firefox`   | `web-ext lint` for the Firefox build (run `npm run build:firefox` first).                            |
+| `npm run lint:docs`      | Markdown lint, relative links and the `RELEASE_NOTES.md` headings.                                   |
 | `npm test`               | The `unit` and `e2e` tests; `dist/` is built first when `e2e` runs (see [Testing](#testing)).        |
 | `npm run test:unit`      | Unit tests of `src/shared` (no browser, no build needed).                                            |
 | `npm run test:e2e`       | End-to-end tests of the extension in Chromium (builds `dist/` first).                                |
