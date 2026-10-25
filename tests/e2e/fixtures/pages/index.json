@@ -9,12 +9,90 @@
 		"/vercel/next.js/discussions": "discussion-list.html",
 		"/vercel/next.js/discussions/10640": "discussion.html",
 		"/react/react/actions": "run-list.html",
-		"/react/react/actions/runs/40061341627": "run.html",
+		"/react/react/actions/runs/40182062971": "run.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": "search-pulls.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=issues": "search-issues.html"
 	},
 	"items": {
 		"/react/react/pulls": [
+			{
+				"number": 37992,
+				"title": "Fix render-phase state update lost after same-value eager bailout",
+				"author": "AdamMagued",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 37991,
+				"title": "[DOM] Reset forms whose reset method is shadowed by a named control",
+				"author": "zhoubiao188",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 37990,
+				"title": "[Fizz] Preserve postponed state when aborting a stalled replay walk",
+				"author": "AdamMagued",
+				"state": "open"
+			},
+			{
+				"number": 37989,
+				"title": "[Fiber] Preserve forwardRef props identity during state updates",
+				"author": "kinqsradio",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 37988,
+				"title": "[DevTools] Avoid retaining tree operations before frontend connection",
+				"author": "kinqsradio",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 37987,
+				"title": "Fix DevTools Store crash on stale node removals",
+				"author": "mrinank1301",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 37985,
+				"title": "[DOM] Use SyntheticTransitionEvent for onTransitionRun, onTransitionStart, and onTransitionCancel",
+				"author": "ShakilUrRehman21",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 37983,
+				"title": "[Hooks] Preserve render-phase state after eager bailouts",
+				"author": "kinqsradio",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 37982,
+				"title": "[compiler] Recognize oxlint-disable suppressions",
+				"author": "christianvuerings",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
 			{
 				"number": 37981,
 				"title": "fix(react-dom): guard null and prototype-less options in prefetchDNS DEV check",
@@ -151,95 +229,6 @@
 					"CLA Signed",
 					"React Core Team"
 				]
-			},
-			{
-				"number": 37962,
-				"title": "[DevTools] Symbolicate all frames of a stack at the same time",
-				"author": "hoxyq",
-				"state": "draft",
-				"labels": [
-					"CLA Signed",
-					"React Core Team"
-				]
-			},
-			{
-				"number": 37961,
-				"title": "[DevTools] Share pending resource and HAR lookups between file fetches",
-				"author": "hoxyq",
-				"state": "draft",
-				"labels": [
-					"CLA Signed",
-					"React Core Team"
-				]
-			},
-			{
-				"number": 37960,
-				"title": "[DevTools] Don't read source-mapped originals as scripts in Chrome",
-				"author": "hoxyq",
-				"state": "draft",
-				"labels": [
-					"CLA Signed",
-					"React Core Team"
-				]
-			},
-			{
-				"number": 37959,
-				"title": "[DevTools] Don't also fetch from the page when the file is in the HAR",
-				"author": "hoxyq",
-				"state": "draft",
-				"labels": [
-					"CLA Signed",
-					"React Core Team"
-				]
-			},
-			{
-				"number": 37958,
-				"title": "[DevTools] Reuse a file's source map for all of its stack frames",
-				"author": "hoxyq",
-				"state": "draft",
-				"labels": [
-					"CLA Signed",
-					"React Core Team"
-				]
-			},
-			{
-				"number": 37957,
-				"title": "[DevTools] Decode inline source maps instead of fetching them",
-				"author": "hoxyq",
-				"state": "draft",
-				"labels": [
-					"CLA Signed",
-					"React Core Team"
-				]
-			},
-			{
-				"number": 37956,
-				"title": "[DevTools] Resolve sources of inline source maps against the script URL",
-				"author": "hoxyq",
-				"state": "draft",
-				"labels": [
-					"CLA Signed",
-					"React Core Team"
-				]
-			},
-			{
-				"number": 37953,
-				"title": "[DevTools] Fix string value reset in native style editor",
-				"author": "chengchuu",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 37952,
-				"title": "[Flight] Escape colons in reference paths and keep undefined object keys",
-				"author": "gaearon",
-				"state": "open",
-				"labels": [
-					"CLA Signed",
-					"React Core Team"
-				]
 			}
 		],
 		"/react/react/pull/9713": [
@@ -276,6 +265,15 @@
 			}
 		],
 		"/react/react/issues": [
+			{
+				"number": 37984,
+				"title": "Bug: onTransitionRun, onTransitionStart, and onTransitionCancel do not receive SyntheticTransitionEvent (missing propertyName, elapsedTime, pseudoElement)",
+				"author": "ShakilUrRehman21",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
+			},
 			{
 				"number": 37967,
 				"title": "Bug: State update made during render is lost when an earlier same-value setState is still queued at a different priority",
@@ -453,15 +451,6 @@
 				"title": "areHookInputsEqual ignores extra deps when the deps array grows, returning a stale useMemo value",
 				"author": "kburym",
 				"state": "open"
-			},
-			{
-				"number": 37783,
-				"title": "Bug:",
-				"author": "rayatulislami403-prog",
-				"state": "open",
-				"labels": [
-					"Status: Unconfirmed"
-				]
 			}
 		],
 		"/react/react/issues/10": [
@@ -478,6 +467,36 @@
 				"title": "Companies / Sites using Next.js",
 				"author": "timneutkens",
 				"category": "Show and tell"
+			},
+			{
+				"number": 100704,
+				"title": "next/jest doesn't use optimizePackageImports",
+				"author": "jeltehomminga",
+				"category": "Ideas"
+			},
+			{
+				"number": 100698,
+				"title": "Help pls",
+				"author": "komlodilorand",
+				"category": "Help"
+			},
+			{
+				"number": 55583,
+				"title": "Why is not-found page triggered even if the page exists?",
+				"author": "mastoj",
+				"category": "App Router"
+			},
+			{
+				"number": 100696,
+				"title": "Paid Pro Plan Locked Out - Email OTP Failing Due to Temporary Outage",
+				"author": "kachexmodel1",
+				"category": "Help"
+			},
+			{
+				"number": 70601,
+				"title": "Permissions issues in Docker Compose",
+				"author": "hahamini",
+				"category": "Help"
 			},
 			{
 				"number": 99484,
@@ -598,36 +617,6 @@
 				"title": "Serving a remote MCP server from a Next.js App Router route handler (Streamable HTTP, stateless)",
 				"author": "matrixagentsocial",
 				"category": "Show and tell"
-			},
-			{
-				"number": 100547,
-				"title": "next build fails on TypeScript 7.1 projects that use content mappers (TS18068)",
-				"author": "colinhacks",
-				"category": "Ideas"
-			},
-			{
-				"number": 53091,
-				"title": "Next.js App with Plugin architecture",
-				"author": "jamalsa",
-				"category": "Help"
-			},
-			{
-				"number": 49371,
-				"title": "Recommended API mocking setup",
-				"author": "SplittyDev",
-				"category": "Help"
-			},
-			{
-				"number": 88000,
-				"title": "# Regression: next/image strips headers from internal API requests",
-				"author": "RHOOPH",
-				"category": "App Router"
-			},
-			{
-				"number": 98653,
-				"title": "Turbopack Internal Panic: Restore of All for task ... failed in another thread",
-				"author": "smishra11",
-				"category": "Turbopack Error Report"
 			}
 		],
 		"/vercel/next.js/discussions/10640": [
@@ -640,211 +629,208 @@
 		],
 		"/react/react/actions": [
 			{
-				"number": 22267,
-				"runId": 40081164147,
+				"number": 992,
+				"runId": 40182062971,
+				"title": "npm_and_yarn in /packages/react-devtools for electron - Update #1651303584",
+				"workflow": "Dependabot Updates",
+				"status": "failed",
+				"branch": "main"
+			},
+			{
+				"number": 991,
+				"runId": 40182032658,
+				"title": "npm_and_yarn in /fixtures/owner-stacks for launch-editor - Update #1651303162",
+				"workflow": "Dependabot Updates",
+				"status": "failed",
+				"branch": "main"
+			},
+			{
+				"number": 22291,
+				"runId": 40179815584,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 19692,
-				"runId": 40080964269,
+				"number": 19716,
+				"runId": 40179621669,
 				"title": "(Shared) Manage stale issues and PRs",
 				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 22266,
-				"runId": 40077526416,
+				"number": 22290,
+				"runId": 40176104247,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 19691,
-				"runId": 40077276436,
+				"number": 19715,
+				"runId": 40175857815,
 				"title": "(Shared) Manage stale issues and PRs",
 				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 22265,
-				"runId": 40073361729,
+				"number": 990,
+				"runId": 40174362731,
+				"title": "npm_and_yarn in /fixtures/view-transition for launch-editor - Update #1651188567",
+				"workflow": "Dependabot Updates",
+				"status": "failed",
+				"branch": "main"
+			},
+			{
+				"number": 22289,
+				"runId": 40172115282,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 19690,
-				"runId": 40073179662,
+				"number": 19714,
+				"runId": 40171915985,
 				"title": "(Shared) Manage stale issues and PRs",
 				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 22264,
-				"runId": 40070055840,
+				"number": 22288,
+				"runId": 40168952955,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 19689,
-				"runId": 40069743234,
+				"number": 19713,
+				"runId": 40168669760,
 				"title": "(Shared) Manage stale issues and PRs",
 				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 2299,
-				"runId": 40068463322,
+				"number": 2303,
+				"runId": 40167536072,
 				"title": "(Shared) Cleanup Stale Branch Caches",
 				"workflow": "(Shared) Cleanup Stale Branch Caches",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 22263,
-				"runId": 40065447592,
+				"number": 22287,
+				"runId": 40164783425,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 19688,
-				"runId": 40065224132,
+				"number": 19712,
+				"runId": 40164620373,
 				"title": "(Shared) Manage stale issues and PRs",
 				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 22262,
-				"runId": 40061663115,
+				"number": 2264,
+				"runId": 40162917360,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 10842,
+				"runId": 40162915233,
+				"title": "Fix render-phase state update lost after same-value eager bailout",
+				"workflow": "(Runtime) ESLint Plugin E2E",
+				"status": "requires action with the application",
+				"branch": "AdamMagued:fix-issue-37967-render-phase-state-eager-bailout"
+			},
+			{
+				"number": 14474,
+				"runId": 40162915205,
+				"title": "Fix render-phase state update lost after same-value eager bailout",
+				"workflow": "(Runtime) Build and Test",
+				"status": "requires action with the application",
+				"branch": "AdamMagued:fix-issue-37967-render-phase-state-eager-bailout"
+			},
+			{
+				"number": 20546,
+				"runId": 40162915178,
+				"title": "Fix render-phase state update lost after same-value eager bailout",
+				"workflow": "(Shared) Lint",
+				"status": "requires action with the application",
+				"branch": "AdamMagued:fix-issue-37967-render-phase-state-eager-bailout"
+			},
+			{
+				"number": 3095,
+				"runId": 40162914582,
+				"title": "Fix render-phase state update lost after same-value eager bailout",
+				"workflow": "(Runtime) Discord Notify",
+				"status": "completed successfully"
+			},
+			{
+				"number": 5354,
+				"runId": 40162914581,
+				"title": "Fix render-phase state update lost after same-value eager bailout",
+				"workflow": "(Shared) Label Core Team PRs",
+				"status": "completed successfully"
+			},
+			{
+				"number": 2263,
+				"runId": 40161536398,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 22286,
+				"runId": 40161298987,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 2243,
-				"runId": 40061626029,
+				"number": 2262,
+				"runId": 40161280366,
 				"title": "(Runtime) Sizebot Comment",
 				"workflow": "(Runtime) Sizebot Comment",
 				"status": "completed successfully"
 			},
 			{
-				"number": 19687,
-				"runId": 40061463215,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 2242,
-				"runId": 40061343531,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 9023,
-				"runId": 40061341627,
-				"title": "[compiler] Type react-native PanResponder.create to fix react-hooks/refs false positive",
-				"workflow": "(Compiler) TypeScript",
-				"status": "completed successfully",
-				"branch": "Gourav224:fix/refs-callback-passed-to-call"
-			},
-			{
-				"number": 20532,
-				"runId": 40061341622,
-				"title": "[compiler] Type react-native PanResponder.create to fix react-hooks/refs false positive",
-				"workflow": "(Shared) Lint",
-				"status": "completed successfully",
-				"branch": "Gourav224:fix/refs-callback-passed-to-call"
-			},
-			{
-				"number": 1280,
-				"runId": 40061341613,
-				"title": "[compiler] Type react-native PanResponder.create to fix react-hooks/refs false positive",
-				"workflow": "React Compiler (Rust)",
-				"status": "completed successfully",
-				"branch": "Gourav224:fix/refs-callback-passed-to-call"
-			},
-			{
-				"number": 9018,
-				"runId": 40061341611,
-				"title": "[compiler] Type react-native PanResponder.create to fix react-hooks/refs false positive",
-				"workflow": "(Compiler) Playground",
-				"status": "completed successfully",
-				"branch": "Gourav224:fix/refs-callback-passed-to-call"
-			},
-			{
-				"number": 10830,
-				"runId": 40061341579,
-				"title": "[compiler] Type react-native PanResponder.create to fix react-hooks/refs false positive",
+				"number": 10841,
+				"runId": 40161278432,
+				"title": "[DOM] Reset forms whose reset method is shadowed by a named control",
 				"workflow": "(Runtime) ESLint Plugin E2E",
 				"status": "completed successfully",
-				"branch": "Gourav224:fix/refs-callback-passed-to-call"
+				"branch": "zhoubiao188:fix-reset-form-shadowed-method"
 			},
 			{
-				"number": 14462,
-				"runId": 40061341577,
-				"title": "[compiler] Type react-native PanResponder.create to fix react-hooks/refs false positive",
-				"workflow": "(Runtime) Build and Test",
-				"status": "completed successfully",
-				"branch": "Gourav224:fix/refs-callback-passed-to-call"
-			},
-			{
-				"number": 2241,
-				"runId": 40058356893,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 20531,
-				"runId": 40058355082,
-				"title": "[Fizz] Preserve postponed holes when replay aborts",
+				"number": 20545,
+				"runId": 40161278361,
+				"title": "[DOM] Reset forms whose reset method is shadowed by a named control",
 				"workflow": "(Shared) Lint",
-				"status": "requires action with the application",
-				"branch": "frpboy:fix/fizz-aborted-replay-postpone-37907"
-			},
-			{
-				"number": 14461,
-				"runId": 40058355038,
-				"title": "[Fizz] Preserve postponed holes when replay aborts",
-				"workflow": "(Runtime) Build and Test",
-				"status": "requires action with the application",
-				"branch": "frpboy:fix/fizz-aborted-replay-postpone-37907"
-			},
-			{
-				"number": 10829,
-				"runId": 40058355021,
-				"title": "[Fizz] Preserve postponed holes when replay aborts",
-				"workflow": "(Runtime) ESLint Plugin E2E",
-				"status": "requires action with the application",
-				"branch": "frpboy:fix/fizz-aborted-replay-postpone-37907"
+				"status": "completed successfully",
+				"branch": "zhoubiao188:fix-reset-form-shadowed-method"
 			}
 		],
-		"/react/react/actions/runs/40061341627": [
+		"/react/react/actions/runs/40182062971": [
 			{
-				"runId": 40061341627,
-				"number": 9023,
-				"title": "[compiler] Type react-native PanResponder.create to fix react-hooks/refs false positive",
-				"workflow": "(Compiler) TypeScript",
-				"status": "completed successfully",
-				"branch": "Gourav224:fix/refs-callback-passed-to-call"
+				"runId": 40182062971,
+				"number": 992,
+				"title": "npm_and_yarn in /packages/react-devtools for electron - Update #1651303584",
+				"status": "failed",
+				"branch": "main"
 			}
 		],
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": [
@@ -933,5 +919,5 @@
 		]
 	},
 	"runListPage": "/react/react/actions",
-	"runPage": "/react/react/actions/runs/40061341627"
+	"runPage": "/react/react/actions/runs/40182062971"
 }
