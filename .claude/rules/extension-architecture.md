@@ -31,7 +31,7 @@ paths:
     2. Add its default binding (`{ keys, enabled }`) to `DEFAULT_CONFIG.shortcuts` in `src/shared/constants/default-config.ts`. The default must pass `validateShortcut`; `cloneConfig`, `serializeSettings` and the import code iterate over `ShortcutType`, so they need no change.
     3. Add a handler in `src/content/shortcut/` implementing `ShortcutHandler` (`type`, `isAvailable(kind, location)`, `handle(event)`) and register it in the `ShortcutService` list in `src/content/content.ts`. `handle` runs synchronously inside `keydown`; start a clipboard write without an `await` before it.
     4. Add a row to `SHORTCUT_ITEMS` in `src/options/constants/shortcut-items.ts` (title and short description of where it works).
-    5. Update the docs: `README.md`, `LISTING.md`, `RELEASE_NOTES.md`, and the matching rules (this file, [shared-api.md](shared-api.md), [popup.md](popup.md), [github-dom-selectors.md](github-dom-selectors.md)).
+    5. Update the docs: `docs/usage.md` (and `docs/templates.md` for settings file fields), `LISTING.md`, `RELEASE_NOTES.md`, and the matching rules (this file, [shared-api.md](shared-api.md), [popup.md](popup.md), [github-dom-selectors.md](github-dom-selectors.md)).
 
 - **Manifests**
     - Two manifests: `public/manifest.json` (Chrome) and `public/manifest.firefox.json` (Firefox). Keep them identical except `browser_specific_settings` (`gecko` and `gecko_android`) in the Firefox one and `background` (`{ "service_worker": "background.js" }` in Chrome, `{ "scripts": ["background.js"] }` in Firefox). Any change goes into both.

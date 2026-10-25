@@ -9,7 +9,7 @@
 ## What is supported
 
 - **Chrome** (current stable) and **Firefox** (desktop 140 and newer, Firefox for Android 142 and newer, as declared in the manifest). The automated tests cover Chromium only, so a Firefox problem may need a manual check.
-- **github.com**, **GitHub Enterprise Cloud** (`*.ghe.com`) and **GitHub Enterprise Server** on the domains you add in the settings. See the [README](../README.md).
+- **github.com**, **GitHub Enterprise Cloud** (`*.ghe.com`) and **GitHub Enterprise Server** on the domains you add in the settings. See [docs/enterprise.md](../docs/enterprise.md).
 - Only the latest released version gets fixes ([SECURITY.md](../SECURITY.md)).
 
 ## When GitHub changes its pages

@@ -357,7 +357,7 @@ There is no backend. "Data" is the extension's settings in `chrome.storage.sync`
 
 **PR-6 — Docs follow the change.** · Minor
 
-- Moving test paths, renaming npm scripts or changing a convention updates `README.md` (scripts, file structure), `AGENTS.md`, the matching `.claude/rules/` file, the [playwright skill](../../playwright/SKILL.md) and this standard in the same PR ([maintaining-agent-context.md](../../../rules/maintaining-agent-context.md)).
+- Moving test paths, renaming npm scripts or changing a convention updates `docs/development.md` (scripts, file structure), `AGENTS.md`, the matching `.claude/rules/` file, the [playwright skill](../../playwright/SKILL.md) and this standard in the same PR ([maintaining-agent-context.md](../../../rules/maintaining-agent-context.md)).
 
 **PR-7 — Nothing secret or personal is committed, in any commit of the PR.** · **Critical**
 

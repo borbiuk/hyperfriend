@@ -72,7 +72,7 @@ Core rules are SCN, AST, DATA, SYNC, MIG, STY and PR. No file in scope → stop 
     - Clipboard payload: [shared-api.md](../../rules/shared-api.md); `src/shared/services/clipboard-service.ts`.
     - Popup: [popup.md](../../rules/popup.md); `src/options/components/*`.
     - Unit tests: [shared-api.md](../../rules/shared-api.md) and the module under test in `src/shared/`.
-- **Test basis:** the rule docs above, the feature list in `README.md`, and what the PR description claims. A behaviour the change claims to cover but does not is a finding under the rule the gap breaks; an uncovered behaviour that is not claimed is FYI.
+- **Test basis:** the rule docs above, the feature list in `docs/usage.md`, and what the PR description claims. A behaviour the change claims to cover but does not is a finding under the rule the gap breaks; an uncovered behaviour that is not claimed is FYI.
 - **Intermediate commits** (when the commits are local): `git log --no-merges --diff-filter=AD --name-status <base>..HEAD` and `git log --no-merges --format='%h %s' --name-only -G'([Tt]oken|[Ss]ecret|[Pp]assw|[Cc]ookie|storageState|@[A-Za-z0-9-]+\.[a-z]{2,})' <base>..HEAD`. Inspect hits with `git show <commit> -- <path>` for PR-7 and DATA-6; report the commit and path only, never the value.
 
 ### 4. Static checks

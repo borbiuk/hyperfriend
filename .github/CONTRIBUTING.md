@@ -12,7 +12,7 @@ npx playwright install chromium   # once, for the e2e tests
 npm run build                     # Chrome, into dist/ (Load unpacked in chrome://extensions)
 ```
 
-Firefox: `npm run build:firefox`, then load `dist-firefox/manifest.json` in `about:debugging`. More in the [README](../README.md#development).
+Firefox: `npm run build:firefox`, then load `dist-firefox/manifest.json` in `about:debugging`. More in [docs/development.md](../docs/development.md).
 
 ## Checks to run before a pull request
 
@@ -41,7 +41,7 @@ CI runs the same checks on every push and pull request. The tests cover **Chromi
 
 ## Documentation
 
-A user-visible change (setting, shortcut, placeholder, permission) goes into `README.md`, `LISTING.md` and `RELEASE_NOTES.md` together. Describe the code as it is: every command, path and value must match the code. Docs are written in simple English.
+A user-visible change (setting, shortcut, placeholder, permission) goes into `docs/`, `LISTING.md` and `RELEASE_NOTES.md` together. Describe the code as it is: every command, path and value must match the code. Docs are written in simple English.
 
 ## Commits and pull requests
 

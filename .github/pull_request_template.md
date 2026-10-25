@@ -21,6 +21,6 @@ Fixes #
 Read [CONTRIBUTING.md](CONTRIBUTING.md). CI runs the builds, lint and tests; these points are for you to decide.
 
 - [ ] Tests were added or changed for the behavior change
-- [ ] `README.md`, `LISTING.md` and `RELEASE_NOTES.md` are updated for a user-visible change
+- [ ] `docs/`, `LISTING.md` and `RELEASE_NOTES.md` are updated for a user-visible change
 - [ ] A new permission or site match is explained in the description
 - [ ] The title is in the imperative mood and has at most 72 characters
