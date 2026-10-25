@@ -1,0 +1,36 @@
+name: dependency-review
+
+# Blocks a pull request that adds a dependency with a known high severity vulnerability or a license
+# that is not on the list below. In practice this checks the weekly Dependabot pull requests.
+# Needs the dependency graph turned on in the repository settings.
+on:
+    pull_request:
+        branches: [master]
+
+permissions:
+    contents: read
+
+concurrency:
+    group: dependency-review-${{ github.event.pull_request.number }}
+    cancel-in-progress: true
+
+jobs:
+    review:
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
+            - name: Review the changed dependencies
+              uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+              with:
+                  fail-on-severity: high
+                  # Development dependencies run in CI and on the maintainer's machine, so they count too
+                  fail-on-scopes: runtime, development
+                  # The licenses used by the current package-lock.json (the dual-licensed packages are
+                  # allowed through their permissive side)
+                  allow-licenses: MIT, ISC, Apache-2.0, BSD-2-Clause, BSD-3-Clause, 0BSD, CC0-1.0, CC-BY-4.0, BlueOak-1.0.0, MPL-2.0, Zlib, W3C, Python-2.0, PSF-2.0
+                  # winreg declares the license "BSD", which is not an SPDX identifier
+                  allow-dependencies-licenses: pkg:npm/winreg

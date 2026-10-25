@@ -13,8 +13,7 @@ on:
     workflow_dispatch:
 
 permissions:
-    contents: write
-    issues: write
+    contents: read
 
 concurrency:
     group: github-markup
@@ -23,6 +22,10 @@ concurrency:
 jobs:
     markup:
         runs-on: ubuntu-latest
+        # Write scopes only on this job: it pushes the snapshots and opens the drift issue
+        permissions:
+            contents: write
+            issues: write
         # Two Playwright runs of up to 10 minutes each (globalTimeout in playwright.config.ts) plus setup and capture
         timeout-minutes: 40
 

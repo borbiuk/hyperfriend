@@ -1,0 +1,9 @@
+# Used by .github/workflows/codeql.yml
+name: Hyperfriend CodeQL config
+
+# Not our code: captured GitHub pages, build output and generated test plans
+paths-ignore:
+    - tests/e2e/fixtures/pages
+    - dist
+    - dist-firefox
+    - specs
