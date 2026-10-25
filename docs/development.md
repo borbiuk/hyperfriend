@@ -149,8 +149,8 @@ The version lives in `public/manifest.json`. The pre-commit hook copies it to `p
 ## Store submission notes
 
 - **Store assets** (promo tiles, screenshots and their sources) live in `design/store/`; see [design/store/README.md](../design/store/README.md) for which file goes where in the Chrome Web Store dashboard and how to regenerate them.
-- **Chrome Web Store**: upload the `artifacts/hyperfriend-build-chrome_*.zip` created by `npm run zip`. The 128×128 icon the store requires is part of the package (`assets/logo-128.png`; see [design/icon](../design/icon/README.md)).
-- **Firefox Add-ons (AMO)**: upload `artifacts/hyperfriend-build-firefox_*.zip`. Because the code is bundled and minified, AMO also needs a **source archive**: the repository without `node_modules/`, `dist/`, `dist-firefox/` and `artifacts/`. Build steps for the reviewer:
+- **Chrome Web Store**: upload `hyperfriend-chrome-x.y.z.zip` from the GitHub Release of the version (built by the release workflow; `npm run zip` makes the same package locally in `artifacts/`). The 128×128 icon the store requires is part of the package (`assets/logo-128.png`; see [design/icon](../design/icon/README.md)).
+- **Firefox Add-ons (AMO)**: upload `hyperfriend-firefox-x.y.z.zip` from the same GitHub Release. Because the code is bundled and minified, AMO also needs a **source archive**: the repository without `node_modules/`, `dist/`, `dist-firefox/` and `artifacts/`. Build steps for the reviewer:
     1. Use Node.js 22 or newer.
     2. Run `npm ci`.
     3. Run `npm run build:firefox`.

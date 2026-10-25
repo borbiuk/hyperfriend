@@ -1,0 +1,121 @@
+name: release
+
+# Builds the packages of a version and publishes the GitHub Release when the maintainer pushes the tag
+# `x.y.z` (see .claude/skills/release/SKILL.md). The zips of the Release are the files built here, so
+# the maintainer uploads these same files to the Chrome Web Store and Firefox Add-ons.
+# Run by hand ("Run workflow", dry run on) to check the build and the notes of the current commit
+# without creating anything.
+on:
+    push:
+        tags: ['[0-9]+.[0-9]+.[0-9]+']
+    workflow_dispatch:
+        inputs:
+            dry_run:
+                description: Build and print the notes, but do not create the GitHub Release
+                type: boolean
+                default: true
+
+permissions:
+    contents: read
+
+concurrency:
+    group: release-${{ github.ref }}
+    cancel-in-progress: false
+
+jobs:
+    release:
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+        permissions:
+            # Create the release; the other two scopes are for the build provenance
+            contents: write
+            id-token: write
+            attestations: write
+        env:
+            GH_TOKEN: ${{ github.token }}
+            GH_REPO: ${{ github.repository }}
+            HUSKY: '0'
+            # A run from a tag publishes; a manual run is a dry run unless it says otherwise
+            DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'false' }}
+
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  # The tags and the history are needed for the guards and the changelog link
+                  fetch-depth: 0
+                  persist-credentials: false
+            - name: Use Node.js 24.x
+              uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+              with:
+                  node-version: 24.x
+                  cache: npm
+            - run: npm ci
+
+            - name: Check that this commit can be released
+              env:
+                  REF_TYPE: ${{ github.ref_type }}
+                  REF_NAME: ${{ github.ref_name }}
+              run: |
+                  version="$(jq -r .version public/manifest.json)"
+                  if [ "$REF_TYPE" = "tag" ] && [ "$REF_NAME" != "$version" ]; then
+                      echo "::error::The tag $REF_NAME differs from the manifest version $version"
+                      exit 1
+                  fi
+                  echo "VERSION=$version" >> "$GITHUB_ENV"
+
+                  # The release notes must have a section for this version (also checked by npm run lint:docs)
+                  scripts/release-notes.sh "$version" HEAD > /dev/null
+
+                  if [ "$DRY_RUN" = "true" ]; then
+                      exit 0
+                  fi
+
+                  # Only a commit of master is released, and only when its build workflow passed
+                  git fetch --no-tags origin master
+                  if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/master; then
+                      echo "::error::The tagged commit is not on master"
+                      exit 1
+                  fi
+                  conclusion="$(gh run list --workflow build.yml --commit "$GITHUB_SHA" --json conclusion --jq '.[0].conclusion')"
+                  if [ "$conclusion" != "success" ]; then
+                      echo "::error::The build workflow of this commit is '$conclusion', not 'success'"
+                      exit 1
+                  fi
+                  if gh release view "$version" > /dev/null 2>&1; then
+                      echo "::error::The release $version already exists"
+                      exit 1
+                  fi
+
+            - name: Build and package both browsers
+              run: ./zip.sh
+
+            - name: Name the packages and check their versions
+              run: |
+                  mkdir -p release
+                  cp artifacts/hyperfriend-build-chrome_*.zip "release/hyperfriend-chrome-$VERSION.zip"
+                  cp artifacts/hyperfriend-build-firefox_*.zip "release/hyperfriend-firefox-$VERSION.zip"
+                  for browser in chrome firefox; do
+                      packaged="$(unzip -p "release/hyperfriend-$browser-$VERSION.zip" manifest.json | jq -r .version)"
+                      if [ "$packaged" != "$VERSION" ]; then
+                          echo "::error::The $browser package has version $packaged, expected $VERSION"
+                          exit 1
+                      fi
+                  done
+                  scripts/release-notes.sh "$VERSION" "$GITHUB_SHA" > release/notes.md
+                  cat release/notes.md
+
+            - name: Attest the build provenance of the packages
+              if: ${{ env.DRY_RUN != 'true' }}
+              uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+              with:
+                  subject-path: release/*.zip
+
+            - name: Create the GitHub Release
+              if: ${{ env.DRY_RUN != 'true' }}
+              run: |
+                  gh release create "$VERSION" \
+                      --verify-tag --latest \
+                      --title "Hyperfriend $VERSION" \
+                      --notes-file release/notes.md \
+                      "release/hyperfriend-chrome-$VERSION.zip" \
+                      "release/hyperfriend-firefox-$VERSION.zip"

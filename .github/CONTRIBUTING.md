@@ -48,7 +48,7 @@ A user-visible change (setting, shortcut, placeholder, permission) goes into `do
 - A pull request title (it becomes the commit title) starts with an upper case letter, is written in the imperative mood ("Add a copy button"), has at most 72 characters, does not end with a period and has no `WIP`, `fixup!` or `squash!`. CI checks everything except the imperative mood.
 - One change per pull request. The maintainer pushes small changes straight to `master`; outside contributions come as pull requests.
 - The Husky pre-commit hook syncs the version, formats the files, stages **every modified tracked file** and builds both browsers, so a commit takes a while and partial commits do not work. New files must be added with `git add` yourself.
-- Do not change the version or `RELEASE_NOTES.md` for a repository-only change. A release has its own commit: `Release x.y.z: <summary>`.
+- Do not change the version or `RELEASE_NOTES.md` for a repository-only change. A release has its own commit, `Release x.y.z: <summary>`; pushing the tag `x.y.z` makes the release workflow build the packages and create the GitHub Release.
 
 ## Reporting
 
