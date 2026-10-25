@@ -110,7 +110,7 @@ How to write tests and the review standard: [.claude/skills/playwright/SKILL.md]
 - `playwright.config.ts`: Playwright projects (`unit`, `e2e`, `live`).
 - `specs/`: Test plans written by the Playwright planner agent.
 - `scripts/`: Maintenance scripts (`check-versions.mjs`, `check-docs.mjs` for relative links and the release notes headings, `check-pr-title.mjs` for pull request titles, `tag-releases.sh` for tagging released versions).
-- `docs/`: The reference documentation (usage, templates and settings files, GitHub Enterprise, this development guide).
+- `docs/`: The reference documentation (usage, templates and settings files, GitHub Enterprise, this development guide) and `docs/adr/`, the [decision records](adr/README.md) that explain why.
 - `.github/`: Issue and pull request templates, `CONTRIBUTING.md`, `SUPPORT.md`, `CODEOWNERS`, Dependabot config and the CI workflows (`build.yml`: build, lint, docs and unused-code checks and tests on pushes and pull requests to `master`; `markup.yml`: daily snapshot refresh and check against github.com; `codeql.yml`, `dependency-review.yml`, `scorecard.yml`: security checks; `pr-title.yml`: pull request titles).
 - `.husky/`: Git pre-commit hook: syncs the version, formats files, stages changes of tracked files and builds both browsers into `.zip` packages (see [AGENTS.md](../AGENTS.md)).
 - `.claude/`: Agent context for AI-assisted development (rules, skills, subagents, shared settings; the Playwright planner, generator and healer agents are generated), see [AGENTS.md](../AGENTS.md).
