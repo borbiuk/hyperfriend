@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Node.js 22 or newer (enforced by `engines` and `engine-strict`).
+- Node.js 24.22.1 or newer (enforced by `engines` and `engine-strict`).
 - `jq` and `zip` for `zip.sh` (packaging) and the pre-commit hook, which builds and zips both browsers on every commit.
 
 ## Installation
@@ -55,7 +55,7 @@ Firefox 140 or newer is required (Firefox for Android: 142 or newer).
 
 CI runs on GitHub Actions:
 
-- `.github/workflows/build.yml` runs on pushes and pull requests to `master`. Job `build` (Node 22, 24 and 26): `npm ci`, `npm audit signatures`, `check:versions`, `format:check`, both builds, both lint scripts and `npm run test:unit`. A newer push to the same branch cancels the older run. Actions are pinned to commit SHAs; Dependabot (`.github/dependabot.yml`) opens weekly update pull requests for npm packages and actions. Job `e2e` (Node 24): installs Playwright's Chromium (`npx --no playwright install --with-deps chromium`) and runs `npm run test:e2e`; on failure it uploads the artifact `playwright-report-e2e` (`playwright-report/` and `test-results/`, kept 14 days).
+- `.github/workflows/build.yml` runs on pushes and pull requests to `master`. Job `build` (Node 24 and 26): `npm ci`, `npm audit signatures`, `check:versions`, `format:check`, both builds, both lint scripts and `npm run test:unit`. A newer push to the same branch cancels the older run. Actions are pinned to commit SHAs; Dependabot (`.github/dependabot.yml`) opens weekly update pull requests for npm packages and actions. Job `e2e` (Node 24): installs Playwright's Chromium (`npx --no playwright install --with-deps chromium`) and runs `npm run test:e2e`; on failure it uploads the artifact `playwright-report-e2e` (`playwright-report/` and `test-results/`, kept 14 days).
 - `.github/workflows/markup.yml` (workflow `github-markup`) checks every day at 05:17 UTC (and on manual dispatch) that the tests still pass on GitHub's current markup. It captures fresh snapshots with `npm run test:snapshots`; when they changed it commits them to `master` as `github-actions[bot]` ("Refresh GitHub page snapshots"; that push does not start `build.yml`, so the workflow runs the tests itself): `npm run test:e2e` on the fresh snapshots, then `npm run test:live` (also when the e2e tests failed, with its own report folders). On any failure it uploads `playwright-report-markup` (14 days) and opens one issue labelled `markup-drift` ("Tests fail on the current GitHub markup"); while that issue is open, later failures are added to it as comments. Fix the selectors in `src/content` and the tests; the first daily run where everything passes closes the issue itself. No AI agents are involved. Because the snapshots are committed before the tests run, after a markup change `master` holds snapshots the tests fail on, and every push to `master` and every pull request stays red in `build.yml` until the selectors or tests are fixed. That is intended.
 
 ## Testing
@@ -151,7 +151,7 @@ The version lives in `public/manifest.json`. The pre-commit hook copies it to `p
 - **Store assets** (promo tiles, screenshots and their sources) live in `design/store/`; see [design/store/README.md](../design/store/README.md) for which file goes where in the Chrome Web Store dashboard and how to regenerate them.
 - **Chrome Web Store**: upload `hyperfriend-chrome-x.y.z.zip` from the GitHub Release of the version (built by the release workflow; `npm run zip` makes the same package locally in `artifacts/`). The 128×128 icon the store requires is part of the package (`assets/logo-128.png`; see [design/icon](../design/icon/README.md)).
 - **Firefox Add-ons (AMO)**: upload `hyperfriend-firefox-x.y.z.zip` from the same GitHub Release. Because the code is bundled and minified, AMO also needs a **source archive**: the repository without `node_modules/`, `dist/`, `dist-firefox/` and `artifacts/`. Build steps for the reviewer:
-    1. Use Node.js 22 or newer.
+    1. Use Node.js 24.22.1 or newer.
     2. Run `npm ci`.
     3. Run `npm run build:firefox`.
     4. The result is in `dist-firefox/`, and its `content.js`, `options.js`, `options.html` and `manifest.json` are the submitted files.

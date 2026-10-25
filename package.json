@@ -10,7 +10,7 @@
 		"url": "https://github.com/borbiuk/hyperfriend"
 	},
 	"engines": {
-		"node": ">=22.13.0"
+		"node": ">=24.22.1"
 	},
 	"scripts": {
 		"watch": "webpack --config webpack/webpack.dev.js --watch",
