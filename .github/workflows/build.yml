@@ -62,6 +62,8 @@ jobs:
             - run: npm ci
             - name: Check the Markdown files, their relative links and the release notes headings
               run: npm run lint:docs
+            - name: Check for unused files, exports and dependencies
+              run: npm run lint:unused
 
     # The extension in Playwright's bundled Chromium against GitHub page snapshots (no network)
     e2e:

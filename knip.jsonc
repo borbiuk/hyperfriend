@@ -1,0 +1,34 @@
+// Finds unused files, exports and dependencies. Run: npm run lint:unused
+{
+	"entry": [
+		// The three webpack entries (webpack/webpack.common.js)
+		"src/content/content.ts",
+		"src/background/background.ts",
+		"src/options/options.tsx",
+		// Repository scripts and configs that no plugin or npm script reaches
+		"scripts/*.mjs",
+		"webpack/webpack.{common,dev,prod,prod.base,firefox}.js",
+		// Run by the /store-assets skill, not by an npm script
+		"design/store/capture-screenshots.mjs",
+		// Playwright specs and the setup project
+		"tests/**/*.{spec,setup}.ts",
+	],
+	"project": [
+		"src/**/*.{ts,tsx}",
+		"tests/**/*.{ts,mjs}",
+		"scripts/*.mjs",
+		"webpack/*.js",
+	],
+	// Webpack loads these by name from the "module.rules" in webpack/webpack.common.js
+	"ignoreDependencies": ["css-loader", "style-loader", "ts-loader"],
+	// Run by the /store-assets skill, not installed through npm
+	"ignoreBinaries": ["magick"],
+	// An export used only inside its own file is not dead
+	"ignoreExportsUsedInFile": true,
+	"ignoreIssues": {
+		// The shared API barrel is documented in .claude/rules/shared-api.md
+		"src/shared/**/index.ts": ["exports", "types"],
+		// The fixture API is described in .claude/skills/playwright/SKILL.md
+		"tests/e2e/fixtures/*.ts": ["exports", "types"],
+	},
+}
