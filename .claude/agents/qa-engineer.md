@@ -27,8 +27,8 @@ Read-only. Use `Bash` only to run checks and inspect output (builds write to `di
 
 Use the `chrome-devtools` MCP from [.mcp.json](../../.mcp.json) or a Chromium that honours `--load-extension` (Chrome for Testing; stable Google Chrome ignores the flag) with the unpacked `dist/`. Expected behaviour is in [github-dom-selectors.md](../rules/github-dom-selectors.md) and [shared-api.md](../rules/shared-api.md). Typical checks:
 
-- Copy button and `Shift+C`: clipboard `text/html` links only the `[bracketed]` part, `text/plain` is `TEXT — URL`; the shortcut works on the Pull Request Conversation tab and the Issue page only, and not in text fields, menus or dialogs.
-- Popup: the three tabs (Templates, Shortcuts, General), recording and resetting a shortcut, the avatars switch, Export (schema 3), Import of version 1 to 3 files, "Reset all settings", no console warnings.
+- Copy button and `Shift+C`: clipboard `text/html` links only the `[bracketed]` part, `text/plain` is `TEXT — URL`; the shortcut works on the Pull Request Conversation tab, the Issue page, the Discussion page and the workflow run summary only, and not in text fields, menus or dialogs.
+- Popup: the three tabs (Templates, Shortcuts, General), recording and resetting a shortcut, the avatars switch, Export (schema 4), Import of version 1 to 4 files, "Reset all settings", no console warnings.
 - `chrome://extensions` shows no errors for the extension.
 
 ## Report format

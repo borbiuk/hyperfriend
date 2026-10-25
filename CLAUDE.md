@@ -15,7 +15,7 @@
 ## Agent context
 
 - Rules (`.claude/rules/`) load automatically when matching files are touched: architecture (with the "add a new shortcut" checklist), GitHub DOM selectors (page detection, copy button, avatars, keyboard shortcuts, toast), shared API (config schema, shortcut helpers, settings file), popup (tabs), Firefox, npm versions, docs and CI, agent context.
-- Skill `/verify` (`.claude/skills/verify/`): exact versions, both builds, ESLint, type check, `npm run test:unit`, `npm run test:e2e` and `web-ext lint`.
+- Skill `/verify` (`.claude/skills/verify/`): exact versions, both builds, ESLint, type check, `npm run lint:docs`, `npm run lint:unused`, `npm run test:unit`, `npm run test:e2e` and `web-ext lint`.
 - Skill `/release` (`.claude/skills/release/`, invoked by the user only): version bump, release commit and zips, then after confirmation push, CI and tag (the release workflow builds the zips and creates the GitHub Release).
 - Skill `/store-assets` (`.claude/skills/store-assets/`): regenerates and checks the Chrome Web Store promo tiles and screenshots.
 - Skills for tests: `/playwright` (`.claude/skills/playwright/`: writing, running and debugging the Playwright suite, Chrome extension specifics) and `/e2e-review` (`.claude/skills/e2e-review/`: the test standard and the review workflow). Tests follow [testing.md](.claude/rules/testing.md); commands: `npm test`, `npm run test:unit`, `npm run test:e2e` (a `dist` setup project builds `dist/` first), `npm run test:live` and `npm run test:snapshots` (network, on demand; CI runs `test:unit` and `test:e2e` on every push and pull request, and the daily `markup.yml` refreshes the snapshots and runs `test:e2e` and `test:live`).
