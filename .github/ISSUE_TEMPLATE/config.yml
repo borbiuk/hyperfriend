@@ -1,5 +1,8 @@
 blank_issues_enabled: true
 contact_links:
+    - name: Contributing guide
+      url: https://github.com/borbiuk/hyperfriend/blob/master/.github/CONTRIBUTING.md
+      about: How to build, test and send a change.
     - name: Report a security problem
       url: https://github.com/borbiuk/hyperfriend/security/advisories/new
       about: Report a vulnerability privately. Please do not open a public issue for it.

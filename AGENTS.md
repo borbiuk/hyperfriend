@@ -75,6 +75,7 @@ The Husky pre-commit hook (`.husky/pre-commit`) runs on **every commit**:
 
 ## Rules of engagement
 
+- Contributors: [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md) (checks, commits, pull requests); privacy and security: [PRIVACY.md](PRIVACY.md), [SECURITY.md](SECURITY.md).
 - English for code comments and technical docs in-repo (per project convention).
 - Follow the working rules in [CLAUDE.md](CLAUDE.md) (minimal scope, no speculative refactors).
 - Never add a `^` or `~` version range. Edit icon SVG sources, not the PNGs, and re-run `./design/icon/render.sh`.
