@@ -471,9 +471,11 @@ try {
 		if (kind === 'run') {
 			// The first finished run of the run list (captured before this page) whose name differs from
 			// its workflow (a scheduled run is named after its workflow, which would hide a mix-up
-			// of the two) and that ran on a branch
+			// of the two) and that ran on a branch. The list row must show the workflow: a row without
+			// it (for example a Dependabot run) has a workflow only on its page, so the two would differ
 			const isCandidate = (item) =>
 				/^(completed|failed|cancel)/i.test(item.status ?? '') &&
+				item.workflow &&
 				item.title !== item.workflow &&
 				item.branch;
 			// Rows of older list pages from an earlier capture are not kept
