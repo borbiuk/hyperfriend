@@ -9,12 +9,98 @@
 		"/vercel/next.js/discussions": "discussion-list.html",
 		"/vercel/next.js/discussions/10640": "discussion.html",
 		"/react/react/actions": "run-list.html",
-		"/react/react/actions/runs/40195979595": "run.html",
+		"/react/react/actions/runs/40471767264": "run.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": "search-pulls.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=issues": "search-issues.html"
 	},
 	"items": {
 		"/react/react/pulls": [
+			{
+				"number": 38013,
+				"title": "[19.2.x] Record synchronous render-phase pings while suspended with delay",
+				"author": "amerllica",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38012,
+				"title": "[compiler] Allow ref access in FinalizationRegistry cleanup callbacks",
+				"author": "zhoubiao188",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38011,
+				"title": "[DOM] Treat font-size-adjust and shape-image-threshold as unitless",
+				"author": "zhoubiao188",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38010,
+				"title": "[compiler] Fix purity false positives for closures not called during render",
+				"author": "1-DARK",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38009,
+				"title": "[DOM] Don't insert a stylesheet preload when the style is already inlined as a hoistable <style>",
+				"author": "andriidrok1",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38008,
+				"title": "Hydrate browser-only Suspense fallbacks after client suspension",
+				"author": "superportalmisha",
+				"state": "draft"
+			},
+			{
+				"number": 38007,
+				"title": "[RN] Call dispatchNativeEvent when the event target is null",
+				"author": "lazerg",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38005,
+				"title": "Preserve painted SSR Suspense fallback DOM on client re-suspend (Fixes #37620)",
+				"author": "gamgsp",
+				"state": "open"
+			},
+			{
+				"number": 38004,
+				"title": "Bump launch-editor from 2.14.1 to 2.14.2 in /packages/react-devtools-cdt-mcp/fixtures/app",
+				"author": "dependabot[bot]",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"dependencies",
+					"javascript"
+				]
+			},
+			{
+				"number": 38003,
+				"title": "[Flight] Allow dev tooling to provide a scoped evaluator for debug-only eval",
+				"author": "james-elicx",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
 			{
 				"number": 38001,
 				"title": "[compiler] Don't treat use-named constants and properties as hooks",
@@ -37,24 +123,6 @@
 				"number": 37998,
 				"title": "[DOM] Re-enable events while a View Transition is waiting to start",
 				"author": "1-DARK",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 37996,
-				"title": "[compiler] Allow ref access in PerformanceObserver / ReportingObserver callbacks",
-				"author": "zhoubiao188",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 37995,
-				"title": "[compiler] Preserve signed zero in constant propagation and code generation",
-				"author": "chengchuu",
 				"state": "open",
 				"labels": [
 					"CLA Signed"
@@ -126,15 +194,6 @@
 				]
 			},
 			{
-				"number": 37985,
-				"title": "[DOM] Use SyntheticTransitionEvent for onTransitionRun, onTransitionStart, and onTransitionCancel",
-				"author": "ShakilUrRehman21",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
 				"number": 37983,
 				"title": "[Hooks] Preserve render-phase state after eager bailouts",
 				"author": "kinqsradio",
@@ -178,60 +237,6 @@
 				"labels": [
 					"CLA Signed"
 				]
-			},
-			{
-				"number": 37978,
-				"title": "[DevTools] Ignore stale standalone socket disconnections",
-				"author": "TheRealAlexxx",
-				"state": "open"
-			},
-			{
-				"number": 37977,
-				"title": "[compiler] Build babel-plugin-react-compiler with target es2022",
-				"author": "rhagigi",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 37976,
-				"title": "[compiler] Only build invariant messages when the invariant fails",
-				"author": "rhagigi",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 37974,
-				"title": "[Fizz] Preserve postponed holes when replay aborts",
-				"author": "frpboy",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 37973,
-				"title": "Add pull request practice file",
-				"author": "Shedy1201",
-				"state": "open"
-			},
-			{
-				"number": 37972,
-				"title": "[DOM] Copy altitudeAngle and azimuthAngle onto synthetic pointer events",
-				"author": "batuhansalkim",
-				"state": "open"
-			},
-			{
-				"number": 37971,
-				"title": "Clear the lane on an update that bailed out eagerly",
-				"author": "shreyanshj10",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
 			}
 		],
 		"/react/react/pull/9713": [
@@ -269,6 +274,21 @@
 		],
 		"/react/react/issues": [
 			{
+				"number": 38014,
+				"title": "Bug: [Flight] A Node.js Buffer is sent as binary at the root but through toJSON when nested",
+				"author": "timostamm",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
+			},
+			{
+				"number": 38006,
+				"title": "Bug: Fabric renderer should call dispatchNativeEvent when the event target is null",
+				"author": "lazerg",
+				"state": "open"
+			},
+			{
 				"number": 38002,
 				"title": "Bug:",
 				"author": "nexoracontrol-ops",
@@ -290,39 +310,10 @@
 				"state": "open"
 			},
 			{
-				"number": 37994,
-				"title": "[Compiler Bug]: React Compiler loses the sign of negative zero",
-				"author": "chengchuu",
-				"state": "open",
-				"labels": [
-					"Status: Unconfirmed",
-					"Type: Bug"
-				]
-			},
-			{
-				"number": 37984,
-				"title": "Bug: onTransitionRun, onTransitionStart, and onTransitionCancel do not receive SyntheticTransitionEvent (missing propertyName, elapsedTime, pseudoElement)",
-				"author": "ShakilUrRehman21",
-				"state": "open",
-				"labels": [
-					"Status: Unconfirmed"
-				]
-			},
-			{
 				"number": 37967,
 				"title": "Bug: State update made during render is lost when an earlier same-value setState is still queued at a different priority",
 				"author": "vlad1mirJ",
 				"state": "open"
-			},
-			{
-				"number": 37955,
-				"title": "[Compiler Bug]: react-hooks/refs false positive when using PanResponder from React Native",
-				"author": "SimpleCreations",
-				"state": "open",
-				"labels": [
-					"Status: Unconfirmed",
-					"Type: Bug"
-				]
 			},
 			{
 				"number": 37954,
@@ -454,6 +445,15 @@
 				"title": "[DevTools Bug]: DOM nodes removed from a still-mounted component stay in publicInstanceToDevToolsInstanceMap until reload (8.0.0, DevTools closed)",
 				"author": "olinanderson",
 				"state": "open"
+			},
+			{
+				"number": 37792,
+				"title": "Bug:",
+				"author": "paulintangana2-hash",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
 			}
 		],
 		"/react/react/issues/10": [
@@ -472,6 +472,36 @@
 				"category": "Show and tell"
 			},
 			{
+				"number": 100773,
+				"title": "cudoc: embed sections across MDX pages and check every reference, with @next/mdx under Turbopack",
+				"author": "cudoment",
+				"category": "Show and tell"
+			},
+			{
+				"number": 100646,
+				"title": "[CLI / Windows] UTF-8 glyphs (▲, ✓, ·) render as mojibake (Γû▓, Γ£ô, ┬╖) under default OEM code page (CP437)",
+				"author": "PratikCreates",
+				"category": "Triage"
+			},
+			{
+				"number": 100762,
+				"title": "A copyable public FAQ fixture in a Next.js 16 lab, with scoped CSS and source comparison checks",
+				"author": "oralabteam",
+				"category": "Show and tell"
+			},
+			{
+				"number": 100731,
+				"title": "Turbopack Error: failed to create whole tree",
+				"author": "rakeebhasan09",
+				"category": "Turbopack Error Report"
+			},
+			{
+				"number": 11990,
+				"title": "How to serve static files from a graphql yoga server? Or how to save files from graphql to next.js' public folder?",
+				"author": "jamestrenda",
+				"category": "Help"
+			},
+			{
 				"number": 100361,
 				"title": "Nextjs + Plugin Architecture - Is it possible to dynamically load compiled components in runtime?",
 				"author": "HybridSolutions",
@@ -488,12 +518,6 @@
 				"title": "Help pls",
 				"author": "komlodilorand",
 				"category": "Help"
-			},
-			{
-				"number": 100646,
-				"title": "[CLI / Windows] UTF-8 glyphs (▲, ✓, ·) render as mojibake (Γû▓, Γ£ô, ┬╖) under default OEM code page (CP437)",
-				"author": "PratikCreates",
-				"category": "Triage"
 			},
 			{
 				"number": 100709,
@@ -596,30 +620,6 @@
 				"title": "Turbopack Error: failed to write to /media/gm/0090F9E0577731FA/Library/projects/CP/website/cpad/.next/dev/server/chunks/[externals]_node:inspector_7a4283c6._.js",
 				"author": "gmbhatti",
 				"category": "Turbopack Error Report"
-			},
-			{
-				"number": 100631,
-				"title": "CreativeCape — Production-Ready Next.js Templates, SaaS Starters & AI Solutions https://creative-cape.com/",
-				"author": "creativecapesolutions",
-				"category": "Show and tell"
-			},
-			{
-				"number": 98048,
-				"title": "Turbopack build: whole-app module graph construction is effectively serial and dominates large-app production builds",
-				"author": "ejc3",
-				"category": "Feedback"
-			},
-			{
-				"number": 93262,
-				"title": "Turbopack Error: Failed to write app endpoint /(public)/product/[slug]/page",
-				"author": "kuhelahmed2024",
-				"category": "Turbopack Error Report"
-			},
-			{
-				"number": 100584,
-				"title": "Turbopack Error: Invariant: Expected to replace all template variables, found VAR_MODULE_GLOBAL_ERROR",
-				"author": "veektrie",
-				"category": "Turbopack Error Report"
 			}
 		],
 		"/vercel/next.js/discussions/10640": [
@@ -632,411 +632,205 @@
 		],
 		"/react/react/actions": [
 			{
-				"number": 22316,
-				"runId": 40306304301,
+				"number": 22342,
+				"runId": 40487061381,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 19741,
-				"runId": 40305876843,
+				"number": 19763,
+				"runId": 40486711890,
 				"title": "(Shared) Manage stale issues and PRs",
 				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 22315,
-				"runId": 40299433311,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 2270,
-				"runId": 40298971266,
+				"number": 2304,
+				"runId": 40486280316,
 				"title": "(Runtime) Sizebot Comment",
 				"workflow": "(Runtime) Sizebot Comment",
 				"status": "completed successfully"
 			},
 			{
-				"number": 19740,
-				"runId": 40298894360,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
+				"number": 20578,
+				"runId": 40486275052,
+				"title": "[19.2.x] Record synchronous render-phase pings while suspended with delay",
+				"workflow": "(Shared) Lint",
+				"status": "requires action with the application",
+				"branch": "amerllica:backport-19.2.x-render-phase-ping"
 			},
 			{
-				"number": 22314,
-				"runId": 40292365762,
+				"number": 14499,
+				"runId": 40486274991,
+				"title": "[19.2.x] Record synchronous render-phase pings while suspended with delay",
+				"workflow": "(Runtime) Build and Test",
+				"status": "requires action with the application",
+				"branch": "amerllica:backport-19.2.x-render-phase-ping"
+			},
+			{
+				"number": 10867,
+				"runId": 40486274705,
+				"title": "[19.2.x] Record synchronous render-phase pings while suspended with delay",
+				"workflow": "(Runtime) ESLint Plugin E2E",
+				"status": "requires action with the application",
+				"branch": "amerllica:backport-19.2.x-render-phase-ping"
+			},
+			{
+				"number": 3106,
+				"runId": 40486273899,
+				"title": "[19.2.x] Record synchronous render-phase pings while suspended with delay",
+				"workflow": "(Runtime) Discord Notify",
+				"status": "completed successfully"
+			},
+			{
+				"number": 5370,
+				"runId": 40486273595,
+				"title": "[19.2.x] Record synchronous render-phase pings while suspended with delay",
+				"workflow": "(Shared) Label Core Team PRs",
+				"status": "completed successfully"
+			},
+			{
+				"number": 22341,
+				"runId": 40479716485,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 19739,
-				"runId": 40291825059,
+				"number": 19762,
+				"runId": 40479295650,
 				"title": "(Shared) Manage stale issues and PRs",
 				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 1287,
-				"runId": 40290335195,
-				"title": "[compiler] Don't treat use-named constants and properties as hooks",
-				"workflow": "React Compiler (Rust)",
-				"status": "requires action with the application",
-				"branch": "SomSamantray:fix/compiler-use-named-properties-29900"
+				"number": 22340,
+				"runId": 40472960257,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
 			},
 			{
-				"number": 20554,
-				"runId": 40290335193,
-				"title": "[compiler] Don't treat use-named constants and properties as hooks",
-				"workflow": "(Shared) Lint",
-				"status": "requires action with the application",
-				"branch": "SomSamantray:fix/compiler-use-named-properties-29900"
+				"number": 19761,
+				"runId": 40472451370,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
 			},
 			{
-				"number": 9025,
-				"runId": 40290335183,
-				"title": "[compiler] Don't treat use-named constants and properties as hooks",
-				"workflow": "(Compiler) Playground",
-				"status": "requires action with the application",
-				"branch": "SomSamantray:fix/compiler-use-named-properties-29900"
-			},
-			{
-				"number": 9030,
-				"runId": 40290335143,
-				"title": "[compiler] Don't treat use-named constants and properties as hooks",
-				"workflow": "(Compiler) TypeScript",
-				"status": "requires action with the application",
-				"branch": "SomSamantray:fix/compiler-use-named-properties-29900"
-			},
-			{
-				"number": 9029,
-				"runId": 40288001976,
-				"title": "[compiler] Don't treat use-named constants and properties as hooks",
-				"workflow": "(Compiler) TypeScript",
-				"status": "requires action with the application",
-				"branch": "SomSamantray:fix/compiler-use-named-properties-29900"
-			},
-			{
-				"number": 20553,
-				"runId": 40288001931,
-				"title": "[compiler] Don't treat use-named constants and properties as hooks",
-				"workflow": "(Shared) Lint",
-				"status": "requires action with the application",
-				"branch": "SomSamantray:fix/compiler-use-named-properties-29900"
-			},
-			{
-				"number": 5360,
-				"runId": 40288001840,
-				"title": "[compiler] Don't treat use-named constants and properties as hooks",
-				"workflow": "(Shared) Label Core Team PRs",
+				"number": 2303,
+				"runId": 40472125769,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
 				"status": "completed successfully"
 			},
 			{
-				"number": 9024,
-				"runId": 40288001778,
-				"title": "[compiler] Don't treat use-named constants and properties as hooks",
-				"workflow": "(Compiler) Playground",
-				"status": "requires action with the application",
-				"branch": "SomSamantray:fix/compiler-use-named-properties-29900"
-			},
-			{
-				"number": 1286,
-				"runId": 40288001762,
-				"title": "[compiler] Don't treat use-named constants and properties as hooks",
-				"workflow": "React Compiler (Rust)",
-				"status": "requires action with the application",
-				"branch": "SomSamantray:fix/compiler-use-named-properties-29900"
-			},
-			{
-				"number": 1274,
-				"runId": 40288001703,
-				"title": "[compiler] Don't treat use-named constants and properties as hooks",
+				"number": 1276,
+				"runId": 40471767357,
+				"title": "[compiler] Allow ref access in FinalizationRegistry cleanup callbacks",
 				"workflow": "(Compiler) Discord Notify",
 				"status": "completed successfully"
 			},
 			{
-				"number": 22313,
-				"runId": 40286516817,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
+				"number": 20577,
+				"runId": 40471767264,
+				"title": "[compiler] Allow ref access in FinalizationRegistry cleanup callbacks",
+				"workflow": "(Shared) Lint",
 				"status": "completed successfully",
-				"branch": "main"
+				"branch": "zhoubiao188:fr-2026-10-27"
 			},
 			{
-				"number": 19738,
-				"runId": 40286196305,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
+				"number": 5369,
+				"runId": 40471767240,
+				"title": "[compiler] Allow ref access in FinalizationRegistry cleanup callbacks",
+				"workflow": "(Shared) Label Core Team PRs",
+				"status": "completed successfully"
 			},
 			{
-				"number": 22312,
-				"runId": 40280724531,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
+				"number": 9037,
+				"runId": 40471767198,
+				"title": "[compiler] Allow ref access in FinalizationRegistry cleanup callbacks",
+				"workflow": "(Compiler) TypeScript",
 				"status": "completed successfully",
-				"branch": "main"
+				"branch": "zhoubiao188:fr-2026-10-27"
 			},
 			{
-				"number": 19737,
-				"runId": 40280012870,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
+				"number": 9032,
+				"runId": 40471766993,
+				"title": "[compiler] Allow ref access in FinalizationRegistry cleanup callbacks",
+				"workflow": "(Compiler) Playground",
 				"status": "completed successfully",
-				"branch": "main"
+				"branch": "zhoubiao188:fr-2026-10-27"
 			},
 			{
-				"number": 2307,
-				"runId": 40277321832,
-				"title": "(Shared) Cleanup Stale Branch Caches",
-				"workflow": "(Shared) Cleanup Stale Branch Caches",
+				"number": 1294,
+				"runId": 40471766976,
+				"title": "[compiler] Allow ref access in FinalizationRegistry cleanup callbacks",
+				"workflow": "React Compiler (Rust)",
 				"status": "completed successfully",
-				"branch": "main"
+				"branch": "zhoubiao188:fr-2026-10-27"
 			},
 			{
-				"number": 22311,
-				"runId": 40273400862,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19736,
-				"runId": 40273102086,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22310,
-				"runId": 40268504880,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			}
-		],
-		"/react/react/actions?page=3": [
-			{
-				"number": 22304,
-				"runId": 40239061974,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19729,
-				"runId": 40238865331,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22303,
-				"runId": 40234361530,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19728,
-				"runId": 40234156011,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 2268,
-				"runId": 40233154747,
+				"number": 2302,
+				"runId": 40471510348,
 				"title": "(Runtime) Sizebot Comment",
 				"workflow": "(Runtime) Sizebot Comment",
 				"status": "completed successfully"
 			},
 			{
-				"number": 22302,
-				"runId": 40229756153,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
+				"number": 10866,
+				"runId": 40471505783,
+				"title": "[DOM] Treat font-size-adjust and shape-image-threshold as unitless",
+				"workflow": "(Runtime) ESLint Plugin E2E",
 				"status": "completed successfully",
-				"branch": "main"
+				"branch": "zhoubiao188:scan-2026-10-27"
 			},
 			{
-				"number": 19727,
-				"runId": 40229539905,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
+				"number": 14498,
+				"runId": 40471505702,
+				"title": "[DOM] Treat font-size-adjust and shape-image-threshold as unitless",
+				"workflow": "(Runtime) Build and Test",
 				"status": "completed successfully",
-				"branch": "main"
+				"branch": "zhoubiao188:scan-2026-10-27"
 			},
 			{
-				"number": 22301,
-				"runId": 40224774781,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
+				"number": 20576,
+				"runId": 40471505653,
+				"title": "[DOM] Treat font-size-adjust and shape-image-threshold as unitless",
+				"workflow": "(Shared) Lint",
 				"status": "completed successfully",
-				"branch": "main"
+				"branch": "zhoubiao188:scan-2026-10-27"
 			},
 			{
-				"number": 19726,
-				"runId": 40224604209,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
+				"number": 3105,
+				"runId": 40471505558,
+				"title": "[DOM] Treat font-size-adjust and shape-image-threshold as unitless",
+				"workflow": "(Runtime) Discord Notify",
+				"status": "completed successfully"
 			},
 			{
-				"number": 22300,
-				"runId": 40220466646,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19725,
-				"runId": 40220200065,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 2305,
-				"runId": 40219146537,
-				"title": "(Shared) Cleanup Stale Branch Caches",
-				"workflow": "(Shared) Cleanup Stale Branch Caches",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22299,
-				"runId": 40215266217,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19724,
-				"runId": 40215105703,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22298,
-				"runId": 40210723834,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19723,
-				"runId": 40210503032,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22297,
-				"runId": 40205861290,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19722,
-				"runId": 40205656725,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22296,
-				"runId": 40201202050,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19721,
-				"runId": 40200993224,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22295,
-				"runId": 40196519572,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19720,
-				"runId": 40196348130,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 9027,
-				"runId": 40195979595,
-				"title": "[compiler] Allow ref access in PerformanceObserver / ReportingObserver callbacks",
-				"workflow": "(Compiler) TypeScript",
-				"status": "completed successfully",
-				"branch": "zhoubiao188:fix-performance-observer-globals"
-			},
-			{
-				"number": 9022,
-				"runId": 40195979555,
-				"title": "[compiler] Allow ref access in PerformanceObserver / ReportingObserver callbacks",
-				"workflow": "(Compiler) Playground",
-				"status": "completed successfully",
-				"branch": "zhoubiao188:fix-performance-observer-globals"
-			},
-			{
-				"number": 5357,
-				"runId": 40195979520,
-				"title": "[compiler] Allow ref access in PerformanceObserver / ReportingObserver callbacks",
+				"number": 5368,
+				"runId": 40471505551,
+				"title": "[DOM] Treat font-size-adjust and shape-image-threshold as unitless",
 				"workflow": "(Shared) Label Core Team PRs",
 				"status": "completed successfully"
 			}
 		],
-		"/react/react/actions/runs/40195979595": [
+		"/react/react/actions/runs/40471767264": [
 			{
-				"runId": 40195979595,
-				"number": 9027,
-				"title": "[compiler] Allow ref access in PerformanceObserver / ReportingObserver callbacks",
-				"workflow": "(Compiler) TypeScript",
+				"runId": 40471767264,
+				"number": 20577,
+				"title": "[compiler] Allow ref access in FinalizationRegistry cleanup callbacks",
+				"workflow": "(Shared) Lint",
 				"status": "completed successfully",
-				"branch": "zhoubiao188:fix-performance-observer-globals"
+				"branch": "zhoubiao188:fr-2026-10-27"
 			}
 		],
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": [
@@ -1099,12 +893,12 @@
 				"title": "[React 19] allow opting out of automatic form reset when Form Actions are used"
 			},
 			{
-				"number": 36996,
-				"title": "Bug:"
-			},
-			{
 				"number": 15344,
 				"title": "useReducer's dispatch should return a promise which resolves once its action has been delivered"
+			},
+			{
+				"number": 36996,
+				"title": "Bug:"
 			},
 			{
 				"number": 30691,
@@ -1124,6 +918,6 @@
 			}
 		]
 	},
-	"runListPage": "/react/react/actions?page=3",
-	"runPage": "/react/react/actions/runs/40195979595"
+	"runListPage": "/react/react/actions",
+	"runPage": "/react/react/actions/runs/40471767264"
 }
