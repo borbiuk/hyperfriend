@@ -1,12 +1,14 @@
 import { DisplayModel } from './display-model';
+import { FiltersModel, FiltersUpdate } from './filters-model';
 import { LinkFormat } from './link-format';
 import { LinkType } from './link-type';
 import { ShortcutBindingModel } from './shortcut-binding-model';
 import { ShortcutType } from './shortcut-type';
 
 /**
- * Exported settings file (schema version 4), used to share settings between users.
- * Version 4 adds the copy `format`. Version 3 files (2.1.x to 2.2.x) have no format; their
+ * Exported settings file (schema version 5), used to share settings between users.
+ * Version 5 adds the quick `filters`. Version 4 files (2.3.0 to 2.9.x) have no filters and add
+ * the copy `format`. Version 3 files (2.1.x to 2.2.x) have no format; their
  * templates already use the `[link]` syntax. Version 2 files (2.0.0) and version 1 files
  * (`templates` only) are still accepted on import; their templates are converted.
  */
@@ -15,7 +17,7 @@ export interface SettingsFileModel {
 	app: 'hyperfriend';
 
 	/** File format version */
-	schemaVersion: 4;
+	schemaVersion: 5;
 
 	/** Export time as an ISO 8601 string */
 	exportedAt: string;
@@ -31,6 +33,9 @@ export interface SettingsFileModel {
 
 	/** Display preferences */
 	display: DisplayModel;
+
+	/** Quick filters above Pull Request lists */
+	filters: FiltersModel;
 }
 
 /**
@@ -41,4 +46,5 @@ export interface SettingsImportModel {
 	format?: LinkFormat;
 	shortcuts?: Partial<Record<ShortcutType, ShortcutBindingModel>>;
 	display?: Partial<DisplayModel>;
+	filters?: FiltersUpdate;
 }

@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 import {
 	detectPageKind,
 	isDiscussionOrActionsList,
+	isPullRequestList,
 	isWorkflowRunSummary,
 	PageKind,
 } from '../../src/content/services/page-detector';
@@ -109,3 +110,39 @@ for (const { path, list } of LIST_CASES) {
 		).toBe(list);
 	});
 }
+
+const PULL_REQUEST_LIST_CASES: { path: string; list: boolean }[] = [
+	{ path: '/react/react/pulls', list: true },
+	{ path: '/react/react/pulls/', list: true },
+	{ path: '/react/react/pulls?q=is%3Apr+is%3Aopen', list: true },
+	{ path: '/react/react/pulls/review-requested/octocat', list: true },
+	{ path: '/react/react/pulls/octocat', list: true },
+	{ path: '/pulls', list: true },
+	{ path: '/pulls/review-requested', list: true },
+	{ path: '/pulls/assigned', list: true },
+	{ path: '/react/react/issues', list: false },
+	{ path: '/issues', list: false },
+	{ path: '/react/react/pulls/new', list: false },
+	{ path: '/react/react/pulls/12', list: false },
+	{ path: '/react/react/pull/9713', list: false },
+	{ path: '/react/react/actions', list: false },
+	{ path: '/search?q=useActionState&type=pullrequests', list: false },
+	{ path: '/pulls/unknown-tab', list: false },
+	{ path: '/', list: false },
+];
+
+for (const { path, list } of PULL_REQUEST_LIST_CASES) {
+	test(`should say ${list ? 'yes' : 'no'} to a Pull Request list for ${path}`, () => {
+		expect(isPullRequestList(new URL(`https://github.com${path}`))).toBe(
+			list
+		);
+	});
+}
+
+test('should not depend on the host for a Pull Request list', () => {
+	expect(
+		isPullRequestList(
+			new URL('https://mycompany.ghe.com/react/react/pulls')
+		)
+	).toBe(true);
+});

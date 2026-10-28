@@ -1,4 +1,5 @@
 import { DisplayModel } from './display-model';
+import { FiltersModel } from './filters-model';
 import { LinkFormat } from './link-format';
 import { LinkType } from './link-type';
 import { ShortcutBindingModel } from './shortcut-binding-model';
@@ -19,4 +20,7 @@ export interface ConfigModel {
 
 	/** Display preferences */
 	display: DisplayModel;
+
+	/** Quick filters above Pull Request lists */
+	filters: FiltersModel;
 }

@@ -9,6 +9,17 @@ Format of a release (checked by `npm run lint:docs`, read by scripts/tag-release
 - End with a line about the settings and the settings file when they are unchanged.
 -->
 
+## 3.0.0
+
+Quick filters on Pull Request lists.
+
+- **Filter chips**: a row of chips under the search box of every Pull Request list (repository lists, `/pulls` and its tabs, on github.com and `*.ghe.com`) puts the right search words into GitHub's own search. Each chip has an icon and can have a colour. The first four are named after the groups of the Reviews page of Linear: **Needs your review**, **Needs review from your GitHub team**, **Created by you** and **Ready to merge**. **Drafts** goes from all Pull Requests to no drafts, to only drafts and back. **CI passing**, **CI failing** and **CI running** filter by the checks. **Mine, waiting for review** and **Mine, changes requested** show your own Pull Requests by their review state. A chip that is on is highlighted, and a click on it turns it off; chips about the same thing replace each other. The list updates in place, without reloading the page, and the chips stay where they are.
+- **Filters tab**: the popup has a fourth tab with two lists. Drag the chips of the bar to change their order (or use the arrow buttons, which also work with the keyboard and screen readers), hide a chip with the cross, and add the ones that are off by default with the plus button: **Approved**, **No reviewer**, **Involves me**, **Mentions me**, **Reviewed by me** and **Not reviewed by me**.
+- **Your own chips**: **Add a custom chip** opens an editor with a name, one of 36 icons, a colour and a filter (GitHub search words such as `label:bug -label:wip` or `base:main`) and a preview. A custom chip works like the built-in ones, never clashes with the words of the same kind already in the search, and can be edited, hidden, moved or deleted. Up to 10 chips.
+- **Remember your choice**: a switch makes the **Drafts** chip sticky. A list you open without a search text then starts with your last choice (for example without drafts). It is off by default.
+- **Settings file**: schema version 5 adds the filters, with the order of the chips and your own chips. Files of versions 1 to 4 still import and leave the filters as they are. Hyperfriend 2.9.x and older do not read version 5 files.
+- No new permissions. The chips change the search text of GitHub's own list; nothing is requested from any server.
+
 ## 2.9.0
 
 A redesigned settings popup.

@@ -15,5 +15,21 @@ export const DEFAULT_STORED_CONFIG = {
 	},
 	format: 'rich',
 	display: { authorAvatars: true },
+	filters: {
+		chips: [
+			'needs-your-review',
+			'needs-team-review',
+			'created-by-you',
+			'ready-to-merge',
+			'drafts',
+			'ci-passing',
+			'ci-failing',
+			'ci-running',
+			'my-waiting',
+			'my-changes',
+		],
+		sticky: { drafts: false },
+		custom: [],
+	},
 	templateFormat: 2,
 } as const;

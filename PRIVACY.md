@@ -11,7 +11,7 @@ When you click a copy button or press the keyboard shortcut, the extension reads
 
 ## What the extension stores
 
-Your settings (link templates, copy format, keyboard shortcuts and display options) are stored with the browser's extension storage (`chrome.storage.sync`). If you use browser sync, your browser (Google or Mozilla account) syncs them between your devices; the extension does not control that. The extension stores nothing else on your device.
+Your settings (link templates, copy format, keyboard shortcuts, display options and quick filter choices, including the names and filters of your own chips) are stored with the browser's extension storage (`chrome.storage.sync`). If you use browser sync, your browser (Google or Mozilla account) syncs them between your devices; the extension does not control that. The extension also remembers, in the local extension storage (`chrome.storage.local`) of this browser only, which state you last chose for drafts (all, hidden or only drafts) in Pull Request lists. When a list is opened again with that choice, the extension keeps the address it opened in the session storage of that browser tab for a few seconds, only to avoid opening it twice; the browser deletes it when the tab closes. The extension stores nothing else on your device.
 
 **Export** creates a file on your computer and **Import** reads a file you pick. Nothing is uploaded.
 

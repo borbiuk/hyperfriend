@@ -1,7 +1,15 @@
-import { MAX_TEMPLATE_LENGTH } from '@shared/constants';
+import {
+	CUSTOM_CHIP_ID_REGEX,
+	FILTER_CHIPS,
+	MAX_CUSTOM_CHIPS,
+	MAX_TEMPLATE_LENGTH,
+} from '@shared/constants';
 import {
 	ConfigModel,
+	CustomChipModel,
 	DisplayModel,
+	FiltersModel,
+	FiltersUpdate,
 	LinkFormat,
 	LinkType,
 	SettingsFileModel,
@@ -13,6 +21,7 @@ import {
 	isReservedShortcut,
 	normalizeShortcut,
 	shortcutsEqual,
+	validateCustomChip,
 } from '@shared/utils';
 
 import { cloneConfig } from './config-service';
@@ -24,8 +33,8 @@ export const SETTINGS_FILE_NAME = 'hyperfriend-settings.json';
 /** Value of the `app` marker in a settings file. */
 const SETTINGS_APP = 'hyperfriend';
 
-/** Settings file format version written by this build (versions 1 to 4 are read). */
-const SCHEMA_VERSION = 4;
+/** Settings file format version written by this build (versions 1 to 5 are read). */
+const SCHEMA_VERSION = 5;
 
 /** Version 1 files (1.0.0) contain templates only. */
 const SCHEMA_VERSION_TEMPLATES_ONLY = 1;
@@ -35,6 +44,9 @@ const SCHEMA_VERSION_LEGACY_TEMPLATES = 2;
 
 /** Version 3 files (2.1.x to 2.2.x) use the `[link]` syntax but have no copy format. */
 const SCHEMA_VERSION_BRACKETS = 3;
+
+/** Version 4 files (2.3.0 to 2.9.x) add the copy format but have no quick filters. */
+const SCHEMA_VERSION_FORMAT = 4;
 
 /** Maximum accepted input size in bytes (64 KB). */
 const MAX_FILE_SIZE = 64 * 1024;
@@ -71,7 +83,7 @@ export function toSingleLineTemplate(template: string): string {
 }
 
 /**
- * Serializes the config into the settings file format (schema version 4).
+ * Serializes the config into the settings file format (schema version 5).
  * Templates are written as single lines (toSingleLineTemplate), so the file imports again.
  *
  * @param config - Current (merged) config.
@@ -105,6 +117,7 @@ export function serializeSettings(
 		display: {
 			authorAvatars: config.display.authorAvatars,
 		},
+		filters: cloneConfig(config).filters,
 	};
 
 	return `${JSON.stringify(file, null, 2)}\n`;
@@ -253,6 +266,100 @@ function parseDisplay(
 }
 
 /**
+ * Reads the quick filter settings: `chips` is a list of known chip ids (in the order of the bar),
+ * `custom` a list of valid custom chips, `sticky` an object of booleans. Other keys are ignored.
+ */
+function parseFilters(
+	filters: Record<string, unknown>
+): SectionResult<FiltersUpdate> {
+	const value: FiltersUpdate = {};
+
+	if (has(filters, 'custom')) {
+		const raw = filters.custom;
+		if (!Array.isArray(raw)) {
+			return {
+				ok: false,
+				error: 'Filter setting "custom" must be a list of chips.',
+			};
+		}
+
+		if (raw.length > MAX_CUSTOM_CHIPS) {
+			return {
+				ok: false,
+				error: `Filter setting "custom" must hold up to ${MAX_CUSTOM_CHIPS} chips.`,
+			};
+		}
+
+		const custom: CustomChipModel[] = [];
+		for (const item of raw) {
+			const result = validateCustomChip(item);
+			if (!result.ok) {
+				return { ok: false, error: result.error };
+			}
+
+			if (custom.some((chip) => chip.id === result.chip.id)) {
+				return {
+					ok: false,
+					error: `Custom chip id "${result.chip.id}" is used twice.`,
+				};
+			}
+
+			custom.push(result.chip);
+		}
+
+		value.custom = custom;
+	}
+
+	if (has(filters, 'chips')) {
+		// A custom id has to look like one; the ids that no chip has are dropped when the
+		// settings are merged (the file may name a chip the user made earlier)
+		const raw = filters.chips;
+		const known = new Set<string>(FILTER_CHIPS.map((chip) => chip.id));
+		const valid =
+			Array.isArray(raw) &&
+			raw.every(
+				(id) =>
+					typeof id === 'string' &&
+					(known.has(id) || CUSTOM_CHIP_ID_REGEX.test(id))
+			) &&
+			new Set(raw).size === raw.length;
+		if (!valid) {
+			return {
+				ok: false,
+				error: 'Filter setting "chips" must be a list of known filter names.',
+			};
+		}
+
+		value.chips = [...(raw as string[])];
+	}
+
+	if (has(filters, 'sticky')) {
+		const sticky = filters.sticky;
+		const keys: (keyof FiltersModel['sticky'])[] = ['drafts'];
+		if (
+			!isObject(sticky) ||
+			keys.some(
+				(key) => has(sticky, key) && typeof sticky[key] !== 'boolean'
+			)
+		) {
+			return {
+				ok: false,
+				error: 'Filter setting "sticky" must hold true or false values.',
+			};
+		}
+
+		value.sticky = {};
+		for (const key of keys) {
+			if (has(sticky, key)) {
+				value.sticky[key] = sticky[key] as boolean;
+			}
+		}
+	}
+
+	return { ok: true, value };
+}
+
+/**
  * Reads the copy format: one of the known LinkFormat values.
  */
 function parseFormat(format: unknown): SectionResult<LinkFormat> {
@@ -294,17 +401,19 @@ function parseVersion1(data: Record<string, unknown>): ParseSettingsResult {
 }
 
 /**
- * Parses a version 2, 3 or 4 file: `templates`, `shortcuts` and `display` are each optional,
+ * Parses a version 2 to 5 file: `templates`, `shortcuts` and `display` are each optional,
  * but a present section must be an object and at least one setting must be present.
- * Version 4 also reads the optional `format`.
+ * Version 4 also reads the optional `format`, version 5 the optional `filters`.
  *
  * @param legacy - Version 2: templates are converted to the `[link]` syntax.
- * @param withFormat - Version 4: read the copy format.
+ * @param withFormat - Version 4 and newer: read the copy format.
+ * @param withFilters - Version 5: read the quick filters.
  */
 function parseSections(
 	data: Record<string, unknown>,
 	legacy: boolean,
-	withFormat: boolean
+	withFormat: boolean,
+	withFilters: boolean
 ): ParseSettingsResult {
 	const settings: SettingsImportModel = {};
 	let count = 0;
@@ -361,6 +470,24 @@ function parseSections(
 		}
 	}
 
+	if (withFilters && data.filters !== undefined) {
+		if (!isObject(data.filters)) {
+			return fail('The "filters" section of the file is not valid.');
+		}
+
+		const filters = parseFilters(data.filters);
+		if (!filters.ok) {
+			return fail(filters.error);
+		}
+
+		const { chips, sticky, custom } = filters.value;
+		const stickyCount = sticky ? Object.keys(sticky).length : 0;
+		if (chips || custom || stickyCount > 0) {
+			settings.filters = filters.value;
+			count += (chips ? 1 : 0) + (custom ? 1 : 0) + stickyCount;
+		}
+	}
+
 	if (count === 0) {
 		return fail('The file does not contain any settings.');
 	}
@@ -369,7 +496,7 @@ function parseSections(
 }
 
 /**
- * Parses and validates the text of a settings file (schema version 1 to 4).
+ * Parses and validates the text of a settings file (schema version 1 to 5).
  * Templates of versions 1 and 2 are converted to the `[link]` syntax.
  * Only known link types, shortcut types and display keys are read; unknown keys are
  * ignored. Templates are trimmed, shortcut keys normalized.
@@ -405,15 +532,19 @@ export function parseSettings(text: string): ParseSettingsResult {
 	}
 
 	if (version === SCHEMA_VERSION_LEGACY_TEMPLATES) {
-		return parseSections(data, true, false);
+		return parseSections(data, true, false, false);
 	}
 
 	if (version === SCHEMA_VERSION_BRACKETS) {
-		return parseSections(data, false, false);
+		return parseSections(data, false, false, false);
+	}
+
+	if (version === SCHEMA_VERSION_FORMAT) {
+		return parseSections(data, false, true, false);
 	}
 
 	if (version === SCHEMA_VERSION) {
-		return parseSections(data, false, true);
+		return parseSections(data, false, true, true);
 	}
 
 	return fail('This settings file has an unsupported version.');

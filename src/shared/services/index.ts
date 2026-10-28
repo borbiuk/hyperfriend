@@ -19,6 +19,7 @@ export type { ParseHostResult, SyncOptions } from './enterprise-service';
 export {
 	cloneConfig,
 	cloneDefaultConfig,
+	ConfigTooLargeError,
 	configService,
 	toStoredConfig,
 } from './config-service';

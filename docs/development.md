@@ -72,7 +72,7 @@ First time on a machine, install the browser Playwright uses: `npx playwright in
 
 The tests cover **Chromium only**: Playwright cannot load extensions into Firefox, so Firefox stays covered by `npm run lint:firefox` and manual checks. Retries are off, so a flaky test is a bug to fix; a trace is kept for every failed test in `test-results/`, and the HTML report is written to `playwright-report/` (open it with `npx playwright show-report`).
 
-**Snapshots.** The e2e tests run on saved copies of public pages: `react/react` (pull request list, pull request 9713 with its Files changed and Commits tabs, issue list, issue 10, a pull request and an issue search, the workflow run list and the first finished run of that list at capture time) and `vercel/next.js` (the discussion list and the pinned discussion 10640) in `tests/e2e/fixtures/pages/`. Scripts, comment and description bodies, tokens, nonces and email addresses are stripped, and the capture fails if any of that remains; the snapshots are excluded from Prettier. Expected item numbers, titles and authors are read from `pages/index.json`. They are refreshed automatically every day by `markup.yml`, and by hand with `npm run test:snapshots` (needs network; review the diff for personal data). The capture waits until the page is stable and numbers GitHub's random ids in document order, so an unchanged page gives an unchanged file. Specs pick their data from the snapshot instead of fixed rows, so a refresh changes titles but not the tests. When a refresh makes tests fail, GitHub changed its markup: update the selectors in `src/content` and the tests.
+**Snapshots.** The e2e tests run on saved copies of public pages: `react/react` (pull request list, pull request 9713 with its Files changed and Commits tabs, issue list, issue 10, a pull request and an issue search, the workflow run list and the first finished run of that list at capture time) and `vercel/next.js` (the discussion list and the pinned discussion 10640) in `tests/e2e/fixtures/pages/`. Scripts, comment and description bodies, tokens, nonces and email addresses are stripped, and the capture fails if any of that remains; the snapshots are excluded from Prettier. Expected item numbers, titles and authors are read from `pages/index.json`. They are refreshed automatically every day by `markup.yml`, and by hand with `npm run test:snapshots` (needs network; review the diff for personal data). The capture waits until the page is stable and numbers GitHub's random ids in document order, so an unchanged page gives an unchanged file. Specs pick their data from the snapshot instead of fixed rows, so a refresh changes titles but not the tests. A repository Pull Request list with a search text (`/react/react/pulls?q=...`, opened by the quick filter chips) is served from the snapshot of the plain list. When a refresh makes tests fail, GitHub changed its markup: update the selectors in `src/content` and the tests.
 
 How to write tests and the review standard: [.claude/skills/playwright/SKILL.md](../.claude/skills/playwright/SKILL.md) and [.claude/rules/testing.md](../.claude/rules/testing.md).
 
@@ -86,15 +86,15 @@ How to write tests and the review standard: [.claude/skills/playwright/SKILL.md]
     - `content/`: Content script that adds copy buttons, author avatars and the keyboard shortcut on GitHub pages (plain DOM, no React).
         - `components/`: The copy button (`copy-button.ts`), the shared tooltip (`tooltip.ts`) and the toast (`toast.ts`).
         - `icons/`: Inline SVG Octicons (copy, check, x).
-        - `services/`: Page detection, link target parsing, button injection, author avatar injection, the keyboard shortcut service, DOM observer and the config store.
+        - `services/`: Page detection, link target parsing, button injection, author avatar injection, the quick filter service (`filter-service.ts`) and its remembered state (`filter-state-store.ts`), the keyboard shortcut service, DOM observer and the config store.
         - `shortcut/`: The shortcut handler interface and one handler per shortcut (`copy-link-shortcut-handler.ts`).
-        - `styles/`: CSS of the button, tooltip, toast and avatar (uses GitHub's Primer CSS variables).
+        - `styles/`: CSS of the button, tooltip, toast, avatar and filter bar (uses GitHub's Primer CSS variables).
         - `content.ts`: The entry of the content script.
     - `options/`: Toolbar popup (settings), a React app built with Primer React.
-        - `components/`: React components of the popup (`options-app.tsx` with the tabs, `templates-panel.tsx`, `shortcuts-panel.tsx` and `general-panel.tsx` for the tab contents, `template-field.tsx`, `token-editor.tsx`, `shortcut-row.tsx`, `key-chips.tsx`, `settings-section.tsx`, `settings-actions.tsx` with export, import and reset).
+        - `components/`: React components of the popup (`options-app.tsx` with the tabs, `templates-panel.tsx`, `shortcuts-panel.tsx`, `filters-panel.tsx` and `general-panel.tsx` for the tab contents, `template-field.tsx`, `token-editor.tsx`, `shortcut-row.tsx`, `key-chips.tsx`, `settings-section.tsx`, `settings-actions.tsx` with export, import and reset).
         - `constants/`: `shortcut-items.ts`, the rows of the Shortcuts tab.
         - `hooks/`: React hooks (`use-config.ts` loads the config and keeps it fresh, `use-view-mode.ts` tells popup from tab).
-        - `styles/`: CSS of the tabs, of the Templates tab (`templates.css`) and of the General tab (`general.css`).
+        - `styles/`: CSS of the tabs, of the Templates tab (`templates.css`) and of the General tab (`general.css`; `filters.css` for the Filters tab).
         - `utils/`: Helpers (`download-text.ts` saves a file without the `downloads` permission, `options-hash.ts` reads the URL hash, `template-tokens.ts` splits a template into text and placeholder chips and finds the link part, `describe-shortcut.ts` spells a shortcut for screen readers).
         - `options.tsx`: The entry of the popup.
     - `shared/`: Models, constants, services (templates, config, clipboard, settings import/export) and utils (including the shortcut helpers), imported via `@shared/*`.
@@ -103,7 +103,7 @@ How to write tests and the review standard: [.claude/skills/playwright/SKILL.md]
 - `tests/`: Playwright tests, see [Testing](#testing).
     - `unit/`: Unit tests of `src/shared` (templates, clipboard payload, shortcuts, settings file, config) and a guard for the manifests and versions.
     - `setup/`: The `dist` setup project that builds `dist/` before `e2e` and `live`.
-    - `e2e/`: End-to-end specs (copy button, keyboard shortcut, avatars, navigation, search, settings upgrade and the popup tabs); `seed.spec.ts` is the seed for the Playwright test agents.
+    - `e2e/`: End-to-end specs (copy button, keyboard shortcut, avatars, quick filters, navigation, search, settings upgrade and the popup tabs); `seed.spec.ts` is the seed for the Playwright test agents.
         - `fixtures/`: The `test` / `expect` fixtures that load the extension (`extension.ts`), the GitHub routing and snapshot lookups (`github.ts`), the literal default settings (`defaults.ts`), the snapshot capture script (`capture-pages.mjs`) and the snapshots with their index (`pages/`, also the item numbers and titles the tests expect).
     - `live/`: Smoke tests against real github.com (`smoke.spec.ts`).
     - `tsconfig.json`: Type check config of the tests.

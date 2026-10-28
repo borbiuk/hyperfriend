@@ -1,12 +1,14 @@
 import { expect, test } from '@playwright/test';
 import {
 	ConfigModel,
+	FilterChipId,
 	LinkFormat,
 	LinkType,
 	ShortcutType,
 } from '@shared/models';
 import {
 	cloneDefaultConfig,
+	ConfigTooLargeError,
 	configService,
 	toStoredConfig,
 } from '@shared/services';
@@ -218,6 +220,24 @@ test.afterEach(() => {
 	}
 });
 
+/** The default quick filters, written out as the oracle */
+const DEFAULT_FILTERS: ConfigModel['filters'] = {
+	chips: [
+		FilterChipId.NeedsYourReview,
+		FilterChipId.NeedsTeamReview,
+		FilterChipId.CreatedByYou,
+		FilterChipId.ReadyToMerge,
+		FilterChipId.Drafts,
+		FilterChipId.CiPassing,
+		FilterChipId.CiFailing,
+		FilterChipId.CiRunning,
+		FilterChipId.MyWaiting,
+		FilterChipId.MyChanges,
+	],
+	sticky: { drafts: false },
+	custom: [],
+};
+
 /** The defaults, written out as the oracle */
 const DEFAULTS: ConfigModel = {
 	format: LinkFormat.Rich,
@@ -232,6 +252,7 @@ const DEFAULTS: ConfigModel = {
 		[ShortcutType.CopyLink]: { keys: ['Shift', 'KeyC'], enabled: true },
 	},
 	display: { authorAvatars: true },
+	filters: DEFAULT_FILTERS,
 };
 
 /** A stored value in the current format that differs from the defaults in every setting */
@@ -247,7 +268,19 @@ const CUSTOM_STORED = {
 		'copy-link': { keys: ['Alt', 'Shift', 'KeyL'], enabled: false },
 	},
 	display: { authorAvatars: false },
+	filters: {
+		chips: ['needs-your-review', 'no-reviewer'],
+		sticky: { drafts: true },
+		custom: [],
+	},
 	templateFormat: 2,
+};
+
+/** The filters of CUSTOM_STORED as the config holds them */
+const CUSTOM_FILTERS: ConfigModel['filters'] = {
+	chips: [FilterChipId.NeedsYourReview, FilterChipId.NoReviewer],
+	sticky: { drafts: true },
+	custom: [],
 };
 
 test.describe('get', () => {
@@ -271,6 +304,7 @@ test.describe('get', () => {
 					},
 				},
 				display: { authorAvatars: false },
+				filters: CUSTOM_FILTERS,
 			},
 		},
 		{
@@ -349,6 +383,7 @@ test.describe('get', () => {
 					},
 				},
 				display: { authorAvatars: true },
+				filters: DEFAULT_FILTERS,
 			},
 		},
 		{
@@ -359,6 +394,7 @@ test.describe('get', () => {
 					'copy-link': { keys: ['Alt', 'KeyL'], enabled: true },
 				},
 				display: { authorAvatars: false },
+				filters: DEFAULT_FILTERS,
 			},
 			expected: {
 				format: LinkFormat.Rich,
@@ -378,6 +414,7 @@ test.describe('get', () => {
 					},
 				},
 				display: { authorAvatars: false },
+				filters: DEFAULT_FILTERS,
 			},
 		},
 		{
@@ -399,6 +436,7 @@ test.describe('get', () => {
 					},
 				},
 				display: { authorAvatars: false },
+				filters: CUSTOM_FILTERS,
 			},
 		},
 		{
@@ -591,6 +629,7 @@ test.describe('template format marker', () => {
 				},
 				display: { authorAvatars: false },
 				format: 'rich',
+				filters: DEFAULT_FILTERS,
 				templateFormat: 2,
 			},
 		});
@@ -633,6 +672,7 @@ test.describe('writers', () => {
 				},
 				display: { authorAvatars: true },
 				format: 'rich',
+				filters: DEFAULT_FILTERS,
 				templateFormat: 2,
 			},
 		});
@@ -712,6 +752,7 @@ test.describe('writers', () => {
 				},
 				display: { authorAvatars: true },
 				format: 'rich',
+				filters: DEFAULT_FILTERS,
 				templateFormat: 2,
 			},
 		});
@@ -740,6 +781,7 @@ test.describe('writers', () => {
 				},
 				display: { authorAvatars: true },
 				format: 'rich',
+				filters: DEFAULT_FILTERS,
 				templateFormat: 2,
 			},
 		});
@@ -809,6 +851,7 @@ test.describe('writers', () => {
 			},
 			format: LinkFormat.Markdown,
 			display: { authorAvatars: false },
+			filters: CUSTOM_FILTERS,
 		});
 
 		expect(storage.writes).toBe(1);
@@ -827,6 +870,7 @@ test.describe('writers', () => {
 				},
 				display: { authorAvatars: false },
 				format: 'markdown',
+				filters: CUSTOM_STORED.filters,
 				templateFormat: 2,
 			},
 		});
@@ -889,6 +933,7 @@ test.describe('write queue', () => {
 				},
 				display: { authorAvatars: false },
 				format: 'rich',
+				filters: DEFAULT_FILTERS,
 				templateFormat: 2,
 			},
 		});
@@ -928,6 +973,7 @@ test.describe('write queue', () => {
 				},
 				display: { authorAvatars: false },
 				format: 'rich',
+				filters: DEFAULT_FILTERS,
 				templateFormat: 2,
 			},
 		});
@@ -960,6 +1006,7 @@ test.describe('write queue', () => {
 				},
 				display: { authorAvatars: false },
 				format: 'rich',
+				filters: DEFAULT_FILTERS,
 				templateFormat: 2,
 			},
 		});
@@ -1001,6 +1048,7 @@ test.describe('setTemplateBeforeClose', () => {
 				},
 				display: { authorAvatars: false },
 				format: 'rich',
+				filters: DEFAULT_FILTERS,
 				templateFormat: 2,
 			},
 		});
@@ -1043,6 +1091,7 @@ test.describe('setTemplateBeforeClose', () => {
 				},
 				display: { authorAvatars: false },
 				format: 'rich',
+				filters: DEFAULT_FILTERS,
 				templateFormat: 2,
 			},
 		});
@@ -1083,6 +1132,7 @@ test.describe('setTemplateBeforeClose', () => {
 				},
 				display: { authorAvatars: true },
 				format: 'rich',
+				filters: DEFAULT_FILTERS,
 				templateFormat: 2,
 			},
 		});
@@ -1128,6 +1178,7 @@ test.describe('setTemplateBeforeClose', () => {
 				},
 				display: { authorAvatars: true },
 				format: 'markdown',
+				filters: DEFAULT_FILTERS,
 				templateFormat: 2,
 			},
 		});
@@ -1217,6 +1268,7 @@ test.describe('subscribe', () => {
 					},
 				},
 				display: { authorAvatars: false },
+				filters: CUSTOM_FILTERS,
 			},
 		]);
 	});
@@ -1256,6 +1308,7 @@ test('should build the stored value from the config plus the format marker', () 
 				},
 			},
 			display: { authorAvatars: false },
+			filters: DEFAULT_FILTERS,
 		})
 	).toEqual({
 		templates: {
@@ -1268,7 +1321,220 @@ test('should build the stored value from the config plus the format marker', () 
 		shortcuts: { 'copy-link': { keys: ['Alt', 'KeyL'], enabled: false } },
 		display: { authorAvatars: false },
 		format: 'rich',
+		filters: DEFAULT_FILTERS,
 		templateFormat: 2,
+	});
+});
+
+test.describe('filters', () => {
+	test('should read stored filters in their own order, without unknown or repeated values', async () => {
+		storage.seed(KEY, {
+			filters: {
+				chips: ['drafts', 'unicorns', 'needs-your-review', 'drafts'],
+				sticky: { drafts: true },
+			},
+			templateFormat: 2,
+		});
+
+		expect((await configService.get()).filters).toEqual({
+			chips: [FilterChipId.Drafts, FilterChipId.NeedsYourReview],
+			sticky: { drafts: true },
+			custom: [],
+		});
+	});
+
+	test('should drop the chips and settings of earlier builds', async () => {
+		storage.seed(KEY, {
+			filters: {
+				chips: ['needs-review', 'bots', 'my-ready', 'ci-passing'],
+				sticky: { drafts: true, bots: true },
+				bots: ['dependabot'],
+			},
+			templateFormat: 2,
+		});
+
+		expect((await configService.get()).filters).toEqual({
+			chips: [FilterChipId.CiPassing],
+			sticky: { drafts: true },
+			custom: [],
+		});
+	});
+
+	test('should keep the default filters for values of the wrong type', async () => {
+		storage.seed(KEY, {
+			filters: { chips: 'drafts', sticky: [] },
+			templateFormat: 2,
+		});
+
+		expect((await configService.get()).filters).toEqual(DEFAULT_FILTERS);
+	});
+
+	test('should allow an empty chip list', async () => {
+		storage.seed(KEY, {
+			filters: { chips: [] },
+			templateFormat: 2,
+		});
+
+		expect((await configService.get()).filters).toEqual({
+			...DEFAULT_FILTERS,
+			chips: [],
+		});
+	});
+
+	test('should load data without filters (2.9.x and older) with the default filters', async () => {
+		storage.seed(KEY, { ...CUSTOM_STORED, filters: undefined });
+
+		expect((await configService.get()).filters).toEqual(DEFAULT_FILTERS);
+	});
+
+	test('should store filters and keep the rest of the config', async () => {
+		storage.seed(KEY, CUSTOM_STORED);
+
+		await configService.setFilters({
+			chips: [FilterChipId.Drafts],
+			sticky: { drafts: false },
+		});
+
+		expect(storage.dump()).toEqual({
+			[KEY]: {
+				...CUSTOM_STORED,
+				filters: {
+					chips: ['drafts'],
+					sticky: { drafts: false },
+					custom: [],
+				},
+			},
+		});
+	});
+
+	/** A custom chip the tests start from */
+	const BUGS = {
+		id: 'custom-abcd1234',
+		label: 'Bugs',
+		icon: 'bug',
+		colour: 'red',
+		query: 'label:bug -label:wip',
+	};
+
+	const CUSTOM_CASES: {
+		title: string;
+		stored: unknown;
+		expected: { chips: string[]; custom: unknown[] };
+	}[] = [
+		{
+			title: 'should read a stored custom chip with a cleaned name and filter',
+			stored: {
+				chips: [BUGS.id],
+				custom: [
+					{
+						...BUGS,
+						label: ' Bugs ',
+						query: ' label:bug   -label:wip ',
+					},
+				],
+			},
+			expected: { chips: [BUGS.id], custom: [BUGS] },
+		},
+		{
+			title: 'should keep a chip made by a later version, with an unknown icon and colour',
+			stored: {
+				chips: [BUGS.id],
+				custom: [{ ...BUGS, icon: 'telescope', colour: 'teal' }],
+			},
+			expected: {
+				chips: [BUGS.id],
+				custom: [{ ...BUGS, icon: 'telescope', colour: 'default' }],
+			},
+		},
+		{
+			title: 'should drop a shown id that no chip has',
+			stored: { chips: ['drafts', 'custom-missing0'], custom: [] },
+			expected: { chips: ['drafts'], custom: [] },
+		},
+		{
+			title: 'should drop an invalid custom chip and its id',
+			stored: {
+				chips: [BUGS.id, 'drafts'],
+				custom: [{ ...BUGS, label: '' }],
+			},
+			expected: { chips: ['drafts'], custom: [] },
+		},
+	];
+
+	for (const c of CUSTOM_CASES) {
+		test(c.title, async () => {
+			storage.seed(KEY, { filters: c.stored, templateFormat: 2 });
+
+			const filters = (await configService.get()).filters;
+
+			expect({ chips: filters.chips, custom: filters.custom }).toEqual(
+				c.expected
+			);
+		});
+	}
+
+	test('should store the custom chips and the shown ids from one write, so a new id is kept', async () => {
+		await configService.setFilters({
+			custom: [BUGS as never],
+			chips: ['drafts', BUGS.id],
+		});
+
+		expect(
+			(storage.dump() as Record<string, { filters: unknown }>)[KEY]
+				.filters
+		).toEqual({
+			chips: ['drafts', BUGS.id],
+			sticky: { drafts: false },
+			custom: [BUGS],
+		});
+	});
+
+	test('should keep the id of a chip the stored config has when an import names it', async () => {
+		storage.seed(KEY, {
+			filters: { chips: ['drafts'], custom: [BUGS] },
+			templateFormat: 2,
+		});
+
+		await configService.importSettings({
+			filters: { chips: [BUGS.id, 'drafts'] },
+		});
+
+		expect((await configService.get()).filters.chips).toEqual([
+			BUGS.id,
+			'drafts',
+		]);
+	});
+
+	test('should drop the id of a deleted chip from the shown list when only the custom chips change', async () => {
+		storage.seed(KEY, {
+			filters: { chips: [BUGS.id, 'drafts'], custom: [BUGS] },
+			templateFormat: 2,
+		});
+
+		await configService.setFilters({ custom: [] });
+
+		expect((await configService.get()).filters).toEqual({
+			...DEFAULT_FILTERS,
+			chips: ['drafts'],
+			custom: [],
+		});
+	});
+
+	test('should refuse a write over the size limit of a sync storage item and store nothing', async () => {
+		await expect(
+			configService.setTemplate(LinkType.Issue, 'x'.repeat(9_000))
+		).rejects.toBeInstanceOf(ConfigTooLargeError);
+
+		expect(storage.writes).toBe(0);
+		expect(storage.dump()).toEqual({});
+	});
+
+	test('should return independent filters from cloneDefaultConfig', () => {
+		const first = cloneDefaultConfig();
+		first.filters.chips.push(FilterChipId.NoReviewer);
+		first.filters.sticky.drafts = true;
+
+		expect(cloneDefaultConfig().filters).toEqual(DEFAULT_FILTERS);
 	});
 });
 

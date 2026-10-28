@@ -3,6 +3,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { Locator, Page } from '@playwright/test';
 import {
 	ConfigModel,
+	FilterChipId,
 	LinkFormat,
 	LinkType,
 	ShortcutType,
@@ -32,6 +33,23 @@ const CUSTOM_SETTINGS: ConfigModel = {
 		[ShortcutType.CopyLink]: { keys: ['Shift', 'KeyJ'], enabled: false },
 	},
 	display: { authorAvatars: false },
+	filters: {
+		chips: [
+			FilterChipId.NeedsYourReview,
+			'custom-abcd1234',
+			FilterChipId.NoReviewer,
+		],
+		sticky: { drafts: true },
+		custom: [
+			{
+				id: 'custom-abcd1234',
+				label: 'Bugs',
+				icon: 'bug',
+				colour: 'red',
+				query: 'label:bug -label:wip',
+			},
+		],
+	},
 };
 
 /**
@@ -241,7 +259,7 @@ test.describe('Export', () => {
 		const content = JSON.parse(await readFile(savedPath, 'utf8'));
 		expect(content).toEqual({
 			app: 'hyperfriend',
-			schemaVersion: 4,
+			schemaVersion: 5,
 			exportedAt: expect.any(String),
 			...CUSTOM_SETTINGS,
 		});
@@ -253,18 +271,22 @@ test.describe('Export', () => {
 });
 
 test.describe('Import', () => {
-	test('should import a version 4 file and show its settings on every tab', async ({
+	test('should import a version 4 file, show its settings on every tab and keep the default filters', async ({
 		openOptions,
 		storage,
 	}, testInfo) => {
 		const file = testInfo.outputPath('settings-v4.json');
+		const { templates, format, shortcuts, display } = CUSTOM_SETTINGS;
 		await writeFile(
 			file,
 			JSON.stringify({
 				app: 'hyperfriend',
 				schemaVersion: 4,
 				exportedAt: '2026-01-02T03:04:05.000Z',
-				...CUSTOM_SETTINGS,
+				templates,
+				format,
+				shortcuts,
+				display,
 			})
 		);
 		const options = await openGeneral(openOptions, true);
@@ -277,7 +299,11 @@ test.describe('Import', () => {
 			).toHaveText('Settings imported.');
 			await expect
 				.poll(() => storage.getConfig())
-				.toEqual(stored(CUSTOM_SETTINGS));
+				.toEqual({
+					...CUSTOM_SETTINGS,
+					filters: DEFAULT_STORED_CONFIG.filters,
+					templateFormat: 2,
+				});
 		});
 
 		await test.step('every tab shows the imported settings', async () => {
@@ -328,6 +354,44 @@ test.describe('Import', () => {
 				CUSTOM_SETTINGS.templates[LinkType.WorkflowRun]
 			);
 		});
+	});
+
+	test('should import a version 5 file and show its filters on the Filters tab', async ({
+		openOptions,
+		storage,
+	}, testInfo) => {
+		const file = testInfo.outputPath('settings-v5.json');
+		await writeFile(
+			file,
+			JSON.stringify({
+				app: 'hyperfriend',
+				schemaVersion: 5,
+				exportedAt: '2026-01-02T03:04:05.000Z',
+				...CUSTOM_SETTINGS,
+			})
+		);
+		const options = await openGeneral(openOptions, true);
+
+		await importFile(options, file);
+
+		await expect(settingsSection(options).getByRole('status')).toHaveText(
+			'Settings imported.'
+		);
+		await expect
+			.poll(() => storage.getConfig())
+			.toEqual(stored(CUSTOM_SETTINGS));
+		await options.getByRole('tab', { name: 'Filters' }).click();
+		await expect(
+			options
+				.getByRole('list', { name: 'Chips shown in the bar' })
+				.locator('.hyperfriend-chip-row__label')
+		).toHaveText(['Needs your review', 'Bugs', 'No reviewer']);
+		await expect(
+			options.getByRole('button', {
+				name: 'Remember the drafts filter',
+				exact: true,
+			})
+		).toHaveAttribute('aria-pressed', 'true');
 	});
 
 	test('should import a version 3 file without a format and keep the stored format', async ({

@@ -23,6 +23,7 @@ Hyperfriend is a browser extension for Chrome and Firefox. It adds a one-click *
 
 - A **copy button** on lists and detail pages of Pull Requests, Issues, Discussions and workflow runs, in light and dark.
 - **Your own templates** with placeholders such as `{{pr_number}}`, `{{pr_name}}`, `{{author}}`, `{{labels}}` and `{{branch}}`. Only the part in `[square brackets]` is the link.
+- **Quick filters** under the search box of Pull Request lists: named like the groups of Linear Reviews (needs your review, needs review from your GitHub team, created by you, ready to merge), plus drafts, CI state and your own Pull Requests by review state, each with an icon, one click, in the order you choose, and remembered if you want. Add your own chips with a name, icon, colour and any GitHub search filter.
 - **Copy several items** at once: Shift+click the buttons in a list, then copy them as one bulleted list.
 - A **keyboard shortcut** (Shift+C by default) on an open item, which you can change or turn off.
 - **Share your setup**: export the settings to a file and import it on another computer, so a whole team pastes links in one format.

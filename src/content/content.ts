@@ -8,6 +8,8 @@ import { ShortcutType } from '@shared/models';
 import { AvatarInjector } from './services/avatar-injector';
 import { ButtonInjector } from './services/button-injector';
 import { ConfigStore } from './services/config-store';
+import { FilterService } from './services/filter-service';
+import { FilterStateStore } from './services/filter-state-store';
 import { HydrationGuard } from './services/hydration-guard';
 import { detectPageKind, PageKind } from './services/page-detector';
 import { PageObserver } from './services/page-observer';
@@ -16,6 +18,7 @@ import { ShortcutService } from './services/shortcut-service';
 import { CopyLinkShortcutHandler } from './shortcut/copy-link-shortcut-handler';
 import './styles/avatar.css';
 import './styles/copy-button.css';
+import './styles/filter-bar.css';
 import './styles/selection-bar.css';
 import './styles/toast.css';
 import './styles/tooltip.css';
@@ -61,8 +64,19 @@ function start(): void {
 	/** Shows author avatars in Pull Request list rows */
 	const avatarInjector = new AvatarInjector(hydrationGuard);
 
+	/** Remembers the state of the sticky filter chips */
+	const filterStateStore = new FilterStateStore();
+
+	/** Shows the quick filter chips on Pull Request lists */
+	const filterService = new FilterService(
+		configStore,
+		filterStateStore,
+		hydrationGuard
+	);
+
 	const scan = (): void => {
 		buttonInjector.scan();
+		filterService.scan();
 		if (!configStore.get().display.authorAvatars) {
 			avatarInjector.removeAll();
 			return;
@@ -76,7 +90,11 @@ function start(): void {
 	// run core services (the config is loaded first, so button labels use the user's templates
 	// and a disabled or changed shortcut never runs with the default keys):
 	// configService.get never rejects, so the services always start
-	void configStore.start(scan).finally(() => {
+	void Promise.all([
+		configStore.start(scan),
+		filterStateStore.start(scan),
+	]).finally(() => {
+		filterService.start();
 		shortcutService.start();
 		selectionService.start();
 		pageObserver.start(scan);

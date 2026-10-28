@@ -1,5 +1,10 @@
 /** Tabs of the settings UI, in display order. The values are also URL hash tokens. */
-export const OPTIONS_TABS = ['templates', 'shortcuts', 'general'] as const;
+export const OPTIONS_TABS = [
+	'templates',
+	'shortcuts',
+	'filters',
+	'general',
+] as const;
 
 /** A tab of the settings UI. */
 export type OptionsTab = (typeof OPTIONS_TABS)[number];
@@ -30,7 +35,7 @@ function isOptionsTab(value: string): value is OptionsTab {
  *
  * The hash is a list of tokens separated by `,` (or `&`), case-insensitive, in any order;
  * unknown tokens are ignored:
- * - `templates`, `shortcuts`, `general`: the tab to open first (the last one wins);
+ * - `templates`, `shortcuts`, `filters`, `general`: the tab to open first (the last one wins);
  * - `tab`: force the browser tab view even when `chrome.tabs.getCurrent()` can't tell.
  *
  * Examples: `#general`, `#tab`, `#tab,general`.

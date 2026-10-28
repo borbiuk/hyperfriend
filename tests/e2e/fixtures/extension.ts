@@ -55,9 +55,13 @@ export interface KeyRecord {
 	defaultPrevented: boolean;
 }
 
-/** Settings to store: any part of the config; `templates` may name only some link types */
-export type ConfigOverrides = Omit<Partial<ConfigModel>, 'templates'> & {
+/** Settings to store: any part of the config; `templates` may name only some link types and `filters` only some of its parts */
+export type ConfigOverrides = Omit<
+	Partial<ConfigModel>,
+	'templates' | 'filters'
+> & {
 	templates?: Partial<ConfigModel['templates']>;
+	filters?: Partial<ConfigModel['filters']>;
 };
 
 export interface ExtensionStorage {
@@ -284,6 +288,7 @@ export const test = base.extend<ExtensionFixtures & ExtensionOptions>({
 							...defaults.templates,
 							...overrides.templates,
 						},
+						filters: { ...defaults.filters, ...overrides.filters },
 					})
 				);
 			},

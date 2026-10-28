@@ -2,13 +2,18 @@ import { CONFIG_STORAGE_KEY, DEFAULT_CONFIG } from '@shared/constants';
 import {
 	ConfigModel,
 	DisplayModel,
+	FiltersUpdate,
 	LinkFormat,
 	LinkType,
 	SettingsImportModel,
 	ShortcutBindingModel,
 	ShortcutType,
 } from '@shared/models';
-import { normalizeShortcut } from '@shared/utils';
+import {
+	normalizeCustomChips,
+	normalizeFilterChips,
+	normalizeShortcut,
+} from '@shared/utils';
 
 import { convertLegacyTemplate } from './template-service';
 
@@ -21,6 +26,25 @@ const TEMPLATE_FORMAT_KEY = 'templateFormat';
 
 /** Template format with the `[link]` syntax (2.1.0). */
 const TEMPLATE_FORMAT = 2;
+
+/** Size limit of one item of `chrome.storage.sync`, used when the browser does not tell it. */
+const DEFAULT_ITEM_QUOTA_BYTES = 8192;
+
+/**
+ * Thrown by the writers when the config would be larger than one item of `chrome.storage.sync`
+ * allows (the key and the JSON text count). Nothing is written.
+ */
+export class ConfigTooLargeError extends Error {
+	constructor(
+		public readonly bytes: number,
+		public readonly limit: number
+	) {
+		super(
+			`The settings take ${bytes} bytes, more than the ${limit} the browser allows.`
+		);
+		this.name = 'ConfigTooLargeError';
+	}
+}
 
 let warnedUnavailable = false;
 
@@ -98,6 +122,11 @@ export function cloneConfig(config: ConfigModel): ConfigModel {
 		format: config.format,
 		shortcuts,
 		display: { ...config.display },
+		filters: {
+			chips: [...config.filters.chips],
+			sticky: { ...config.filters.sticky },
+			custom: config.filters.custom.map((chip) => ({ ...chip })),
+		},
 	};
 }
 
@@ -201,8 +230,38 @@ function applyDisplay(config: ConfigModel, display: unknown): void {
 }
 
 /**
+ * Copies the valid parts of the quick filter settings into the config: the custom chips and the shown chip ids (known ids, in
+ * the order given) and the boolean sticky flag; anything else is ignored (also the parts of earlier builds).
+ */
+function applyFilters(config: ConfigModel, filters: unknown): void {
+	if (!isObject(filters)) {
+		return;
+	}
+
+	const custom = normalizeCustomChips(filters.custom);
+	if (custom) {
+		config.filters.custom = custom;
+	}
+
+	// The ids of chips that do not exist (a custom chip that was deleted) are dropped, so the
+	// list is checked again after every change of the custom chips
+	const customIds = config.filters.custom.map((chip) => chip.id);
+	config.filters.chips =
+		normalizeFilterChips(filters.chips, customIds) ??
+		normalizeFilterChips(config.filters.chips, customIds) ??
+		[];
+
+	if (
+		isObject(filters.sticky) &&
+		typeof filters.sticky.drafts === 'boolean'
+	) {
+		config.filters.sticky.drafts = filters.sticky.drafts;
+	}
+}
+
+/**
  * Merges a raw stored value over DEFAULT_CONFIG, ignoring unknown keys and invalid values.
- * Data saved by 1.0.0 (`{ templates }` only) gets the default shortcuts and display settings.
+ * Data saved by 1.0.0 (`{ templates }` only) gets the default shortcuts, display and filter settings.
  * Without the TEMPLATE_FORMAT marker (1.x / 2.0.0) the templates are converted to the
  * `[link]` syntax; nothing is written here, the next write stores them with the marker.
  *
@@ -221,6 +280,7 @@ function mergeWithDefaults(stored: unknown): ConfigModel {
 	applyFormat(config, stored.format);
 	applyShortcuts(config, stored.shortcuts);
 	applyDisplay(config, stored.display);
+	applyFilters(config, stored.filters);
 	return config;
 }
 
@@ -262,9 +322,20 @@ function updateConfig(
 				? cloneConfig(lastKnownConfig)
 				: await readConfig(storage);
 		change(config);
+		const stored = toStoredConfig(config);
+		// The whole config is one item of the sync storage: a write over its size limit is refused
+		// by the browser, so it is refused here first, with a reason the popup can name
+		const bytes = new TextEncoder().encode(
+			`${CONFIG_STORAGE_KEY}${JSON.stringify(stored)}`
+		).length;
+		const limit = storage.QUOTA_BYTES_PER_ITEM ?? DEFAULT_ITEM_QUOTA_BYTES;
+		if (bytes > limit) {
+			throw new ConfigTooLargeError(bytes, limit);
+		}
+
 		rememberWrite(config);
 		try {
-			await storage.set({ [CONFIG_STORAGE_KEY]: toStoredConfig(config) });
+			await storage.set({ [CONFIG_STORAGE_KEY]: stored });
 		} catch (error) {
 			// The stored value is unknown now; the next write reads it again
 			rememberWrite(null);
@@ -373,6 +444,17 @@ export const configService = {
 	},
 
 	/**
+	 * Saves quick filter settings (writes the full merged config).
+	 * Missing fields keep their value; invalid parts are ignored. The shown ids and the custom
+	 * chips can be written together, so a new chip is in the list from the first write.
+	 *
+	 * @param filters - New quick filter settings; `sticky` may hold one flag.
+	 */
+	async setFilters(filters: FiltersUpdate): Promise<void> {
+		await updateConfig((config) => applyFilters(config, filters));
+	},
+
+	/**
 	 * Applies settings read from an imported file with a single write of the full merged
 	 * config. Settings missing from the file keep their current value.
 	 *
@@ -384,11 +466,12 @@ export const configService = {
 			applyFormat(config, settings.format);
 			applyShortcuts(config, settings.shortcuts);
 			applyDisplay(config, settings.display);
+			applyFilters(config, settings.filters);
 		});
 	},
 
 	/**
-	 * Restores DEFAULT_CONFIG (templates, shortcuts and display) by removing the stored value.
+	 * Restores DEFAULT_CONFIG (templates, format, shortcuts, display and filters) by removing the stored value.
 	 */
 	async reset(): Promise<void> {
 		await enqueueWrite(async () => {

@@ -1,6 +1,7 @@
 import { DownloadIcon, TrashIcon, UploadIcon } from '@primer/octicons-react';
 import { Button, ConfirmationDialog, Text } from '@primer/react';
 import {
+	ConfigTooLargeError,
 	configService,
 	parseSettings,
 	serializeSettings,
@@ -170,8 +171,14 @@ export function SettingsActions({
 			await configService.importSettings(result.settings);
 			await applyStored();
 			show({ kind: 'success', text: 'Settings imported.' });
-		} catch {
-			show({ kind: 'error', text: 'Could not import the file.' });
+		} catch (error) {
+			show({
+				kind: 'error',
+				text:
+					error instanceof ConfigTooLargeError
+						? 'The file makes the settings too large for the browser to sync (8 KB). Shorten the templates or custom chips.'
+						: 'Could not import the file.',
+			});
 		}
 	};
 

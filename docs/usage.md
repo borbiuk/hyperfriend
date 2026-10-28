@@ -30,6 +30,47 @@ The selection is cleared after a successful copy, with **Clear**, with **Esc** (
 - **Feedback**: the title button shows the usual "Copied!" tooltip. If the button is scrolled out of view, a small "Link copied" toast appears at the bottom of the page for about 2 seconds ("Copy failed" if the copy did not work). Screen readers announce the result, and the title button carries `aria-keyshortcuts` while the shortcut is on.
 - **Change or turn it off**: in the **Shortcuts** tab of the popup (see below).
 
+## Quick filters
+
+In every Pull Request list (a repository's `/OWNER/REPO/pulls`, your `/pulls` dashboard and its tabs, on github.com and `*.ghe.com`) a row of chips sits under the search box. Every chip has an icon before its text. A chip adds search words to GitHub's own search and opens the list; click it again to remove them. The address holds the search text, so Back, bookmarks and GitHub's own filters keep working, and the chip that matches the search text is highlighted. The list updates in place, without reloading the page.
+
+The first four chips are named after the groups of the Reviews page of Linear, so the two tools read the same:
+
+| Chip                                                                                          | Search words added                                                       |
+| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| **Needs your review**                                                                         | `user-review-requested:@me` (the request is for you personally)          |
+| **Needs review from your GitHub team**                                                        | `review-requested:@me -user-review-requested:@me` (a team of yours only) |
+| **Created by you**                                                                            | `author:@me`                                                             |
+| **Ready to merge**                                                                            | `author:@me review:approved status:success`                              |
+| **Drafts: all / hidden / only**                                                               | nothing, `-is:draft`, `is:draft` (each click goes to the next)           |
+| **CI passing / failing / running**                                                            | `status:success`, `status:failure`, `status:pending`                     |
+| **Mine, waiting for review**                                                                  | `author:@me review:required`                                             |
+| **Mine, changes requested**                                                                   | `author:@me review:changes_requested`                                    |
+| **Approved** (off by default)                                                                 | `review:approved`                                                        |
+| **No reviewer** (off by default)                                                              | `review:none`                                                            |
+| **Involves me**, **Mentions me**, **Reviewed by me**, **Not reviewed by me** (off by default) | `involves:@me`, `mentions:@me`, `reviewed-by:@me`, `-reviewed-by:@me`    |
+
+- **Icons and colours**: every chip has an icon. The icon takes the colour of the text unless the chip has a colour: the checks use GitHub's status colours (green **CI passing**, red **CI failing**, yellow **CI running**), and so do your own chips. A coloured chip also uses its colour for the border and a soft background while it is on, so the chips read without colour too (the icons differ).
+- **Chips replace each other**: a chip about who the Pull Request belongs to or waits for (for example **Needs your review**) replaces `author:@me`, `review-requested:@me` or another such word in the search, and the CI chips replace each other. Other search words you typed stay.
+- **Team requests**: GitHub's `review-requested:@me` also matches the teams you belong to. **Needs your review** uses `user-review-requested:@me` (you personally), and **Needs review from your GitHub team** takes the Pull Requests where only a team asked. To see both, use neither chip and type `review-requested:@me`.
+- **Page number**: a chip opens the first page of the new result.
+- **Remember your choice**: in the **Filters** tab turn on **Remember the drafts filter**. When you open a list whose search text says nothing about drafts, the last state you chose with the **Drafts** chip is added to it. A search text that already has `is:draft` or `-is:draft` is left alone. The switch is off by default and needs the **Drafts** chip to be shown. Until you choose, the remembered state is "no drafts". The remembered state is kept in this browser only (it is not in the settings file).
+- **Where**: Pull Request lists only. Issue lists, Discussions, workflow runs and search results do not get the chips.
+- **Choose, order and add chips**: the **Filters** tab of the popup (see below). The bar shows the chips in the order of the tab.
+
+### Your own chips
+
+In the **Filters** tab click **Add a custom chip** and fill in:
+
+- **Name**: up to 30 characters, one line.
+- **Icon**: one of 36 icons.
+- **Colour**: default, green, red, yellow, blue, purple, orange or gray. The colours come from GitHub's theme, so they stay readable in the light, dark and high-contrast themes.
+- **Filter**: GitHub search words, separated by spaces, for example `label:bug -label:wip`, `base:main`, `reviewed-by:@me`, `team-review-requested:ORG/TEAM`, `-author:app/dependabot` or `label:"good first issue"`. It can have up to 10 words and 200 characters (letters outside the English alphabet and quotation marks count double), and quotation marks must be closed. Groups (`OR`, `AND`, `NOT`, parentheses) and `is:pr` are not accepted, and a word typed twice is added once. Hyperfriend checks only this shape; GitHub decides which words exist, so a wrong word gives an empty list.
+
+A custom chip works like the built-in ones: it is on when all its words are in the search text, a click adds them (or removes them when it is on), and the list updates in place. It never clashes with what is already in the search: words of the same single-value kind (`status:`, `review:`, `base:`, `head:`, `milestone:`, `project:`, `sort:`, `language:`) replace each other, the "who" words (`author:`, `review-requested:`, `user-review-requested:`, `reviewed-by:`, `involves:`, `mentions:` and their negations) replace each other, state words (`is:open`, `is:closed`, `is:merged`, `state:open`, ...) replace each other and the `state:open` GitHub starts a list with, and everything else (`label:`, `repo:`, free text) is added next to the rest. In a search that has parentheses or `OR` (typed by you) only the chip's own words are added or removed.
+
+You can have up to 10 custom chips. A new chip joins the end of the bar. Edit a chip with its pencil button; **Delete** in the editor asks once more (**Yes, delete** or **Keep**). If the settings become too large for the browser to sync (8 KB, mostly because of very long templates), saving a chip or importing a file is refused with a message and nothing is changed.
+
 ## Author avatars
 
 - **Who opened it**: in Pull Request lists a small round avatar (16 px) is shown before the author's login, like on other GitHub pages.
@@ -56,18 +97,19 @@ On Mac the keys are shown as symbols (⌃ ⌥ ⇧ ⌘); on Windows and Linux as 
 
 ## Settings popup
 
-The popup has three tabs and a footer with a link to the GitHub repository. The URL hash of `options.html` can open a tab first: `#templates`, `#shortcuts` or `#general`.
+The popup has four tabs and a footer with a link to the GitHub repository. The URL hash of `options.html` can open a tab first: `#templates`, `#shortcuts`, `#filters` or `#general`.
 
 - **GitHub look**: built with Primer React, the design system of GitHub.
 - **Header**: the popup shows the extension icon next to the name.
 - **Templates**: a switch picks the link type (Pull Request, Issue, Discussion or workflow run; a dot marks a template you changed). The template editor shows each placeholder as a chip and highlights the part in `[square brackets]` that becomes the link. Click a quick placeholder or open **All placeholders** to insert one at the caret; **Reset to default** appears when the template differs from the default. **You will paste** shows the resulting link text for a sample item (live preview). Changes are saved about 300 ms after you stop typing, with a "Saved" status.
 - **Shortcuts**: change, turn off or reset the keyboard shortcut (see above). Shortcuts don't work while you type in a text field.
+- **Filters**: two lists. **Shown in the bar** holds the chips of the bar in order: drag a row to move it (or use the arrow buttons, which also work with the keyboard and screen readers and announce the new position), hide a chip with the cross, or edit your own chips with the pencil. **Not shown** lists the other chips, each with a plus button that adds it to the end of the bar. **Add a custom chip** opens the editor (name, icon, colour, filter and a preview), and **Remember the drafts filter** turns on the sticky drafts chip (see [Quick filters](#quick-filters)); it is disabled while the **Drafts** chip is hidden.
 - **General**:
     - **Copy format**: a switch between **Rich link** (default) and **Markdown**, saved at once, with a preview of what is pasted (made with your Pull Request template). The Templates preview shows the same format.
     - **Show author avatars** (on by default), applied immediately.
     - **Enterprise Server domains**: a row that opens a screen to add the domain of your GitHub Enterprise Server (**Add**, **Remove**, a **General** button to go back); the row shows how many domains are added. See [GitHub Enterprise](enterprise.md).
     - **Export** and **Import** share the settings as a file (see above).
-    - **Reset all settings** (at the right of the file buttons) restores the default templates, copy format, shortcuts and display settings after a confirmation ("Reset all settings?").
+    - **Reset all settings** (at the right of the file buttons) restores the default templates, copy format, shortcuts, display settings and filters after a confirmation ("Reset all settings?").
 - **Light and dark themes**: the popup follows the operating system theme.
 
 ## Supported pages
@@ -89,6 +131,6 @@ All pages are on `github.com`.
 
 The keyboard shortcut works on the Issue page, the Discussion page, the workflow run summary page (`/OWNER/REPO/actions/runs/123` and the summary of one attempt, `/attempts/2`; not its job pages) and on the main Pull Request page only (`/OWNER/REPO/pull/12`, the Conversation tab), not on the Pull Request sub-tabs `/files`, `/commits` and `/checks`, even though the copy button is shown there.
 
-Author avatars are added to the Pull Request lists only (the repository and dashboard lists); Issue lists and search results do not get them. Other pages (for example `/OWNER/REPO/issues/new`) are left untouched.
+Author avatars and the quick filter chips are added to the Pull Request lists only (the repository and dashboard lists); Issue lists and search results do not get them. Other pages (for example `/OWNER/REPO/issues/new`) are left untouched.
 
 \* The dashboards are supported by the code but have not been verified on live GitHub pages yet (they require signing in).

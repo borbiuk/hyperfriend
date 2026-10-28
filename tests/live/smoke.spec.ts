@@ -53,6 +53,29 @@ test('should add one copy button per pull request on the list', async ({
 	);
 });
 
+test('should add the quick filter bar right after the search box of the pull request list', async ({
+	page,
+}) => {
+	await page.goto(`https://github.com${PAGES.pullList}`);
+
+	await expect(
+		page.locator(
+			'[role="search"][aria-label="Pull requests"] + [data-hyperfriend="filter-bar"] button'
+		)
+	).toHaveText([
+		'Needs your review',
+		'Needs review from your GitHub team',
+		'Created by you',
+		'Ready to merge',
+		'Drafts: all',
+		'CI passing',
+		'CI failing',
+		'CI running',
+		'Mine, waiting for review',
+		'Mine, changes requested',
+	]);
+});
+
 test('should add the copy button right after the issue number', async ({
 	page,
 }) => {

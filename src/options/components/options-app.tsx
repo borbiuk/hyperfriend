@@ -7,6 +7,7 @@ import { useViewMode } from '../hooks/use-view-mode';
 import '../styles/tabs.css';
 import { DEFAULT_OPTIONS_TAB, parseOptionsHash } from '../utils/options-hash';
 
+import { FiltersPanel } from './filters-panel';
 import { GeneralPanel } from './general-panel';
 import { Logo } from './logo';
 import { ShortcutsPanel } from './shortcuts-panel';
@@ -16,7 +17,7 @@ import { TemplatesPanel } from './templates-panel';
 const REPOSITORY_URL = 'https://github.com/borbiuk/hyperfriend';
 
 /**
- * Root of the toolbar popup: header, the Templates / Shortcuts / General tabs and footer.
+ * Root of the toolbar popup: header, the Templates / Shortcuts / Filters / General tabs and footer.
  * The URL hash selects the first tab (see parseOptionsHash), e.g. `#general`.
  */
 export function OptionsApp() {
@@ -88,6 +89,9 @@ export function OptionsApp() {
 						<UnderlinePanels.Tab value="shortcuts">
 							Shortcuts
 						</UnderlinePanels.Tab>
+						<UnderlinePanels.Tab value="filters">
+							Filters
+						</UnderlinePanels.Tab>
 						<UnderlinePanels.Tab value="general">
 							General
 						</UnderlinePanels.Tab>
@@ -109,6 +113,12 @@ export function OptionsApp() {
 								config={config}
 								syncEpoch={syncEpoch}
 							/>
+						</UnderlinePanels.Panel>
+						<UnderlinePanels.Panel
+							value="filters"
+							className="hyperfriend-tabs__panel"
+						>
+							<FiltersPanel key={syncEpoch} config={config} />
 						</UnderlinePanels.Panel>
 						<UnderlinePanels.Panel
 							value="general"

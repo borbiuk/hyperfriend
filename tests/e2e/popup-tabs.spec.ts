@@ -2,10 +2,10 @@ import { Page } from '@playwright/test';
 
 import { expect, test } from './fixtures/extension';
 
-// Settings popup (options.html in a tab): the three tabs, the URL hash that picks the first one,
+// Settings popup (options.html in a tab): the four tabs, the URL hash that picks the first one,
 // keyboard navigation between them and a popup height that does not jump.
 
-const TABS = ['Templates', 'Shortcuts', 'General'] as const;
+const TABS = ['Templates', 'Shortcuts', 'Filters', 'General'] as const;
 
 /** URL hash token and a control only that tab shows, per tab */
 const TAB_CASES = [
@@ -20,6 +20,12 @@ const TAB_CASES = [
 		tab: 'Shortcuts',
 		control: 'Copy link shortcut',
 		role: 'button',
+	},
+	{
+		hash: '#filters',
+		tab: 'Filters',
+		control: 'Chips shown in the bar',
+		role: 'list',
 	},
 	{
 		hash: '#general',
@@ -38,7 +44,7 @@ async function mainHeight(options: Page): Promise<number | undefined> {
 	return (await options.getByRole('main').boundingBox())?.height;
 }
 
-test('should show the Templates, Shortcuts and General tabs with Templates selected', async ({
+test('should show the Templates, Shortcuts, Filters and General tabs with Templates selected', async ({
 	openOptions,
 }) => {
 	const options = await openOptions();
@@ -120,6 +126,32 @@ test('should keep the popup height when switching tabs', async ({
 			await expect.poll(() => mainHeight(options)).toBe(height);
 		});
 	}
+});
+
+test("should keep every tab below Chrome's 600 px limit for a toolbar popup", async ({
+	openOptions,
+}) => {
+	const options = await openOptions();
+	// The tabs render after the settings are read: measure only then
+	await expect(options.getByRole('tabpanel')).toHaveAccessibleName(
+		'Templates'
+	);
+
+	// The panels share one cell, so the popup is as tall as the tallest tab
+	expect(await mainHeight(options)).toBeLessThanOrEqual(600);
+});
+
+test("should keep the popup below Chrome's limit while the chip editor shows its error lines", async ({
+	openOptions,
+}) => {
+	const options = await openOptions('#filters');
+	await options.getByRole('button', { name: 'Add a custom chip' }).click();
+	await options.getByRole('button', { name: 'Save', exact: true }).click();
+	await expect(
+		options.getByRole('alert').filter({ hasText: /\S/ })
+	).toHaveCount(2);
+
+	expect(await mainHeight(options)).toBeLessThanOrEqual(600);
 });
 
 test('should log no warnings while loading and switching tabs', async ({

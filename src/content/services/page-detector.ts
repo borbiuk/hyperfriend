@@ -68,6 +68,9 @@ const REPO_LIST_REGEXES = [
 const GLOBAL_LIST_REGEX =
 	/^\/(?:pulls|issues)(?:\/(?:assigned|created|mentioned|review-requested|recent-activity))?\/?$/;
 
+/** Paths of Pull Request lists: the repository ones and the global dashboard (`/pulls`) */
+const PULL_REQUEST_LIST_PATH_REGEX = /^\/(?:[^/]+\/[^/]+\/)?pulls(?:\/|$)/;
+
 /** Search result types that list Pull Requests or Issues */
 const SEARCH_TYPES = new Set(['pullrequests', 'issues']);
 
@@ -154,5 +157,21 @@ export function isDiscussionOrActionsList(
 ): boolean {
 	return DISCUSSION_AND_ACTIONS_LIST_REGEXES.some((regex) =>
 		regex.test(location.pathname)
+	);
+}
+
+/**
+ * Returns whether the page is a Pull Request list: a repository list (`/{owner}/{repo}/pulls`
+ * and its filter sub-paths) or the global dashboard (`/pulls` and its tabs). Search results are
+ * not included: they have their own search form.
+ *
+ * @param location - Location to inspect (defaults to the current page).
+ */
+export function isPullRequestList(
+	location: Location | URL = window.location
+): boolean {
+	return (
+		PULL_REQUEST_LIST_PATH_REGEX.test(location.pathname) &&
+		detectPageKind(location) === PageKind.List
 	);
 }

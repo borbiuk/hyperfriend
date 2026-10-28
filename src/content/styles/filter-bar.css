@@ -1,0 +1,105 @@
+/*
+	Hyperfriend filter bar: a row of toggle chips under the search box of a Pull Request list.
+	Colors come from GitHub's Primer CSS variables with light-theme fallbacks, so it follows
+	GitHub's light and dark themes.
+*/
+
+.hyperfriend-filter-bar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--base-size-8, 8px);
+	margin: var(--base-size-8, 8px) 0;
+}
+
+.hyperfriend-filter-bar__chip {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--base-size-6, 6px);
+	box-sizing: border-box;
+	height: var(--control-small-size, 28px);
+	padding: 0 var(--base-size-12, 12px);
+	border: 1px solid var(--borderColor-default, #d1d9e0);
+	border-radius: 2em;
+	background-color: var(--bgColor-default, #ffffff);
+	color: var(--fgColor-default, #1f2328);
+	font: inherit;
+	font-size: var(--text-body-size-small, 12px);
+	font-weight: 500;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.hyperfriend-filter-bar__chip:hover {
+	background-color: var(--bgColor-muted, #f6f8fa);
+}
+
+.hyperfriend-filter-bar__chip[data-active] {
+	border-color: var(--borderColor-accent-emphasis, #0969da);
+	background-color: var(--bgColor-accent-muted, #ddf4ff);
+	color: var(--fgColor-accent, #0969da);
+}
+
+.hyperfriend-filter-bar__chip:focus-visible {
+	outline: 2px solid var(--focus-outlineColor, #0969da);
+	outline-offset: 1px;
+}
+
+@media (forced-colors: active) {
+	.hyperfriend-filter-bar__chip[data-active] {
+		outline: 2px solid Highlight;
+	}
+}
+
+/*
+	The icon follows the text colour unless the chip has a colour: CI chips and the chips of the user
+	set --hyperfriend-chip-colour from GitHub's theme colours, and the chip uses it while it is on.
+*/
+.hyperfriend-filter-bar__chip svg {
+	flex: none;
+	color: var(--hyperfriend-chip-colour, currentColor);
+}
+
+.hyperfriend-filter-bar__chip[data-colour='green'] {
+	--hyperfriend-chip-colour: var(--fgColor-success, #1a7f37);
+}
+
+.hyperfriend-filter-bar__chip[data-colour='red'] {
+	--hyperfriend-chip-colour: var(--fgColor-danger, #d1242f);
+}
+
+.hyperfriend-filter-bar__chip[data-colour='yellow'] {
+	--hyperfriend-chip-colour: var(--fgColor-attention, #9a6700);
+}
+
+.hyperfriend-filter-bar__chip[data-colour='blue'] {
+	--hyperfriend-chip-colour: var(--fgColor-accent, #0969da);
+}
+
+.hyperfriend-filter-bar__chip[data-colour='purple'] {
+	--hyperfriend-chip-colour: var(--fgColor-done, #8250df);
+}
+
+.hyperfriend-filter-bar__chip[data-colour='orange'] {
+	--hyperfriend-chip-colour: var(--fgColor-severe, #bc4c00);
+}
+
+.hyperfriend-filter-bar__chip[data-colour='gray'] {
+	--hyperfriend-chip-colour: var(--fgColor-muted, #59636e);
+}
+
+.hyperfriend-filter-bar__chip[data-colour][data-active] {
+	border-color: var(--hyperfriend-chip-colour);
+	background-color: color-mix(
+		in srgb,
+		var(--hyperfriend-chip-colour) 14%,
+		transparent
+	);
+	color: var(--fgColor-default, #1f2328);
+}
+
+@media (forced-colors: active) {
+	.hyperfriend-filter-bar__chip svg {
+		color: currentColor;
+	}
+}

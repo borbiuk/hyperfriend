@@ -5,6 +5,8 @@ import {
 	ShortcutType,
 } from '@shared/models';
 
+import { DEFAULT_FILTER_CHIPS } from './filter-chips';
+
 /**
  * Key under which the config is stored in chrome.storage.sync.
  */
@@ -27,6 +29,11 @@ export const DEFAULT_CONFIG: ConfigModel = {
 	},
 	display: {
 		authorAvatars: true,
+	},
+	filters: {
+		chips: [...DEFAULT_FILTER_CHIPS],
+		sticky: { drafts: false },
+		custom: [],
 	},
 };
 

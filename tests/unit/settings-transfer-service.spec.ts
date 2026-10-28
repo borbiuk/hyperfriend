@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import {
 	ConfigModel,
+	FilterChipId,
 	LinkFormat,
 	LinkType,
 	ShortcutType,
@@ -28,6 +29,19 @@ const CUSTOM_CONFIG: ConfigModel = {
 		},
 	},
 	display: { authorAvatars: false },
+	filters: {
+		chips: [FilterChipId.NeedsYourReview, FilterChipId.NoReviewer],
+		sticky: { drafts: true },
+		custom: [
+			{
+				id: 'custom-abcd1234',
+				label: 'Bugs',
+				icon: 'bug',
+				colour: 'red',
+				query: 'label:bug -label:wip',
+			},
+		],
+	},
 };
 
 const EXPORTED_AT = new Date('2026-10-21T08:30:00.000Z');
@@ -45,12 +59,12 @@ test('should name the exported file hyperfriend-settings.json', () => {
 	expect(SETTINGS_FILE_NAME).toBe('hyperfriend-settings.json');
 });
 
-test('should serialize the config as pretty schema 4 JSON with the given export time', () => {
+test('should serialize the config as pretty schema 5 JSON with the given export time', () => {
 	expect(serializeSettings(CUSTOM_CONFIG, EXPORTED_AT)).toBe(
 		[
 			'{',
 			'  "app": "hyperfriend",',
-			'  "schemaVersion": 4,',
+			'  "schemaVersion": 5,',
 			'  "exportedAt": "2026-10-21T08:30:00.000Z",',
 			'  "templates": {',
 			'    "pull-request": "{{pr_name}} [#{{pr_number}}] \\"draft\\"",',
@@ -71,6 +85,24 @@ test('should serialize the config as pretty schema 4 JSON with the given export 
 			'  },',
 			'  "display": {',
 			'    "authorAvatars": false',
+			'  },',
+			'  "filters": {',
+			'    "chips": [',
+			'      "needs-your-review",',
+			'      "no-reviewer"',
+			'    ],',
+			'    "sticky": {',
+			'      "drafts": true',
+			'    },',
+			'    "custom": [',
+			'      {',
+			'        "id": "custom-abcd1234",',
+			'        "label": "Bugs",',
+			'        "icon": "bug",',
+			'        "colour": "red",',
+			'        "query": "label:bug -label:wip"',
+			'      }',
+			'    ]',
 			'  }',
 			'}',
 			'',
@@ -106,6 +138,19 @@ test('should export a stored template with a tab as one line that imports again'
 				},
 			},
 			display: { authorAvatars: false },
+			filters: {
+				chips: [FilterChipId.NeedsYourReview, FilterChipId.NoReviewer],
+				sticky: { drafts: true },
+				custom: [
+					{
+						id: 'custom-abcd1234',
+						label: 'Bugs',
+						icon: 'bug',
+						colour: 'red',
+						query: 'label:bug -label:wip',
+					},
+				],
+			},
 		},
 	});
 });
@@ -138,6 +183,19 @@ test('should import an exported old template whose escaped brackets make it long
 				},
 			},
 			display: { authorAvatars: false },
+			filters: {
+				chips: [FilterChipId.NeedsYourReview, FilterChipId.NoReviewer],
+				sticky: { drafts: true },
+				custom: [
+					{
+						id: 'custom-abcd1234',
+						label: 'Bugs',
+						icon: 'bug',
+						colour: 'red',
+						query: 'label:bug -label:wip',
+					},
+				],
+			},
 		},
 	});
 });
@@ -176,6 +234,19 @@ test('should read back every setting of an exported file', () => {
 				},
 			},
 			display: { authorAvatars: false },
+			filters: {
+				chips: [FilterChipId.NeedsYourReview, FilterChipId.NoReviewer],
+				sticky: { drafts: true },
+				custom: [
+					{
+						id: 'custom-abcd1234',
+						label: 'Bugs',
+						icon: 'bug',
+						colour: 'red',
+						query: 'label:bug -label:wip',
+					},
+				],
+			},
 		},
 	});
 });
@@ -415,6 +486,156 @@ const SUCCESS_CASES: ParseCase[] = [
 		},
 	},
 	{
+		title: 'should read the filters of a schema 5 file',
+		text: settingsFile({
+			schemaVersion: 5,
+			filters: {
+				chips: ['drafts', 'needs-your-review'],
+				sticky: { drafts: true },
+			},
+		}),
+		expected: {
+			ok: true,
+			settings: {
+				filters: {
+					chips: [FilterChipId.Drafts, FilterChipId.NeedsYourReview],
+					sticky: { drafts: true },
+				},
+			},
+		},
+	},
+	{
+		title: 'should read an empty chip list of a schema 5 file',
+		text: settingsFile({
+			schemaVersion: 5,
+			filters: { chips: [] },
+		}),
+		expected: {
+			ok: true,
+			settings: { filters: { chips: [] } },
+		},
+	},
+	{
+		title: 'should read the custom chips of a schema 5 file, with a cleaned name and filter',
+		text: settingsFile({
+			schemaVersion: 5,
+			filters: {
+				chips: ['custom-abcd1234', 'drafts'],
+				custom: [
+					{
+						id: 'custom-abcd1234',
+						label: '  Bugs  ',
+						icon: 'bug',
+						colour: 'red',
+						query: ' label:bug   -label:wip ',
+					},
+				],
+			},
+		}),
+		expected: {
+			ok: true,
+			settings: {
+				filters: {
+					chips: ['custom-abcd1234', 'drafts'],
+					custom: [
+						{
+							id: 'custom-abcd1234',
+							label: 'Bugs',
+							icon: 'bug',
+							colour: 'red',
+							query: 'label:bug -label:wip',
+						},
+					],
+				},
+			},
+		},
+	},
+	{
+		title: 'should accept exactly 10 custom chips',
+		text: settingsFile({
+			schemaVersion: 5,
+			filters: {
+				custom: Array.from({ length: 10 }, (_, index) => ({
+					id: `custom-abcd${String(1000 + index)}`,
+					label: `Chip ${index}`,
+					icon: 'bug',
+					colour: 'red',
+					query: 'label:bug',
+				})),
+			},
+		}),
+		expected: {
+			ok: true,
+			settings: {
+				filters: {
+					custom: Array.from({ length: 10 }, (_, index) => ({
+						id: `custom-abcd${String(1000 + index)}`,
+						label: `Chip ${index}`,
+						icon: 'bug',
+						colour: 'red',
+						query: 'label:bug',
+					})),
+				},
+			},
+		},
+	},
+	{
+		title: 'should accept the id of a custom chip the file does not define',
+		text: settingsFile({
+			schemaVersion: 5,
+			filters: { chips: ['custom-abcd1234'] },
+		}),
+		expected: {
+			ok: true,
+			settings: { filters: { chips: ['custom-abcd1234'] } },
+		},
+	},
+	{
+		title: 'should read an empty custom chip list',
+		text: settingsFile({ schemaVersion: 5, filters: { custom: [] } }),
+		expected: { ok: true, settings: { filters: { custom: [] } } },
+	},
+	{
+		title: 'should ignore a bots list in a schema 5 file',
+		text: settingsFile({
+			schemaVersion: 5,
+			filters: {
+				chips: ['drafts'],
+				sticky: { drafts: false },
+				bots: ['dependabot'],
+			},
+		}),
+		expected: {
+			ok: true,
+			settings: {
+				filters: {
+					chips: [FilterChipId.Drafts],
+					sticky: { drafts: false },
+				},
+			},
+		},
+	},
+	{
+		title: 'should ignore the filters of a schema 4 file, which has none',
+		text: settingsFile({
+			schemaVersion: 4,
+			format: 'rich',
+			filters: { chips: ['drafts'] },
+		}),
+		expected: { ok: true, settings: { format: LinkFormat.Rich } },
+	},
+	{
+		title: 'should reject a schema 4 file that holds only filters as having no settings',
+		text: settingsFile({
+			schemaVersion: 4,
+			filters: { chips: ['drafts'] },
+		}),
+		expected: {
+			ok: false,
+			error: 'The file does not contain any settings.',
+		},
+	},
+	{
 		title: 'should accept a file that starts with a UTF-8 byte order mark',
 		text: `\uFEFF${settingsFile({ schemaVersion: 3, display: { authorAvatars: false } })}`,
 		expected: { ok: true, settings: { display: { authorAvatars: false } } },
@@ -520,9 +741,9 @@ const ERROR_CASES: ParseCase[] = [
 		},
 	},
 	{
-		title: 'should reject schema 5 as created by a newer version',
+		title: 'should reject schema 6 as created by a newer version',
 		text: settingsFile({
-			schemaVersion: 5,
+			schemaVersion: 6,
 			display: { authorAvatars: false },
 		}),
 		expected: {
@@ -779,6 +1000,229 @@ const ERROR_CASES: ParseCase[] = [
 		expected: {
 			ok: false,
 			error: 'Display setting "authorAvatars" must be true or false.',
+		},
+	},
+	{
+		title: 'should reject a filters section that is not an object',
+		text: settingsFile({ schemaVersion: 5, filters: ['drafts'] }),
+		expected: {
+			ok: false,
+			error: 'The "filters" section of the file is not valid.',
+		},
+	},
+	{
+		title: 'should reject a chip list with an unknown filter name',
+		text: settingsFile({
+			schemaVersion: 5,
+			filters: { chips: ['drafts', 'unicorns'] },
+		}),
+		expected: {
+			ok: false,
+			error: 'Filter setting "chips" must be a list of known filter names.',
+		},
+	},
+	{
+		title: 'should reject a chip list that repeats a filter',
+		text: settingsFile({
+			schemaVersion: 5,
+			filters: { chips: ['drafts', 'drafts'] },
+		}),
+		expected: {
+			ok: false,
+			error: 'Filter setting "chips" must be a list of known filter names.',
+		},
+	},
+	{
+		title: 'should reject chips that are not a list',
+		text: settingsFile({
+			schemaVersion: 5,
+			filters: { chips: 'drafts' },
+		}),
+		expected: {
+			ok: false,
+			error: 'Filter setting "chips" must be a list of known filter names.',
+		},
+	},
+	{
+		title: 'should reject a sticky flag that is not a boolean',
+		text: settingsFile({
+			schemaVersion: 5,
+			filters: { sticky: { drafts: 'yes' } },
+		}),
+		expected: {
+			ok: false,
+			error: 'Filter setting "sticky" must hold true or false values.',
+		},
+	},
+	{
+		title: 'should reject custom chips that are not a list',
+		text: settingsFile({ schemaVersion: 5, filters: { custom: 'bug' } }),
+		expected: {
+			ok: false,
+			error: 'Filter setting "custom" must be a list of chips.',
+		},
+	},
+	{
+		title: 'should reject more than 10 custom chips',
+		text: settingsFile({
+			schemaVersion: 5,
+			filters: {
+				custom: Array.from({ length: 11 }, (_, index) => ({
+					id: `custom-abcd${String(1000 + index)}`,
+					label: `Chip ${index}`,
+					icon: 'bug',
+					colour: 'red',
+					query: 'label:bug',
+				})),
+			},
+		}),
+		expected: {
+			ok: false,
+			error: 'Filter setting "custom" must hold up to 10 chips.',
+		},
+	},
+	{
+		title: 'should reject a custom chip with a bad id',
+		text: settingsFile({
+			schemaVersion: 5,
+			filters: {
+				custom: [
+					{
+						id: 'my-chip',
+						label: 'Bugs',
+						icon: 'bug',
+						colour: 'red',
+						query: 'label:bug',
+					},
+				],
+			},
+		}),
+		expected: {
+			ok: false,
+			error: 'Custom chip "Bugs" has no valid id.',
+		},
+	},
+	{
+		title: 'should reject a custom chip with an unknown icon',
+		text: settingsFile({
+			schemaVersion: 5,
+			filters: {
+				custom: [
+					{
+						id: 'custom-abcd1234',
+						label: 'Bugs',
+						icon: 'unicorn',
+						colour: 'red',
+						query: 'label:bug',
+					},
+				],
+			},
+		}),
+		expected: {
+			ok: false,
+			error: 'Custom chip "Bugs" has an unknown icon.',
+		},
+	},
+	{
+		title: 'should reject a custom chip with an unknown colour',
+		text: settingsFile({
+			schemaVersion: 5,
+			filters: {
+				custom: [
+					{
+						id: 'custom-abcd1234',
+						label: 'Bugs',
+						icon: 'bug',
+						colour: 'pink',
+						query: 'label:bug',
+					},
+				],
+			},
+		}),
+		expected: {
+			ok: false,
+			error: 'Custom chip "Bugs" has an unknown colour.',
+		},
+	},
+	{
+		title: 'should reject a custom chip with an empty filter',
+		text: settingsFile({
+			schemaVersion: 5,
+			filters: {
+				custom: [
+					{
+						id: 'custom-abcd1234',
+						label: 'Bugs',
+						icon: 'bug',
+						colour: 'red',
+						query: '  ',
+					},
+				],
+			},
+		}),
+		expected: {
+			ok: false,
+			error: 'The filter of custom chip "Bugs" is not valid: Enter at least one search word.',
+		},
+	},
+	{
+		title: 'should reject a custom chip with a name over 30 characters',
+		text: settingsFile({
+			schemaVersion: 5,
+			filters: {
+				custom: [
+					{
+						id: 'custom-abcd1234',
+						label: 'x'.repeat(31),
+						icon: 'bug',
+						colour: 'red',
+						query: 'label:bug',
+					},
+				],
+			},
+		}),
+		expected: {
+			ok: false,
+			error: 'The name of custom chip "custom-abcd1234" must be one line of up to 30 characters.',
+		},
+	},
+	{
+		title: 'should reject two custom chips with the same id',
+		text: settingsFile({
+			schemaVersion: 5,
+			filters: {
+				custom: [
+					{
+						id: 'custom-abcd1234',
+						label: 'A',
+						icon: 'bug',
+						colour: 'red',
+						query: 'label:a',
+					},
+					{
+						id: 'custom-abcd1234',
+						label: 'B',
+						icon: 'bug',
+						colour: 'red',
+						query: 'label:b',
+					},
+				],
+			},
+		}),
+		expected: {
+			ok: false,
+			error: 'Custom chip id "custom-abcd1234" is used twice.',
+		},
+	},
+	{
+		title: 'should reject a chip list with an id that is neither built in nor shaped like a custom one',
+		text: settingsFile({
+			schemaVersion: 5,
+			filters: { chips: ['custom-ABC'] },
+		}),
+		expected: {
+			ok: false,
+			error: 'Filter setting "chips" must be a list of known filter names.',
 		},
 	},
 	{

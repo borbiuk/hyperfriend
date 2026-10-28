@@ -104,6 +104,22 @@ export interface GitHubRouteOptions {
 }
 
 /**
+ * The snapshot of a repository Pull Request list for the same list with a search text (`?q=...`):
+ * the quick filters open such addresses, and the file is the same, because the content script
+ * reads the filters from the address.
+ *
+ * @param url - Requested URL.
+ * @returns The snapshot file, or `undefined` when the request is not a filtered Pull Request list.
+ */
+function filteredListSnapshot(url: URL): string | undefined {
+	if (!url.searchParams.has('q') || !url.pathname.endsWith('/pulls')) {
+		return undefined;
+	}
+
+	return INDEX.pages[url.pathname];
+}
+
+/**
  * Serves github.com (and the fake Enterprise domains) from the saved snapshots and keeps every other
  * host offline. The page URL stays real, so the content script (matches https://github.com/*, or the
  * script the background registers for a granted domain) is injected as usual.
@@ -138,7 +154,9 @@ export async function routeGitHub(
 				return;
 			}
 
-			const file = INDEX.pages[url.pathname + url.search];
+			const file =
+				INDEX.pages[url.pathname + url.search] ??
+				filteredListSnapshot(url);
 			if (!file) {
 				unplanned.push(url.href);
 				await route.fulfill({ status: 404, body: '' });
