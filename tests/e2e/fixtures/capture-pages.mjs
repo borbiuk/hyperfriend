@@ -471,8 +471,8 @@ try {
 		if (kind === 'run') {
 			// The first finished run of the run list (captured before this page) whose name differs from
 			// its workflow (a scheduled run is named after its workflow, which would hide a mix-up
-			// of the two) and that ran on a branch. The list row must show the workflow: a row without
-			// it (for example a Dependabot run) has a workflow only on its page, so the two would differ
+			// of the two) and that ran on a branch. The list row and the page must both show the
+			// workflow, otherwise the two would differ
 			const isCandidate = (item) =>
 				/^(completed|failed|cancel)/i.test(item.status ?? '') &&
 				item.workflow &&
@@ -484,8 +484,28 @@ try {
 					delete index.items[key];
 				}
 			}
+			// A run of a dynamic workflow (for example Dependabot) shows its workflow in the row but
+			// not in the header of its page, so the page is checked too (a few candidates per list page)
+			const findRun = async (items) => {
+				for (const item of items.filter(isCandidate).slice(0, 5)) {
+					await page.goto(
+						`https://github.com/react/react/actions/runs/${item.runId}`,
+						{ waitUntil: 'domcontentloaded' }
+					);
+					await page
+						.locator('h1.PageHeader-title')
+						.first()
+						.waitFor({ state: 'attached' });
+					await waitForStableDom(page);
+					if ((await page.evaluate(readRunMetadata)).workflow) {
+						return item;
+					}
+				}
+
+				return undefined;
+			};
 			let listKey = '/react/react/actions';
-			let finished = index.items[listKey]?.find(isCandidate);
+			let finished = await findRun(index.items[listKey] ?? []);
 			// The first page can hold no such run (for example, only fork pull request runs that wait
 			// for approval), so older pages of the list are read too. Their HTML is not saved, but the
 			// rows of the page with the run are, so tests can check the run against its list row
@@ -502,7 +522,7 @@ try {
 					.waitFor({ state: 'attached' });
 				await waitForStableDom(page);
 				const items = await page.evaluate(readRunItems);
-				finished = items.find(isCandidate);
+				finished = await findRun(items);
 				if (finished) {
 					index.items[listKey] = items;
 				}
