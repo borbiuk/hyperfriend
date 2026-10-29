@@ -9,12 +9,30 @@
 		"/vercel/next.js/discussions": "discussion-list.html",
 		"/vercel/next.js/discussions/10640": "discussion.html",
 		"/react/react/actions": "run-list.html",
-		"/react/react/actions/runs/40793761492": "run.html",
+		"/react/react/actions/runs/40836078999": "run.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": "search-pulls.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=issues": "search-issues.html"
 	},
 	"items": {
 		"/react/react/pulls": [
+			{
+				"number": 38034,
+				"title": "View Transitions: update error message classification for Chrome 153",
+				"author": "sophiebits",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38033,
+				"title": "[rust-compiler] Don't emit hook guards for calls in forest mode",
+				"author": "2SinceJuly",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
 			{
 				"number": 38032,
 				"title": "[Fiber] Restore the previous act queue when an act scope throws",
@@ -211,26 +229,6 @@
 				"labels": [
 					"CLA Signed"
 				]
-			},
-			{
-				"number": 37998,
-				"title": "[DOM] Re-enable events while a View Transition is waiting to start",
-				"author": "1-DARK",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 37993,
-				"title": "Bump electron from 23.1.2 to 42.11.16",
-				"author": "dependabot[bot]",
-				"state": "open",
-				"labels": [
-					"CLA Signed",
-					"dependencies",
-					"javascript"
-				]
 			}
 		],
 		"/react/react/pull/9713": [
@@ -267,6 +265,12 @@
 			}
 		],
 		"/react/react/issues": [
+			{
+				"number": 38035,
+				"title": "Bug: a transition waits for useDeferredValue value instead of committing initialValue — markRootSuspended clears a ping on an entangled lane (19.3)",
+				"author": "skam123",
+				"state": "open"
+			},
 			{
 				"number": 38031,
 				"title": "Bug: act leaves its queue installed when the callback throws, so later updates outside act never render",
@@ -442,12 +446,6 @@
 				"title": "Transition never commits: a ping from a synchronously resolving Flight chunk is dropped during render (RootSuspendedWithDelay)",
 				"author": "Minnyat",
 				"state": "open"
-			},
-			{
-				"number": 37804,
-				"title": "Bug: react-refresh retains roots that unmount before their first render (StrictMode), same leak as #36379",
-				"author": "amosvizer",
-				"state": "open"
 			}
 		],
 		"/react/react/issues/10": [
@@ -469,7 +467,61 @@
 				"number": 100787,
 				"title": "Upgrading from Next.js 15 to 16: what's blocking you?",
 				"author": "icyJoseph",
-				"category": "💬 Feedback"
+				"category": "Feedback"
+			},
+			{
+				"number": 100880,
+				"title": "Turbopack Error: Resource path \"src/components/About.jsx\" needs to be on project filesystem \"Documents/Marketing-portfolio\"",
+				"author": "ismailgito",
+				"category": "Turbopack Error Report"
+			},
+			{
+				"number": 85960,
+				"title": "I set up Playwright tests in a TurboRepo project using Next.js, but the tests often fail — is it just me?",
+				"author": "chbaefront",
+				"category": "Help"
+			},
+			{
+				"number": 72538,
+				"title": "How to perform normal page navigation with the Link tag",
+				"author": "fushihara",
+				"category": "Help"
+			},
+			{
+				"number": 100864,
+				"title": "Guidance on bundled Undici and Zod versions in Next.js 16.4.3",
+				"author": "abensemann",
+				"category": "Help"
+			},
+			{
+				"number": 100817,
+				"title": "Readable stack traces from Next.js production builds without shipping source maps",
+				"author": "virajrakholiya",
+				"category": "Show and tell"
+			},
+			{
+				"number": 89020,
+				"title": "How to support CSS localization in a Next.js App Router application?",
+				"author": "4zuko",
+				"category": "Help"
+			},
+			{
+				"number": 100865,
+				"title": "Using NEXT_OTEL_PERFORMANCE_PREFIX",
+				"author": "erkde",
+				"category": "Triage"
+			},
+			{
+				"number": 71709,
+				"title": "PnP support for Turbopack",
+				"author": "martinjlowm",
+				"category": "Ideas"
+			},
+			{
+				"number": 100868,
+				"title": "Turbopack Error: Access is denied. (os error 5)",
+				"author": "343-Htoo",
+				"category": "Turbopack Error Report"
 			},
 			{
 				"number": 100787,
@@ -494,12 +546,6 @@
 				"title": "Turbopack Error: Failed to write page endpoint /[locale]/index",
 				"author": "zGrav",
 				"category": "Turbopack Error Report"
-			},
-			{
-				"number": 100817,
-				"title": "Readable stack traces from Next.js production builds without shipping source maps",
-				"author": "virajrakholiya",
-				"category": "Show and tell"
 			},
 			{
 				"number": 99822,
@@ -572,54 +618,6 @@
 				"title": "Learned to code? Practise spotting mistakes without hints (Next.js app)",
 				"author": "Anas127",
 				"category": "Show and tell"
-			},
-			{
-				"number": 72538,
-				"title": "How to perform normal page navigation with the Link tag",
-				"author": "fushihara",
-				"category": "Help"
-			},
-			{
-				"number": 100762,
-				"title": "A copyable public FAQ fixture in a Next.js 16 lab, with scoped CSS and source comparison checks",
-				"author": "oralabteam",
-				"category": "Show and tell"
-			},
-			{
-				"number": 100646,
-				"title": "[CLI / Windows] UTF-8 glyphs (▲, ✓, ·) render as mojibake (Γû▓, Γ£ô, ┬╖) under default OEM code page (CP437)",
-				"author": "PratikCreates",
-				"category": "Triage"
-			},
-			{
-				"number": 100731,
-				"title": "Turbopack Error: failed to create whole tree",
-				"author": "rakeebhasan09",
-				"category": "Turbopack Error Report"
-			},
-			{
-				"number": 11990,
-				"title": "How to serve static files from a graphql yoga server? Or how to save files from graphql to next.js' public folder?",
-				"author": "jamestrenda",
-				"category": "Help"
-			},
-			{
-				"number": 100361,
-				"title": "Nextjs + Plugin Architecture - Is it possible to dynamically load compiled components in runtime?",
-				"author": "HybridSolutions",
-				"category": "Help"
-			},
-			{
-				"number": 89181,
-				"title": "Turbopack and raw svg",
-				"author": "D-Thrane",
-				"category": "Help"
-			},
-			{
-				"number": 100698,
-				"title": "Help pls",
-				"author": "komlodilorand",
-				"category": "Help"
 			}
 		],
 		"/vercel/next.js/discussions/10640": [
@@ -632,208 +630,207 @@
 		],
 		"/react/react/actions": [
 			{
-				"number": 19801,
-				"runId": 40793918634,
+				"number": 22393,
+				"runId": 40863277060,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 19812,
+				"runId": 40863002309,
 				"title": "(Shared) Manage stale issues and PRs",
 				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 2336,
-				"runId": 40793766250,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 20604,
-				"runId": 40793761492,
-				"title": "[Fiber] Restore the previous act queue when an act scope throws",
-				"workflow": "(Shared) Lint",
+				"number": 22392,
+				"runId": 40855564879,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
-				"branch": "zhoubiao188:scan-2026-10-29"
+				"branch": "main"
 			},
 			{
-				"number": 14521,
-				"runId": 40793761475,
-				"title": "[Fiber] Restore the previous act queue when an act scope throws",
-				"workflow": "(Runtime) Build and Test",
-				"status": "currently running",
-				"branch": "zhoubiao188:scan-2026-10-29"
-			},
-			{
-				"number": 3117,
-				"runId": 40793761448,
-				"title": "[Fiber] Restore the previous act queue when an act scope throws",
-				"workflow": "(Runtime) Discord Notify",
-				"status": "completed successfully"
-			},
-			{
-				"number": 5384,
-				"runId": 40793761447,
-				"title": "[Fiber] Restore the previous act queue when an act scope throws",
-				"workflow": "(Shared) Label Core Team PRs",
-				"status": "completed successfully"
-			},
-			{
-				"number": 10889,
-				"runId": 40793761386,
-				"title": "[Fiber] Restore the previous act queue when an act scope throws",
-				"workflow": "(Runtime) ESLint Plugin E2E",
+				"number": 19811,
+				"runId": 40855245503,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
-				"branch": "zhoubiao188:scan-2026-10-29"
+				"branch": "main"
 			},
 			{
-				"number": 840,
-				"runId": 40791598451,
-				"title": "(DevTools) Regression Tests",
-				"workflow": "(DevTools) Regression Tests",
+				"number": 1004,
+				"runId": 40854309966,
+				"title": "npm_and_yarn in /fixtures/flight-esm for body-parser - Update #1662819643",
+				"workflow": "Dependabot Updates",
 				"status": "failed",
 				"branch": "main"
 			},
 			{
-				"number": 2318,
-				"runId": 40791162564,
-				"title": "(Shared) Cleanup Stale Branch Caches",
-				"workflow": "(Shared) Cleanup Stale Branch Caches",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22381,
-				"runId": 40785351095,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19800,
-				"runId": 40785108750,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 2774,
-				"runId": 40779784639,
-				"title": "(Runtime) Commit Artifacts for Meta WWW and fbsource V2",
-				"workflow": "(Runtime) Commit Artifacts for Meta WWW and fbsource V2",
+				"number": 2344,
+				"runId": 40848102432,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
 				"status": "completed successfully"
 			},
 			{
-				"number": 2335,
-				"runId": 40779784629,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "skipped"
-			},
-			{
-				"number": 2334,
-				"runId": 40779207357,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "skipped"
-			},
-			{
-				"number": 2468,
-				"runId": 40779199935,
-				"title": "[rust-compiler] Fix non-ASCII panic in is_ref_like_name",
-				"workflow": "(Shared) Cleanup Merged Branch Caches",
-				"status": "completed successfully",
-				"branch": "lazerg:fix/issue-38023-ref-like-name-non-ascii"
-			},
-			{
-				"number": 20603,
-				"runId": 40779199222,
-				"title": "[rust-compiler] Fix non-ASCII panic in is_ref_like_name (#38025)",
-				"workflow": "(Shared) Lint",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 9045,
-				"runId": 40779199200,
-				"title": "[rust-compiler] Fix non-ASCII panic in is_ref_like_name (#38025)",
-				"workflow": "(Compiler) TypeScript",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 14520,
-				"runId": 40779199190,
-				"title": "[rust-compiler] Fix non-ASCII panic in is_ref_like_name (#38025)",
-				"workflow": "(Runtime) Build and Test",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 9040,
-				"runId": 40779199149,
-				"title": "[rust-compiler] Fix non-ASCII panic in is_ref_like_name (#38025)",
-				"workflow": "(Compiler) Playground",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22380,
-				"runId": 40779199016,
-				"title": "[rust-compiler] Fix non-ASCII panic in is_ref_like_name (#38025)",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 10888,
-				"runId": 40779198995,
-				"title": "[rust-compiler] Fix non-ASCII panic in is_ref_like_name (#38025)",
-				"workflow": "(Runtime) ESLint Plugin E2E",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 1302,
-				"runId": 40779198971,
-				"title": "[rust-compiler] Fix non-ASCII panic in is_ref_like_name (#38025)",
-				"workflow": "React Compiler (Rust)",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22379,
-				"runId": 40777894984,
+				"number": 22391,
+				"runId": 40847876550,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 19799,
-				"runId": 40777592482,
+				"number": 19810,
+				"runId": 40847509930,
 				"title": "(Shared) Manage stale issues and PRs",
 				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 22378,
-				"runId": 40769596787,
+				"number": 22390,
+				"runId": 40840838422,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
-			}
-		],
-		"/react/react/actions/runs/40793761492": [
+			},
 			{
-				"runId": 40793761492,
-				"number": 20604,
-				"title": "[Fiber] Restore the previous act queue when an act scope throws",
+				"number": 19809,
+				"runId": 40840484845,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 2343,
+				"runId": 40836532312,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 2342,
+				"runId": 40836082841,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 14524,
+				"runId": 40836078999,
+				"title": "View Transitions: update error message classification for Chrome 153",
+				"workflow": "(Runtime) Build and Test",
+				"status": "completed successfully",
+				"branch": "sophiebits:sophiebits/view-transition-skip-reasons"
+			},
+			{
+				"number": 20610,
+				"runId": 40836078931,
+				"title": "View Transitions: update error message classification for Chrome 153",
 				"workflow": "(Shared) Lint",
 				"status": "completed successfully",
-				"branch": "zhoubiao188:scan-2026-10-29"
+				"branch": "sophiebits:sophiebits/view-transition-skip-reasons"
+			},
+			{
+				"number": 10892,
+				"runId": 40836078887,
+				"title": "View Transitions: update error message classification for Chrome 153",
+				"workflow": "(Runtime) ESLint Plugin E2E",
+				"status": "completed successfully",
+				"branch": "sophiebits:sophiebits/view-transition-skip-reasons"
+			},
+			{
+				"number": 2341,
+				"runId": 40835925764,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 2340,
+				"runId": 40835520815,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 20609,
+				"runId": 40835513014,
+				"title": "View Transitions: update error message classification for Chrome 153",
+				"workflow": "(Shared) Lint",
+				"status": "completed successfully",
+				"branch": "sophiebits:sophiebits/view-transition-skip-reasons"
+			},
+			{
+				"number": 14523,
+				"runId": 40835512916,
+				"title": "View Transitions: update error message classification for Chrome 153",
+				"workflow": "(Runtime) Build and Test",
+				"status": "failed",
+				"branch": "sophiebits:sophiebits/view-transition-skip-reasons"
+			},
+			{
+				"number": 10891,
+				"runId": 40835512913,
+				"title": "View Transitions: update error message classification for Chrome 153",
+				"workflow": "(Runtime) ESLint Plugin E2E",
+				"status": "completed successfully",
+				"branch": "sophiebits:sophiebits/view-transition-skip-reasons"
+			},
+			{
+				"number": 22389,
+				"runId": 40833986152,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 19808,
+				"runId": 40833671749,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 2339,
+				"runId": 40831804692,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 2338,
+				"runId": 40831086470,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 14522,
+				"runId": 40831082852,
+				"title": "View Transitions: update error message classification for Chrome 153",
+				"workflow": "(Runtime) Build and Test",
+				"status": "failed",
+				"branch": "sophiebits:sophiebits/view-transition-skip-reasons"
+			}
+		],
+		"/react/react/actions/runs/40836078999": [
+			{
+				"runId": 40836078999,
+				"number": 14524,
+				"title": "View Transitions: update error message classification for Chrome 153",
+				"workflow": "(Runtime) Build and Test",
+				"status": "completed successfully",
+				"branch": "sophiebits:sophiebits/view-transition-skip-reasons"
 			}
 		],
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": [
@@ -922,5 +919,5 @@
 		]
 	},
 	"runListPage": "/react/react/actions",
-	"runPage": "/react/react/actions/runs/40793761492"
+	"runPage": "/react/react/actions/runs/40836078999"
 }
