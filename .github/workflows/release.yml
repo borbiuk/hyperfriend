@@ -92,8 +92,8 @@ jobs:
             - name: Name the packages and check their versions
               run: |
                   mkdir -p release
-                  cp artifacts/hyperfriend-build-chrome_*.zip "release/hyperfriend-chrome-$VERSION.zip"
-                  cp artifacts/hyperfriend-build-firefox_*.zip "release/hyperfriend-firefox-$VERSION.zip"
+                  cp artifacts/hyperfriend-*_chrome.zip "release/hyperfriend-chrome-$VERSION.zip"
+                  cp artifacts/hyperfriend-*_firefox.zip "release/hyperfriend-firefox-$VERSION.zip"
                   for browser in chrome firefox; do
                       packaged="$(unzip -p "release/hyperfriend-$browser-$VERSION.zip" manifest.json | jq -r .version)"
                       if [ "$packaged" != "$VERSION" ]; then

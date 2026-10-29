@@ -11,4 +11,4 @@ test-results
 playwright-report
 test-results-live
 playwright-report-live
-hyperfriend-build*
+hyperfriend-*_build_*

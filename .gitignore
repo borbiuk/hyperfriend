@@ -5,7 +5,7 @@ node_modules/
 dist/
 dist-firefox/
 *.zip
-hyperfriend-build*
+hyperfriend-*_build_*
 artifacts/
 
 # JetBrains IDE

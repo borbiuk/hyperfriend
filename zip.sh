@@ -6,6 +6,9 @@ set -euo pipefail
 # The packages are written here (gitignored); the folder is created when it is missing
 output_dir="$(pwd)/artifacts"
 
+# One timestamp for the whole run, so the packages of both browsers share it
+current_date_time=$(date +'%d-%m-%Y_%H:%M:%S')
+
 # Files that will be included to .zip (paths are relative to the build directory)
 include_files=(
 	"assets/logo-16.png"
@@ -37,13 +40,10 @@ create_package() {
 	fi
 	npm run "$build_script" || exit 1
 
-	local current_date_time
-	current_date_time=$(date +'%d-%m-%Y_%H:%M:%S')
-
 	local version
 	version=$(jq -r '.version' "$build_dir/manifest.json")
 
-	local zip_filename="hyperfriend-build-${browser}_${current_date_time}_${version}.zip"
+	local zip_filename="hyperfriend-${version}_build_${current_date_time}_${browser}.zip"
 
 	mkdir -p "$output_dir"
 

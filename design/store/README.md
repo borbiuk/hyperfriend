@@ -34,7 +34,7 @@ Store listing tab:
 | Marquee promo tile    | 1400×560, 24-bit PNG, no alpha | `promo-marquee-1400x560-dark.png` or `promo-marquee-1400x560-light.png` |
 | Description           | text                           | `LISTING.md`                                                            |
 
-The package itself (`artifacts/hyperfriend-build-chrome_*.zip`) comes from `npm run zip` and already contains the extension icons.
+The package itself (`artifacts/hyperfriend-*_build_*_chrome.zip`) comes from `npm run zip` and already contains the extension icons.
 
 ## Promo images
 
