@@ -9,19 +9,155 @@
 		"/vercel/next.js/discussions": "discussion-list.html",
 		"/vercel/next.js/discussions/10640": "discussion.html",
 		"/react/react/actions": "run-list.html",
-		"/react/react/actions/runs/40836078999": "run.html",
+		"/react/react/actions/runs/41039692014": "run.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": "search-pulls.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=issues": "search-issues.html"
 	},
 	"items": {
 		"/react/react/pulls": [
 			{
-				"number": 38034,
-				"title": "View Transitions: update error message classification for Chrome 153",
-				"author": "sophiebits",
+				"number": 38058,
+				"title": "Bump postcss-selector-parser from 6.0.2 to 6.1.5",
+				"author": "dependabot[bot]",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"dependencies",
+					"javascript"
+				]
+			},
+			{
+				"number": 38057,
+				"title": "Bump zod from 4.1.12 to 4.6.6",
+				"author": "dependabot[bot]",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"dependencies",
+					"javascript"
+				]
+			},
+			{
+				"number": 38056,
+				"title": "Bump undici from 5.28.4 to 6.29.1",
+				"author": "dependabot[bot]",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"dependencies",
+					"javascript"
+				]
+			},
+			{
+				"number": 38055,
+				"title": "Safely access form reset and method when shadowed by named inputs",
+				"author": "helmipradita",
 				"state": "open",
 				"labels": [
 					"CLA Signed"
+				]
+			},
+			{
+				"number": 38053,
+				"title": "Add mathDepth and shapeImageThreshold to unitlessNumbers",
+				"author": "helmipradita",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38052,
+				"title": "[Flight] Convert Windows file paths to file:// URLs in fake stack frames",
+				"author": "lazerg",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38051,
+				"title": "Bump undici from 6.23.0 to 6.29.1 in /compiler",
+				"author": "dependabot[bot]",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"dependencies",
+					"javascript"
+				]
+			},
+			{
+				"number": 38050,
+				"title": "[Fiber] Don't reset work stack when updating a different root with a pending commit",
+				"author": "1-DARK",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38048,
+				"title": "[React] Restore actQueue when act callback throws or rejects",
+				"author": "AdamMagued",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38047,
+				"title": "[compiler] Bail out on for..of/for..in loops that assign to an existing variable",
+				"author": "b84330808",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38046,
+				"title": "[DOM] Guard against form control name-clobbering in resetFormInstance and useFormStatus",
+				"author": "ShakilUrRehman21",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38045,
+				"title": "[DOM] Add shapeImageThreshold and missing CSS properties to isUnitlessNumber",
+				"author": "ShakilUrRehman21",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38044,
+				"title": "[DOM] Use SyntheticUIEvent for onResize",
+				"author": "ShakilUrRehman21",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38037,
+				"title": "Fix pinged lane when deferred render suspends",
+				"author": "jianyunyi",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38036,
+				"title": "Bump body-parser from 2.2.0 to 2.4.0 in /compiler",
+				"author": "dependabot[bot]",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"dependencies",
+					"javascript"
 				]
 			},
 			{
@@ -110,125 +246,6 @@
 				"labels": [
 					"CLA Signed"
 				]
-			},
-			{
-				"number": 38018,
-				"title": "[build] Use transform plugins instead of deprecated Babel proposal plugins",
-				"author": "jasontd92",
-				"state": "open"
-			},
-			{
-				"number": 38017,
-				"title": "[DOM] Dedupe modulepreload links that omit the default as type",
-				"author": "zhoubiao188",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38015,
-				"title": "[Flight] Serialize nested Node.js Buffers as binary",
-				"author": "lazerg",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38013,
-				"title": "[19.2.x] Record synchronous render-phase pings while suspended with delay",
-				"author": "amerllica",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38012,
-				"title": "[compiler] Allow ref access in FinalizationRegistry cleanup callbacks",
-				"author": "zhoubiao188",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38011,
-				"title": "[DOM] Treat font-size-adjust and shape-image-threshold as unitless",
-				"author": "zhoubiao188",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38010,
-				"title": "[compiler] Fix purity false positives for closures not called during render",
-				"author": "1-DARK",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38009,
-				"title": "[DOM] Don't insert a stylesheet preload when the style is already inlined as a hoistable <style>",
-				"author": "andriidrok1",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38008,
-				"title": "Hydrate browser-only Suspense fallbacks after client suspension",
-				"author": "superportalmisha",
-				"state": "draft"
-			},
-			{
-				"number": 38005,
-				"title": "Preserve painted SSR Suspense fallback DOM on client re-suspend (Fixes #37620)",
-				"author": "gamgsp",
-				"state": "open"
-			},
-			{
-				"number": 38004,
-				"title": "Bump launch-editor from 2.14.1 to 2.14.2 in /packages/react-devtools-cdt-mcp/fixtures/app",
-				"author": "dependabot[bot]",
-				"state": "open",
-				"labels": [
-					"CLA Signed",
-					"dependencies",
-					"javascript"
-				]
-			},
-			{
-				"number": 38003,
-				"title": "[Flight] Allow dev tooling to provide a scoped evaluator for debug-only eval",
-				"author": "james-elicx",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38001,
-				"title": "[compiler] Don't treat use-named constants and properties as hooks",
-				"author": "SomSamantray",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 37999,
-				"title": "[compiler] Support interpolations in tagged template literals",
-				"author": "NaamuKim",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
 			}
 		],
 		"/react/react/pull/9713": [
@@ -265,6 +282,72 @@
 			}
 		],
 		"/react/react/issues": [
+			{
+				"number": 38054,
+				"title": "Add example of focusing an input using callback refs",
+				"author": "OjasvDixit-Ibotix",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
+			},
+			{
+				"number": 38049,
+				"title": "Bug: useId mismatch after a forked lazy component is replayed during concurrent hydration",
+				"author": "Futurecondos",
+				"state": "open"
+			},
+			{
+				"number": 38043,
+				"title": "Bug: Submitting or resetting forms crashes when form fields are named \"reset\" or \"method\"",
+				"author": "ShakilUrRehman21",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
+			},
+			{
+				"number": 38042,
+				"title": "Bug: shapeImageThreshold and mathDepth have 'px' erroneously appended",
+				"author": "ShakilUrRehman21",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
+			},
+			{
+				"number": 38041,
+				"title": "Bug: onResize does not use SyntheticUIEvent (event.view and event.detail are undefined)",
+				"author": "ShakilUrRehman21",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
+			},
+			{
+				"number": 38040,
+				"title": "Bug: Cross-root context defaults become null when an external-store update cancels a stylesheet-suspended commit",
+				"author": "mattcosta7",
+				"state": "open"
+			},
+			{
+				"number": 38039,
+				"title": "Bug:  [Flight] File system stack trace filenames on Windows are not prefixed with file:// URI scheme",
+				"author": "sujlcodes",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
+			},
+			{
+				"number": 38038,
+				"title": "Bug: Nested FormData in Server Action arguments is returned empty when partId >= 10 due to decimal/hex mismatch",
+				"author": "sujlcodes",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
+			},
 			{
 				"number": 38035,
 				"title": "Bug: a transition waits for useDeferredValue value instead of committing initialValue — markRootSuspended clears a ping on an entangled lane (19.3)",
@@ -392,60 +475,6 @@
 				"labels": [
 					"Status: Unconfirmed"
 				]
-			},
-			{
-				"number": 37881,
-				"title": "Bug: TypeError in CheckStringCoercion typeName() for null-prototype objects in DEV",
-				"author": "ShakilUrRehman21",
-				"state": "open",
-				"labels": [
-					"Status: Unconfirmed"
-				]
-			},
-			{
-				"number": 37874,
-				"title": "[DevTools Bug]: Operation packets accumulate until the first frontend connects",
-				"author": "Elehiggle",
-				"state": "open"
-			},
-			{
-				"number": 37866,
-				"title": "Bug: dev-only \"two <ViewTransition name> mounted at the same time\" warning is a false positive after name changes to undefined/another name",
-				"author": "esershnr",
-				"state": "open"
-			},
-			{
-				"number": 37837,
-				"title": "Bug: Submitting a form before hydration fails when a field is named \"action\"",
-				"author": "christianaurichzm",
-				"state": "open",
-				"labels": [
-					"Status: Unconfirmed"
-				]
-			},
-			{
-				"number": 37833,
-				"title": "[Compiler Bug]: hoisted function declaration memoized without assigning the outer binding (undefined on cache miss)",
-				"author": "drosi94",
-				"state": "open"
-			},
-			{
-				"number": 37830,
-				"title": "Transition never commits: a Flight chunk's synchronous then() pings from inside the render phase while the root is already suspended-with-delay, and the ping is dropped (React 19.2.8, Next 15.5 same-route navigation)",
-				"author": "lloydhelio",
-				"state": "open"
-			},
-			{
-				"number": 37809,
-				"title": "Bug: error recovery is disabled when the recovery retry is only interrupted for selective hydration (regression from #37739)",
-				"author": "8tungi",
-				"state": "open"
-			},
-			{
-				"number": 37805,
-				"title": "Transition never commits: a ping from a synchronously resolving Flight chunk is dropped during render (RootSuspendedWithDelay)",
-				"author": "Minnyat",
-				"state": "open"
 			}
 		],
 		"/react/react/issues/10": [
@@ -470,6 +499,78 @@
 				"category": "Feedback"
 			},
 			{
+				"number": 100199,
+				"title": "Opt out of Next.js's own server error log when onRequestError reports errors",
+				"author": "mhayk",
+				"category": "Ideas"
+			},
+			{
+				"number": 100945,
+				"title": "Turbopack Error: Failed to write app endpoint /(dashboard)/admin/app-access/page",
+				"author": "ajayappscrip",
+				"category": "Turbopack Error Report"
+			},
+			{
+				"number": 100864,
+				"title": "Guidance on bundled Undici and Zod versions in Next.js 16.4.3",
+				"author": "abensemann",
+				"category": "Help"
+			},
+			{
+				"number": 85001,
+				"title": "Error on fetch with stream in nextjs dev with --experimental-flag",
+				"author": "el-frontend",
+				"category": "Help"
+			},
+			{
+				"number": 19653,
+				"title": "how to apply http2 in nextjs?",
+				"author": "yyhan0915",
+				"category": "Help"
+			},
+			{
+				"number": 100817,
+				"title": "Readable stack traces from Next.js production builds without shipping source maps",
+				"author": "virajrakholiya",
+				"category": "Show and tell"
+			},
+			{
+				"number": 100698,
+				"title": "Help pls",
+				"author": "komlodilorand",
+				"category": "Help"
+			},
+			{
+				"number": 100787,
+				"title": "Upgrading from Next.js 15 to 16: what's blocking you?",
+				"author": "icyJoseph",
+				"category": "Feedback"
+			},
+			{
+				"number": 99137,
+				"title": "Improve readability of internationalized URLs in development request logs",
+				"author": "m-elagamy",
+				"category": "Ideas"
+			},
+			{
+				"number": 95632,
+				"title": "Hydration mismatch caused by browser extension injecting DOM before React hydration",
+				"author": "talha959",
+				"category": "App Router"
+			},
+			{
+				"number": 54516,
+				"title": "How to cancel a server action?",
+				"author": "nbouvrette",
+				"category": "Help"
+			},
+			{
+				"number": 100883,
+				"title": "Turbopack Error: Failed to write app endpoint /page",
+				"author": "Sourya3-14",
+				"category": "Turbopack Error Report"
+			},
+			{
 				"number": 100880,
 				"title": "Turbopack Error: Resource path \"src/components/About.jsx\" needs to be on project filesystem \"Documents/Marketing-portfolio\"",
 				"author": "ismailgito",
@@ -486,18 +587,6 @@
 				"title": "How to perform normal page navigation with the Link tag",
 				"author": "fushihara",
 				"category": "Help"
-			},
-			{
-				"number": 100864,
-				"title": "Guidance on bundled Undici and Zod versions in Next.js 16.4.3",
-				"author": "abensemann",
-				"category": "Help"
-			},
-			{
-				"number": 100817,
-				"title": "Readable stack traces from Next.js production builds without shipping source maps",
-				"author": "virajrakholiya",
-				"category": "Show and tell"
 			},
 			{
 				"number": 89020,
@@ -522,12 +611,6 @@
 				"title": "Turbopack Error: Access is denied. (os error 5)",
 				"author": "343-Htoo",
 				"category": "Turbopack Error Report"
-			},
-			{
-				"number": 100787,
-				"title": "Upgrading from Next.js 15 to 16: what's blocking you?",
-				"author": "icyJoseph",
-				"category": "Feedback"
 			},
 			{
 				"number": 100786,
@@ -564,60 +647,6 @@
 				"title": "Trying to use puppeteer in vercel deployment",
 				"author": "abhishekmg",
 				"category": "Help"
-			},
-			{
-				"number": 97485,
-				"title": "RSC payload served from browser disk cache after router cache is cleared by a mutation",
-				"author": "VladSmirnou",
-				"category": "Triage"
-			},
-			{
-				"number": 100516,
-				"title": "Turbopack Error: [project]/node_modules/powershell-utils/index.js [app-rsc] (ecmascript)",
-				"author": "Svish",
-				"category": "Turbopack Error Report"
-			},
-			{
-				"number": 93689,
-				"title": "cacheComponents and theming",
-				"author": "MakakWasTaken",
-				"category": "Help"
-			},
-			{
-				"number": 100687,
-				"title": "Registration Phone Verification Blocked",
-				"author": "lance0902",
-				"category": "Help"
-			},
-			{
-				"number": 93267,
-				"title": "Add Android arm64 SWC binary support",
-				"author": "Zohaib8090",
-				"category": "Ideas"
-			},
-			{
-				"number": 100804,
-				"title": "Feature request: configurable debounce / pause for the dev watcher (AI coding agents trigger cascading recompiles)",
-				"author": "CarlosAllberto",
-				"category": "Ideas"
-			},
-			{
-				"number": 100795,
-				"title": "Turbopack Error: Failed to write app endpoint /(authenticated)/api/chat/route",
-				"author": "sironjuh",
-				"category": "Turbopack Error Report"
-			},
-			{
-				"number": 86731,
-				"title": "Next.js bundle analyzer feedback",
-				"author": "timneutkens",
-				"category": "Show and tell"
-			},
-			{
-				"number": 100794,
-				"title": "Learned to code? Practise spotting mistakes without hints (Next.js app)",
-				"author": "Anas127",
-				"category": "Show and tell"
 			}
 		],
 		"/vercel/next.js/discussions/10640": [
@@ -630,207 +659,200 @@
 		],
 		"/react/react/actions": [
 			{
-				"number": 22393,
-				"runId": 40863277060,
+				"number": 22419,
+				"runId": 41045976135,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 19812,
-				"runId": 40863002309,
+				"number": 19836,
+				"runId": 41045750625,
 				"title": "(Shared) Manage stale issues and PRs",
 				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 22392,
-				"runId": 40855564879,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19811,
-				"runId": 40855245503,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 1004,
-				"runId": 40854309966,
-				"title": "npm_and_yarn in /fixtures/flight-esm for body-parser - Update #1662819643",
-				"workflow": "Dependabot Updates",
-				"status": "failed",
-				"branch": "main"
-			},
-			{
-				"number": 2344,
-				"runId": 40848102432,
+				"number": 2381,
+				"runId": 41040555833,
 				"title": "(Runtime) Sizebot Comment",
 				"workflow": "(Runtime) Sizebot Comment",
 				"status": "completed successfully"
 			},
 			{
-				"number": 22391,
-				"runId": 40847876550,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19810,
-				"runId": 40847509930,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22390,
-				"runId": 40840838422,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19809,
-				"runId": 40840484845,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 2343,
-				"runId": 40836532312,
+				"number": 2380,
+				"runId": 41040442474,
 				"title": "(Runtime) Sizebot Comment",
 				"workflow": "(Runtime) Sizebot Comment",
 				"status": "completed successfully"
 			},
 			{
-				"number": 2342,
-				"runId": 40836082841,
+				"number": 2379,
+				"runId": 41040407522,
 				"title": "(Runtime) Sizebot Comment",
 				"workflow": "(Runtime) Sizebot Comment",
 				"status": "completed successfully"
 			},
 			{
-				"number": 14524,
-				"runId": 40836078999,
-				"title": "View Transitions: update error message classification for Chrome 153",
+				"number": 2378,
+				"runId": 41039697188,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 14548,
+				"runId": 41039692014,
+				"title": "Bump postcss-selector-parser from 6.0.2 to 6.1.5",
 				"workflow": "(Runtime) Build and Test",
 				"status": "completed successfully",
-				"branch": "sophiebits:sophiebits/view-transition-skip-reasons"
+				"branch": "dependabot/npm_and_yarn/postcss-selector-parser-6.1.5"
 			},
 			{
-				"number": 20610,
-				"runId": 40836078931,
-				"title": "View Transitions: update error message classification for Chrome 153",
-				"workflow": "(Shared) Lint",
-				"status": "completed successfully",
-				"branch": "sophiebits:sophiebits/view-transition-skip-reasons"
-			},
-			{
-				"number": 10892,
-				"runId": 40836078887,
-				"title": "View Transitions: update error message classification for Chrome 153",
+				"number": 10916,
+				"runId": 41039691586,
+				"title": "Bump postcss-selector-parser from 6.0.2 to 6.1.5",
 				"workflow": "(Runtime) ESLint Plugin E2E",
 				"status": "completed successfully",
-				"branch": "sophiebits:sophiebits/view-transition-skip-reasons"
+				"branch": "dependabot/npm_and_yarn/postcss-selector-parser-6.1.5"
 			},
 			{
-				"number": 2341,
-				"runId": 40835925764,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 2340,
-				"runId": 40835520815,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 20609,
-				"runId": 40835513014,
-				"title": "View Transitions: update error message classification for Chrome 153",
+				"number": 20638,
+				"runId": 41039691583,
+				"title": "Bump postcss-selector-parser from 6.0.2 to 6.1.5",
 				"workflow": "(Shared) Lint",
 				"status": "completed successfully",
-				"branch": "sophiebits:sophiebits/view-transition-skip-reasons"
+				"branch": "dependabot/npm_and_yarn/postcss-selector-parser-6.1.5"
 			},
 			{
-				"number": 14523,
-				"runId": 40835512916,
-				"title": "View Transitions: update error message classification for Chrome 153",
-				"workflow": "(Runtime) Build and Test",
-				"status": "failed",
-				"branch": "sophiebits:sophiebits/view-transition-skip-reasons"
+				"number": 5401,
+				"runId": 41039689976,
+				"title": "Bump postcss-selector-parser from 6.0.2 to 6.1.5",
+				"workflow": "(Shared) Label Core Team PRs",
+				"status": "completed successfully"
 			},
 			{
-				"number": 10891,
-				"runId": 40835512913,
-				"title": "View Transitions: update error message classification for Chrome 153",
+				"number": 3130,
+				"runId": 41039689784,
+				"title": "Bump postcss-selector-parser from 6.0.2 to 6.1.5",
+				"workflow": "(Runtime) Discord Notify",
+				"status": "completed successfully"
+			},
+			{
+				"number": 2377,
+				"runId": 41039687505,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 2376,
+				"runId": 41039679409,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 20637,
+				"runId": 41039677109,
+				"title": "Bump zod from 4.1.12 to 4.6.6",
+				"workflow": "(Shared) Lint",
+				"status": "completed successfully",
+				"branch": "dependabot/npm_and_yarn/zod-4.6.6"
+			},
+			{
+				"number": 10915,
+				"runId": 41039677106,
+				"title": "Bump zod from 4.1.12 to 4.6.6",
 				"workflow": "(Runtime) ESLint Plugin E2E",
 				"status": "completed successfully",
-				"branch": "sophiebits:sophiebits/view-transition-skip-reasons"
+				"branch": "dependabot/npm_and_yarn/zod-4.6.6"
 			},
 			{
-				"number": 22389,
-				"runId": 40833986152,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19808,
-				"runId": 40833671749,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 2339,
-				"runId": 40831804692,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 2338,
-				"runId": 40831086470,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 14522,
-				"runId": 40831082852,
-				"title": "View Transitions: update error message classification for Chrome 153",
+				"number": 14547,
+				"runId": 41039677085,
+				"title": "Bump zod from 4.1.12 to 4.6.6",
 				"workflow": "(Runtime) Build and Test",
-				"status": "failed",
-				"branch": "sophiebits:sophiebits/view-transition-skip-reasons"
+				"status": "completed successfully",
+				"branch": "dependabot/npm_and_yarn/zod-4.6.6"
+			},
+			{
+				"number": 20636,
+				"runId": 41039674072,
+				"title": "Bump undici from 5.28.4 to 6.29.1",
+				"workflow": "(Shared) Lint",
+				"status": "completed successfully",
+				"branch": "dependabot/npm_and_yarn/undici-6.29.1"
+			},
+			{
+				"number": 10914,
+				"runId": 41039673979,
+				"title": "Bump undici from 5.28.4 to 6.29.1",
+				"workflow": "(Runtime) ESLint Plugin E2E",
+				"status": "completed successfully",
+				"branch": "dependabot/npm_and_yarn/undici-6.29.1"
+			},
+			{
+				"number": 14546,
+				"runId": 41039673952,
+				"title": "Bump undici from 5.28.4 to 6.29.1",
+				"workflow": "(Runtime) Build and Test",
+				"status": "completed successfully",
+				"branch": "dependabot/npm_and_yarn/undici-6.29.1"
+			},
+			{
+				"number": 3129,
+				"runId": 41039673080,
+				"title": "Bump zod from 4.1.12 to 4.6.6",
+				"workflow": "(Runtime) Discord Notify",
+				"status": "completed successfully"
+			},
+			{
+				"number": 5400,
+				"runId": 41039672871,
+				"title": "Bump zod from 4.1.12 to 4.6.6",
+				"workflow": "(Shared) Label Core Team PRs",
+				"status": "completed successfully"
+			},
+			{
+				"number": 5399,
+				"runId": 41039666635,
+				"title": "Bump undici from 5.28.4 to 6.29.1",
+				"workflow": "(Shared) Label Core Team PRs",
+				"status": "completed successfully"
+			},
+			{
+				"number": 3128,
+				"runId": 41039666585,
+				"title": "Bump undici from 5.28.4 to 6.29.1",
+				"workflow": "(Runtime) Discord Notify",
+				"status": "completed successfully"
+			},
+			{
+				"number": 2375,
+				"runId": 41039567454,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "skipped"
+			},
+			{
+				"number": 2776,
+				"runId": 41039567296,
+				"title": "(Runtime) Commit Artifacts for Meta WWW and fbsource V2",
+				"workflow": "(Runtime) Commit Artifacts for Meta WWW and fbsource V2",
+				"status": "completed successfully"
 			}
 		],
-		"/react/react/actions/runs/40836078999": [
+		"/react/react/actions/runs/41039692014": [
 			{
-				"runId": 40836078999,
-				"number": 14524,
-				"title": "View Transitions: update error message classification for Chrome 153",
+				"runId": 41039692014,
+				"number": 14548,
+				"title": "Bump postcss-selector-parser from 6.0.2 to 6.1.5",
 				"workflow": "(Runtime) Build and Test",
 				"status": "completed successfully",
-				"branch": "sophiebits:sophiebits/view-transition-skip-reasons"
+				"branch": "dependabot/npm_and_yarn/postcss-selector-parser-6.1.5"
 			}
 		],
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": [
@@ -919,5 +941,5 @@
 		]
 	},
 	"runListPage": "/react/react/actions",
-	"runPage": "/react/react/actions/runs/40836078999"
+	"runPage": "/react/react/actions/runs/41039692014"
 }
