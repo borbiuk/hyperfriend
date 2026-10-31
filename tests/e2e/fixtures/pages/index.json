@@ -9,12 +9,138 @@
 		"/vercel/next.js/discussions": "discussion-list.html",
 		"/vercel/next.js/discussions/10640": "discussion.html",
 		"/react/react/actions": "run-list.html",
-		"/react/react/actions/runs/41039692014": "run.html",
+		"/react/react/actions/runs/41181940387": "run.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": "search-pulls.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=issues": "search-issues.html"
 	},
 	"items": {
 		"/react/react/pulls": [
+			{
+				"number": 38083,
+				"title": "Fix useDeferredValue losing pings on entangled lanes",
+				"author": "nupurkale78",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38082,
+				"title": "[DOM] Restore focus when reordering inputs in shadow roots",
+				"author": "shoutoutuoadi325",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38080,
+				"title": "[compiler] Honor JS-resolved flags and node_modules default in the Rust port",
+				"author": "2SinceJuly",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38079,
+				"title": "[compiler] Match suppression comments anywhere in a comment in the Rust port",
+				"author": "zhoubiao188",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38077,
+				"title": "[Fizz] Preserve the import map when resuming a postponed shell",
+				"author": "hsusul",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38075,
+				"title": "[eslint-plugin-react-hooks] Require zod-validation-error ^4.0.0",
+				"author": "bercedev",
+				"state": "open"
+			},
+			{
+				"number": 38072,
+				"title": "[DevTools] Don't report bailed out subtrees as rendered in the facade profiler",
+				"author": "Dev-next-gen",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38069,
+				"title": "[DevTools] Keep unmatched console specifiers literal in single-string formatter",
+				"author": "hoxyq",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"React Core Team"
+				]
+			},
+			{
+				"number": 38068,
+				"title": "[DevTools] Normalize BigInt values in facade inspection results",
+				"author": "hoxyq",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"React Core Team"
+				]
+			},
+			{
+				"number": 38067,
+				"title": "[DevTools] Find non-resource hoistable instances in the facade",
+				"author": "hoxyq",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"React Core Team"
+				]
+			},
+			{
+				"number": 38066,
+				"title": "[DevTools] Keep special characters in Open in Editor paths",
+				"author": "fizzbeom",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38063,
+				"title": "[Flight] Let Fizz retry lazy chunks that hit a stack overflow while decoding",
+				"author": "kassens",
+				"state": "draft",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38062,
+				"title": "[compiler] Bail out on calls in switch case tests",
+				"author": "b84330808",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38060,
+				"title": "Untrack previous ViewTransition name when it changes",
+				"author": "RubenPari",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
 			{
 				"number": 38058,
 				"title": "Bump postcss-selector-parser from 6.0.2 to 6.1.5",
@@ -121,131 +247,6 @@
 				"labels": [
 					"CLA Signed"
 				]
-			},
-			{
-				"number": 38045,
-				"title": "[DOM] Add shapeImageThreshold and missing CSS properties to isUnitlessNumber",
-				"author": "ShakilUrRehman21",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38044,
-				"title": "[DOM] Use SyntheticUIEvent for onResize",
-				"author": "ShakilUrRehman21",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38037,
-				"title": "Fix pinged lane when deferred render suspends",
-				"author": "jianyunyi",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38036,
-				"title": "Bump body-parser from 2.2.0 to 2.4.0 in /compiler",
-				"author": "dependabot[bot]",
-				"state": "open",
-				"labels": [
-					"CLA Signed",
-					"dependencies",
-					"javascript"
-				]
-			},
-			{
-				"number": 38033,
-				"title": "[rust-compiler] Don't emit hook guards for calls in forest mode",
-				"author": "2SinceJuly",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38032,
-				"title": "[Fiber] Restore the previous act queue when an act scope throws",
-				"author": "zhoubiao188",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38030,
-				"title": "[Fiber] Ping throttled hydration retries when a transition gives up hydrating",
-				"author": "hamidrezahanafi",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38028,
-				"title": "[compiler] Evaluate the target of compound assignments and updates once",
-				"author": "b84330808",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38027,
-				"title": "[rust-compiler] Expose typed ErrorCategory and ErrorSeverity on CompilerErrorDetailInfo",
-				"author": "debnathSD",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38026,
-				"title": "Preserve painted SSR fallback DOM when hydration re-suspends on recoverable boundary",
-				"author": "MilindChatrabhuji",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38024,
-				"title": "[compiler] Skip memoization passes in lint mode for functions without manual memoization",
-				"author": "mohamadgarmabi",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38022,
-				"title": "[compiler] Fix refs false positive on sibling reads after passing obj.prop to a JSX ref",
-				"author": "seongwon030",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38021,
-				"title": "docs: fix typo in ReadMe sample only",
-				"author": "lukearaquil",
-				"state": "open"
-			},
-			{
-				"number": 38020,
-				"title": "Preserve painted SSR Suspense fallback DOM during client re-suspend",
-				"author": "vipulojha",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
 			}
 		],
 		"/react/react/pull/9713": [
@@ -282,6 +283,51 @@
 			}
 		],
 		"/react/react/issues": [
+			{
+				"number": 38081,
+				"title": "Bug: Reordering keyed inputs inside a ShadowRoot loses focus",
+				"author": "shoutoutuoadi325",
+				"state": "open"
+			},
+			{
+				"number": 38078,
+				"title": "Bug:",
+				"author": "joker11500",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
+			},
+			{
+				"number": 38076,
+				"title": "[Compiler Bug]: Rust compiler ignores the isDev option it receives, so dev builds get no Fast Refresh cache reset",
+				"author": "1-DARK",
+				"state": "open"
+			},
+			{
+				"number": 38074,
+				"title": "[Compiler Bug]: Rust Babel plugin compiles files in node_modules by default; TypeScript skips them",
+				"author": "1-DARK",
+				"state": "open"
+			},
+			{
+				"number": 38073,
+				"title": "[Compiler Bug]: Rust compiler misses suppression comments unless they start the comment (eslint-disable…, $FlowFixMe[react-rule…]), so it compiles code TypeScript skips",
+				"author": "1-DARK",
+				"state": "open"
+			},
+			{
+				"number": 38065,
+				"title": "[eslint-plugin-react-hooks] 7.1.1 still accepts zod-validation-error 3.5.4, which has no ./v4 export (ERR_PACKAGE_PATH_NOT_EXPORTED)",
+				"author": "axelahdritz",
+				"state": "open"
+			},
+			{
+				"number": 38064,
+				"title": "act warns for an awaited call when Zone.js patches queueMicrotask",
+				"author": "CaliLuke",
+				"state": "open"
+			},
 			{
 				"number": 38054,
 				"title": "Add example of focusing an input using callback refs",
@@ -361,12 +407,6 @@
 				"state": "open"
 			},
 			{
-				"number": 38029,
-				"title": "Bug: Transition never commits when a throttled hydration retry is interrupted by a ping",
-				"author": "hamidrezahanafi",
-				"state": "open"
-			},
-			{
 				"number": 38016,
 				"title": "Bug:",
 				"author": "abwahmdqsy190-tech",
@@ -430,51 +470,6 @@
 				"labels": [
 					"Status: Unconfirmed"
 				]
-			},
-			{
-				"number": 37907,
-				"title": "[Fizz] Aborting while a resumed boundary's replay walk is stalled above the resumable slot client-renders the boundary and returns null postponed state",
-				"author": "zhoubiao188",
-				"state": "open"
-			},
-			{
-				"number": 37899,
-				"title": "Bug: a component loses its state when its type changes from React.lazy to the component the lazy resolved to",
-				"author": "nitedani",
-				"state": "open"
-			},
-			{
-				"number": 37891,
-				"title": "Bug:",
-				"author": "zhaosjeng",
-				"state": "open",
-				"labels": [
-					"Status: Unconfirmed"
-				]
-			},
-			{
-				"number": 37888,
-				"title": "[Compiler Bug]: Local copy of a module-level variable is replaced by the variable itself inside closures",
-				"author": "miltonmc",
-				"state": "open"
-			},
-			{
-				"number": 37886,
-				"title": "Bug:",
-				"author": "vitormourapro-beep",
-				"state": "open",
-				"labels": [
-					"Status: Unconfirmed"
-				]
-			},
-			{
-				"number": 37885,
-				"title": "Bug: TypeError in ReactDOM.prefetchDNS() when called with null or prototype-less options in DEV",
-				"author": "ShakilUrRehman21",
-				"state": "open",
-				"labels": [
-					"Status: Unconfirmed"
-				]
 			}
 		],
 		"/react/react/issues/10": [
@@ -499,10 +494,28 @@
 				"category": "Feedback"
 			},
 			{
-				"number": 100199,
-				"title": "Opt out of Next.js's own server error log when onRequestError reports errors",
-				"author": "mhayk",
-				"category": "Ideas"
+				"number": 100864,
+				"title": "Guidance on bundled Undici and Zod versions in Next.js 16.4.3",
+				"author": "abensemann",
+				"category": "Help"
+			},
+			{
+				"number": 96888,
+				"title": "A runnable reproduction of the Next.js + Supabase RLS leak (red on one branch, green on the other, ~2s)",
+				"author": "cekuu35",
+				"category": "Show and tell"
+			},
+			{
+				"number": 93262,
+				"title": "Turbopack Error: Failed to write app endpoint /(public)/product/[slug]/page",
+				"author": "kuhelahmed2024",
+				"category": "Turbopack Error Report"
+			},
+			{
+				"number": 100991,
+				"title": "Arguseye: inspect Next.js component edits without starting the app",
+				"author": "DarkWorldCoder",
+				"category": "Show and tell"
 			},
 			{
 				"number": 100945,
@@ -511,10 +524,28 @@
 				"category": "Turbopack Error Report"
 			},
 			{
-				"number": 100864,
-				"title": "Guidance on bundled Undici and Zod versions in Next.js 16.4.3",
-				"author": "abensemann",
-				"category": "Help"
+				"number": 100963,
+				"title": "Opt-in for tsrs: The Rust-native TypeScript compiller",
+				"author": "thernstig",
+				"category": "Ideas"
+			},
+			{
+				"number": 100969,
+				"title": "Tesla Wrap Pro — a Next.js app for free manual Paint Shop editing",
+				"author": "chenxingyuoo",
+				"category": "Show and tell"
+			},
+			{
+				"number": 93267,
+				"title": "Add Android arm64 SWC binary support",
+				"author": "Zohaib8090",
+				"category": "Ideas"
+			},
+			{
+				"number": 100199,
+				"title": "Opt out of Next.js's own server error log when onRequestError reports errors",
+				"author": "mhayk",
+				"category": "Ideas"
 			},
 			{
 				"number": 85001,
@@ -611,42 +642,6 @@
 				"title": "Turbopack Error: Access is denied. (os error 5)",
 				"author": "343-Htoo",
 				"category": "Turbopack Error Report"
-			},
-			{
-				"number": 100786,
-				"title": "Next.js 15.x still in maintenance LTS?",
-				"author": "G-2-Z",
-				"category": "Help"
-			},
-			{
-				"number": 98124,
-				"title": "Turbopack silently downlevels to ES5 and expands \\p{...} above its compat data",
-				"author": "ejc3",
-				"category": "Turbopack Error Report"
-			},
-			{
-				"number": 100825,
-				"title": "Turbopack Error: Failed to write page endpoint /[locale]/index",
-				"author": "zGrav",
-				"category": "Turbopack Error Report"
-			},
-			{
-				"number": 99822,
-				"title": "Is something like <Link unstable_dynamicOnHover> planned for a stable release?",
-				"author": "stefanprobst",
-				"category": "Help"
-			},
-			{
-				"number": 100773,
-				"title": "cudoc: embed sections across MDX pages and check every reference, with @next/mdx under Turbopack",
-				"author": "cudoment",
-				"category": "Show and tell"
-			},
-			{
-				"number": 63961,
-				"title": "Trying to use puppeteer in vercel deployment",
-				"author": "abhishekmg",
-				"category": "Help"
 			}
 		],
 		"/vercel/next.js/discussions/10640": [
@@ -659,200 +654,209 @@
 		],
 		"/react/react/actions": [
 			{
-				"number": 22419,
-				"runId": 41045976135,
+				"number": 22448,
+				"runId": 41191535613,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 19836,
-				"runId": 41045750625,
+				"number": 19859,
+				"runId": 41191402744,
 				"title": "(Shared) Manage stale issues and PRs",
 				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 2381,
-				"runId": 41040555833,
+				"number": 151,
+				"runId": 41187739860,
+				"title": "(Runtime) Release From CI",
+				"workflow": "(Runtime) Release From CI",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 22447,
+				"runId": 41187493143,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 19858,
+				"runId": 41187360030,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 2435,
+				"runId": 41186377096,
 				"title": "(Runtime) Sizebot Comment",
 				"workflow": "(Runtime) Sizebot Comment",
 				"status": "completed successfully"
 			},
 			{
-				"number": 2380,
-				"runId": 41040442474,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 2379,
-				"runId": 41040407522,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 2378,
-				"runId": 41039697188,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 14548,
-				"runId": 41039692014,
-				"title": "Bump postcss-selector-parser from 6.0.2 to 6.1.5",
-				"workflow": "(Runtime) Build and Test",
+				"number": 22446,
+				"runId": 41183556107,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
-				"branch": "dependabot/npm_and_yarn/postcss-selector-parser-6.1.5"
+				"branch": "main"
 			},
 			{
-				"number": 10916,
-				"runId": 41039691586,
-				"title": "Bump postcss-selector-parser from 6.0.2 to 6.1.5",
-				"workflow": "(Runtime) ESLint Plugin E2E",
+				"number": 19857,
+				"runId": 41183403664,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
-				"branch": "dependabot/npm_and_yarn/postcss-selector-parser-6.1.5"
+				"branch": "main"
 			},
 			{
-				"number": 20638,
-				"runId": 41039691583,
-				"title": "Bump postcss-selector-parser from 6.0.2 to 6.1.5",
-				"workflow": "(Shared) Lint",
-				"status": "completed successfully",
-				"branch": "dependabot/npm_and_yarn/postcss-selector-parser-6.1.5"
-			},
-			{
-				"number": 5401,
-				"runId": 41039689976,
-				"title": "Bump postcss-selector-parser from 6.0.2 to 6.1.5",
-				"workflow": "(Shared) Label Core Team PRs",
-				"status": "completed successfully"
-			},
-			{
-				"number": 3130,
-				"runId": 41039689784,
-				"title": "Bump postcss-selector-parser from 6.0.2 to 6.1.5",
-				"workflow": "(Runtime) Discord Notify",
-				"status": "completed successfully"
-			},
-			{
-				"number": 2377,
-				"runId": 41039687505,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 2376,
-				"runId": 41039679409,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 20637,
-				"runId": 41039677109,
-				"title": "Bump zod from 4.1.12 to 4.6.6",
-				"workflow": "(Shared) Lint",
-				"status": "completed successfully",
-				"branch": "dependabot/npm_and_yarn/zod-4.6.6"
-			},
-			{
-				"number": 10915,
-				"runId": 41039677106,
-				"title": "Bump zod from 4.1.12 to 4.6.6",
-				"workflow": "(Runtime) ESLint Plugin E2E",
-				"status": "completed successfully",
-				"branch": "dependabot/npm_and_yarn/zod-4.6.6"
-			},
-			{
-				"number": 14547,
-				"runId": 41039677085,
-				"title": "Bump zod from 4.1.12 to 4.6.6",
-				"workflow": "(Runtime) Build and Test",
-				"status": "completed successfully",
-				"branch": "dependabot/npm_and_yarn/zod-4.6.6"
-			},
-			{
-				"number": 20636,
-				"runId": 41039674072,
-				"title": "Bump undici from 5.28.4 to 6.29.1",
-				"workflow": "(Shared) Lint",
-				"status": "completed successfully",
-				"branch": "dependabot/npm_and_yarn/undici-6.29.1"
-			},
-			{
-				"number": 10914,
-				"runId": 41039673979,
-				"title": "Bump undici from 5.28.4 to 6.29.1",
-				"workflow": "(Runtime) ESLint Plugin E2E",
-				"status": "completed successfully",
-				"branch": "dependabot/npm_and_yarn/undici-6.29.1"
-			},
-			{
-				"number": 14546,
-				"runId": 41039673952,
-				"title": "Bump undici from 5.28.4 to 6.29.1",
-				"workflow": "(Runtime) Build and Test",
-				"status": "completed successfully",
-				"branch": "dependabot/npm_and_yarn/undici-6.29.1"
-			},
-			{
-				"number": 3129,
-				"runId": 41039673080,
-				"title": "Bump zod from 4.1.12 to 4.6.6",
-				"workflow": "(Runtime) Discord Notify",
-				"status": "completed successfully"
-			},
-			{
-				"number": 5400,
-				"runId": 41039672871,
-				"title": "Bump zod from 4.1.12 to 4.6.6",
-				"workflow": "(Shared) Label Core Team PRs",
-				"status": "completed successfully"
-			},
-			{
-				"number": 5399,
-				"runId": 41039666635,
-				"title": "Bump undici from 5.28.4 to 6.29.1",
-				"workflow": "(Shared) Label Core Team PRs",
-				"status": "completed successfully"
-			},
-			{
-				"number": 3128,
-				"runId": 41039666585,
-				"title": "Bump undici from 5.28.4 to 6.29.1",
-				"workflow": "(Runtime) Discord Notify",
-				"status": "completed successfully"
-			},
-			{
-				"number": 2375,
-				"runId": 41039567454,
+				"number": 2434,
+				"runId": 41182196544,
 				"title": "(Runtime) Sizebot Comment",
 				"workflow": "(Runtime) Sizebot Comment",
 				"status": "skipped"
 			},
 			{
-				"number": 2776,
-				"runId": 41039567296,
+				"number": 2782,
+				"runId": 41182196405,
 				"title": "(Runtime) Commit Artifacts for Meta WWW and fbsource V2",
 				"workflow": "(Runtime) Commit Artifacts for Meta WWW and fbsource V2",
 				"status": "completed successfully"
-			}
-		],
-		"/react/react/actions/runs/41039692014": [
+			},
 			{
-				"runId": 41039692014,
-				"number": 14548,
-				"title": "Bump postcss-selector-parser from 6.0.2 to 6.1.5",
+				"number": 2433,
+				"runId": 41181942293,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "skipped"
+			},
+			{
+				"number": 2478,
+				"runId": 41181940387,
+				"title": "[Fizz] Forward crossOrigin to the external runtime script",
+				"workflow": "(Shared) Cleanup Merged Branch Caches",
+				"status": "completed successfully",
+				"branch": "sebbie/external-runtime-crossorigin"
+			},
+			{
+				"number": 22445,
+				"runId": 41181940068,
+				"title": "[Fizz] Forward crossOrigin to the external runtime script (#38071)",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 9061,
+				"runId": 41181940053,
+				"title": "[Fizz] Forward crossOrigin to the external runtime script (#38071)",
+				"workflow": "(Compiler) Playground",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 14576,
+				"runId": 41181940049,
+				"title": "[Fizz] Forward crossOrigin to the external runtime script (#38071)",
 				"workflow": "(Runtime) Build and Test",
 				"status": "completed successfully",
-				"branch": "dependabot/npm_and_yarn/postcss-selector-parser-6.1.5"
+				"branch": "main"
+			},
+			{
+				"number": 9066,
+				"runId": 41181940028,
+				"title": "[Fizz] Forward crossOrigin to the external runtime script (#38071)",
+				"workflow": "(Compiler) TypeScript",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 20671,
+				"runId": 41181940027,
+				"title": "[Fizz] Forward crossOrigin to the external runtime script (#38071)",
+				"workflow": "(Shared) Lint",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 1323,
+				"runId": 41181940026,
+				"title": "[Fizz] Forward crossOrigin to the external runtime script (#38071)",
+				"workflow": "React Compiler (Rust)",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 10944,
+				"runId": 41181940024,
+				"title": "[Fizz] Forward crossOrigin to the external runtime script (#38071)",
+				"workflow": "(Runtime) ESLint Plugin E2E",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 22444,
+				"runId": 41179423509,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 19856,
+				"runId": 41179297971,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 2432,
+				"runId": 41178658596,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 20670,
+				"runId": 41178656464,
+				"title": "Fix useDeferredValue losing pings on entangled lanes",
+				"workflow": "(Shared) Lint",
+				"status": "requires action with the application",
+				"branch": "nupurkale78:fix/deferred-value-entangled-ping"
+			},
+			{
+				"number": 10943,
+				"runId": 41178656439,
+				"title": "Fix useDeferredValue losing pings on entangled lanes",
+				"workflow": "(Runtime) ESLint Plugin E2E",
+				"status": "requires action with the application",
+				"branch": "nupurkale78:fix/deferred-value-entangled-ping"
+			},
+			{
+				"number": 14575,
+				"runId": 41178656431,
+				"title": "Fix useDeferredValue losing pings on entangled lanes",
+				"workflow": "(Runtime) Build and Test",
+				"status": "requires action with the application",
+				"branch": "nupurkale78:fix/deferred-value-entangled-ping"
+			}
+		],
+		"/react/react/actions/runs/41181940387": [
+			{
+				"runId": 41181940387,
+				"number": 2478,
+				"title": "[Fizz] Forward crossOrigin to the external runtime script",
+				"workflow": "(Shared) Cleanup Merged Branch Caches",
+				"status": "completed successfully",
+				"branch": "sebbie/external-runtime-crossorigin"
 			}
 		],
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": [
@@ -865,10 +869,6 @@
 				"title": "[Fizz] Fix createFastHash in FIPS environments"
 			},
 			{
-				"number": 37053,
-				"title": "[Flight] Let encodeFormAction reuse the default encoding"
-			},
-			{
 				"number": 37555,
 				"title": "Fix Fizz SSR corrupting hooks state on nested renders"
 			},
@@ -879,6 +879,10 @@
 			{
 				"number": 36683,
 				"title": "[eslint-plugin-react-hooks] Treat useActionState dispatch as stable when isPending is destructured"
+			},
+			{
+				"number": 37053,
+				"title": "[Flight] Let encodeFormAction reuse the default encoding"
 			},
 			{
 				"number": 36557,
@@ -907,12 +911,16 @@
 				"title": "[React 19] Controlled `<select>` component is subject to automatic form reset"
 			},
 			{
-				"number": 37044,
-				"title": "[Flight] Let encodeFormAction reuse the default encoding"
-			},
-			{
 				"number": 29034,
 				"title": "[React 19] allow opting out of automatic form reset when Form Actions are used"
+			},
+			{
+				"number": 31695,
+				"title": "[React 19] Controlled checkboxes are reset by form submission and form.reset()"
+			},
+			{
+				"number": 37044,
+				"title": "[Flight] Let encodeFormAction reuse the default encoding"
 			},
 			{
 				"number": 15344,
@@ -933,13 +941,9 @@
 			{
 				"number": 33556,
 				"title": "Bug: \"Rendered more hooks than ...\" throws when it shouldn't with multiple suspends"
-			},
-			{
-				"number": 35242,
-				"title": "Bug: `useActionState`'s second argument is not optional in the React types"
 			}
 		]
 	},
 	"runListPage": "/react/react/actions",
-	"runPage": "/react/react/actions/runs/41039692014"
+	"runPage": "/react/react/actions/runs/41181940387"
 }
