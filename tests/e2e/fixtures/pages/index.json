@@ -9,12 +9,48 @@
 		"/vercel/next.js/discussions": "discussion-list.html",
 		"/vercel/next.js/discussions/10640": "discussion.html",
 		"/react/react/actions": "run-list.html",
-		"/react/react/actions/runs/41266576601": "run.html",
+		"/react/react/actions/runs/41435547736": "run.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": "search-pulls.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=issues": "search-issues.html"
 	},
 	"items": {
 		"/react/react/pulls": [
+			{
+				"number": 38095,
+				"title": "[Fast Refresh] Include hooks with a digit after use in signatures",
+				"author": "NotAFlightRisk",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38094,
+				"title": "[compiler] Preserve catch handlers for array spreads",
+				"author": "chengchuu",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38092,
+				"title": "Fix RangeError when converting a large binary view to a string",
+				"author": "Huang-404-Q",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38090,
+				"title": "[Fizz] Use the script nonce for bootstrap script preloads",
+				"author": "hsusul",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
 			{
 				"number": 38088,
 				"title": "[DOM] Copy inputType, data, and isComposing onto onInput events",
@@ -208,42 +244,6 @@
 				"labels": [
 					"CLA Signed"
 				]
-			},
-			{
-				"number": 38048,
-				"title": "[React] Restore actQueue when act callback throws or rejects",
-				"author": "AdamMagued",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38047,
-				"title": "[compiler] Bail out on for..of/for..in loops that assign to an existing variable",
-				"author": "b84330808",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38046,
-				"title": "[DOM] Guard against form control name-clobbering in resetFormInstance and useFormStatus",
-				"author": "ShakilUrRehman21",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38045,
-				"title": "[DOM] Add shapeImageThreshold and missing CSS properties to isUnitlessNumber",
-				"author": "ShakilUrRehman21",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
 			}
 		],
 		"/react/react/pull/9713": [
@@ -280,6 +280,36 @@
 			}
 		],
 		"/react/react/issues": [
+			{
+				"number": 38093,
+				"title": "[Compiler Bug]: Array spreads lose required catch handlers",
+				"author": "chengchuu",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed",
+					"Type: Bug"
+				]
+			},
+			{
+				"number": 38091,
+				"title": "[DevTools Bug] Cannot add child \"256\" to parent \"173\" because parent node was not found in the Store.",
+				"author": "Prospector-dev-1",
+				"state": "open",
+				"labels": [
+					"Component: Developer Tools",
+					"Status: Unconfirmed",
+					"Type: Bug"
+				]
+			},
+			{
+				"number": 38089,
+				"title": "Bug:",
+				"author": "itai-SEND",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
+			},
 			{
 				"number": 38086,
 				"title": "[Compiler Bug]:",
@@ -442,27 +472,6 @@
 				"labels": [
 					"Status: Unconfirmed"
 				]
-			},
-			{
-				"number": 38002,
-				"title": "Bug:",
-				"author": "nexoracontrol-ops",
-				"state": "open",
-				"labels": [
-					"Status: Unconfirmed"
-				]
-			},
-			{
-				"number": 38000,
-				"title": "Bug: Fizz leaves a Suspense boundary unresolved when a nested boundary's fallback suspends after the shell",
-				"author": "vhpx",
-				"state": "open"
-			},
-			{
-				"number": 37997,
-				"title": "Bug: Keystrokes typed into a controlled input are lost while a <ViewTransition> update is starting",
-				"author": "enstyled",
-				"state": "open"
 			}
 		],
 		"/react/react/issues/10": [
@@ -485,6 +494,12 @@
 				"title": "Upgrading from Next.js 15 to 16: what's blocking you?",
 				"author": "icyJoseph",
 				"category": "Feedback"
+			},
+			{
+				"number": 101024,
+				"title": "Counting API usage per customer in Next.js route handlers, without a background process",
+				"author": "supertj",
+				"category": "Show and tell"
 			},
 			{
 				"number": 96888,
@@ -629,12 +644,6 @@
 				"title": "PnP support for Turbopack",
 				"author": "martinjlowm",
 				"category": "Ideas"
-			},
-			{
-				"number": 100868,
-				"title": "Turbopack Error: Access is denied. (os error 5)",
-				"author": "343-Htoo",
-				"category": "Turbopack Error Report"
 			}
 		],
 		"/vercel/next.js/discussions/10640": [
@@ -647,405 +656,208 @@
 		],
 		"/react/react/actions": [
 			{
-				"number": 2447,
-				"runId": 41302732626,
+				"number": 22500,
+				"runId": 41450726761,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 19910,
+				"runId": 41450445657,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 22499,
+				"runId": 41443135945,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 19909,
+				"runId": 41442801606,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 2336,
+				"runId": 41441187745,
+				"title": "(Shared) Cleanup Stale Branch Caches",
+				"workflow": "(Shared) Cleanup Stale Branch Caches",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 2469,
+				"runId": 41439985093,
 				"title": "(Runtime) Sizebot Comment",
 				"workflow": "(Runtime) Sizebot Comment",
 				"status": "completed successfully"
 			},
 			{
-				"number": 14581,
-				"runId": 41302730377,
-				"title": "[DOM] Copy inputType, data, and isComposing onto onInput events",
-				"workflow": "(Runtime) Build and Test",
-				"status": "requires action with the application",
-				"branch": "beyondwin:dom-oninput-inputevent-fields"
+				"number": 5425,
+				"runId": 41439978920,
+				"title": "[Fast Refresh] Include hooks with a digit after use in signatures",
+				"workflow": "(Shared) Label Core Team PRs",
+				"status": "completed successfully"
 			},
 			{
-				"number": 20678,
-				"runId": 41302730375,
-				"title": "[DOM] Copy inputType, data, and isComposing onto onInput events",
+				"number": 20686,
+				"runId": 41439978878,
+				"title": "[Fast Refresh] Include hooks with a digit after use in signatures",
 				"workflow": "(Shared) Lint",
 				"status": "requires action with the application",
-				"branch": "beyondwin:dom-oninput-inputevent-fields"
+				"branch": "NotAFlightRisk:fix-refresh-hook-digit-names"
 			},
 			{
-				"number": 3145,
-				"runId": 41302730357,
-				"title": "[DOM] Copy inputType, data, and isComposing onto onInput events",
+				"number": 10954,
+				"runId": 41439978876,
+				"title": "[Fast Refresh] Include hooks with a digit after use in signatures",
+				"workflow": "(Runtime) ESLint Plugin E2E",
+				"status": "requires action with the application",
+				"branch": "NotAFlightRisk:fix-refresh-hook-digit-names"
+			},
+			{
+				"number": 14586,
+				"runId": 41439978854,
+				"title": "[Fast Refresh] Include hooks with a digit after use in signatures",
+				"workflow": "(Runtime) Build and Test",
+				"status": "requires action with the application",
+				"branch": "NotAFlightRisk:fix-refresh-hook-digit-names"
+			},
+			{
+				"number": 3148,
+				"runId": 41439978826,
+				"title": "[Fast Refresh] Include hooks with a digit after use in signatures",
 				"workflow": "(Runtime) Discord Notify",
 				"status": "completed successfully"
 			},
 			{
-				"number": 5421,
-				"runId": 41302730356,
-				"title": "[DOM] Copy inputType, data, and isComposing onto onInput events",
-				"workflow": "(Shared) Label Core Team PRs",
-				"status": "completed successfully"
-			},
-			{
-				"number": 10949,
-				"runId": 41302730349,
-				"title": "[DOM] Copy inputType, data, and isComposing onto onInput events",
-				"workflow": "(Runtime) ESLint Plugin E2E",
-				"status": "requires action with the application",
-				"branch": "beyondwin:dom-oninput-inputevent-fields"
-			},
-			{
-				"number": 2446,
-				"runId": 41300934568,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 22474,
-				"runId": 41300433164,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
+				"number": 9072,
+				"runId": 41435547736,
+				"title": "[compiler] Preserve catch handlers for array spreads",
+				"workflow": "(Compiler) TypeScript",
 				"status": "completed successfully",
-				"branch": "main"
+				"branch": "chengchuu:fix/compiler-preserve-array-spread-catch"
 			},
 			{
-				"number": 19884,
-				"runId": 41300344207,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22473,
-				"runId": 41296142897,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19883,
-				"runId": 41296003003,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22472,
-				"runId": 41291843730,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19882,
-				"runId": 41291715559,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22471,
-				"runId": 41287786258,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19881,
-				"runId": 41287615798,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22470,
-				"runId": 41283626247,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19880,
-				"runId": 41283499569,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22469,
-				"runId": 41280102695,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19879,
-				"runId": 41279923437,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 2445,
-				"runId": 41279517144,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 2331,
-				"runId": 41279039738,
-				"title": "(Shared) Cleanup Stale Branch Caches",
-				"workflow": "(Shared) Cleanup Stale Branch Caches",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22468,
-				"runId": 41275807602,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19878,
-				"runId": 41275674269,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22467,
-				"runId": 41272094688,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19877,
-				"runId": 41271935160,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			}
-		],
-		"/react/react/actions?page=2": [
-			{
-				"number": 22466,
-				"runId": 41268276603,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19876,
-				"runId": 41268076185,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 2444,
-				"runId": 41266831041,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "failed"
-			},
-			{
-				"number": 2443,
-				"runId": 41266578686,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 14580,
-				"runId": 41266576601,
-				"title": "Fix transition type isolation across lanes",
-				"workflow": "(Runtime) Build and Test",
-				"status": "completed successfully",
-				"branch": "akasakariko:fix/37712-transition-types-per-lane"
-			},
-			{
-				"number": 10948,
-				"runId": 41266576480,
-				"title": "Fix transition type isolation across lanes",
-				"workflow": "(Runtime) ESLint Plugin E2E",
-				"status": "completed successfully",
-				"branch": "akasakariko:fix/37712-transition-types-per-lane"
-			},
-			{
-				"number": 20677,
-				"runId": 41266576471,
-				"title": "Fix transition type isolation across lanes",
+				"number": 20685,
+				"runId": 41435547627,
+				"title": "[compiler] Preserve catch handlers for array spreads",
 				"workflow": "(Shared) Lint",
 				"status": "completed successfully",
-				"branch": "akasakariko:fix/37712-transition-types-per-lane"
+				"branch": "chengchuu:fix/compiler-preserve-array-spread-catch"
 			},
 			{
-				"number": 22465,
-				"runId": 41264301459,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
+				"number": 1329,
+				"runId": 41435547522,
+				"title": "[compiler] Preserve catch handlers for array spreads",
+				"workflow": "React Compiler (Rust)",
 				"status": "completed successfully",
-				"branch": "main"
+				"branch": "chengchuu:fix/compiler-preserve-array-spread-catch"
 			},
 			{
-				"number": 19875,
-				"runId": 41264127739,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
+				"number": 9067,
+				"runId": 41435547489,
+				"title": "[compiler] Preserve catch handlers for array spreads",
+				"workflow": "(Compiler) Playground",
 				"status": "completed successfully",
-				"branch": "main"
+				"branch": "chengchuu:fix/compiler-preserve-array-spread-catch"
 			},
 			{
-				"number": 22464,
-				"runId": 41259871123,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19874,
-				"runId": 41259739381,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 2442,
-				"runId": 41259675064,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 2441,
-				"runId": 41257222880,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 22463,
-				"runId": 41257137050,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 19873,
-				"runId": 41256690216,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 5420,
-				"runId": 41256627105,
-				"title": "[compiler] Promote rest parameter temporaries in BuildHIR",
+				"number": 5424,
+				"runId": 41435543589,
+				"title": "[compiler] Preserve catch handlers for array spreads",
 				"workflow": "(Shared) Label Core Team PRs",
 				"status": "completed successfully"
 			},
 			{
-				"number": 1291,
-				"runId": 41256627100,
-				"title": "[compiler] Promote rest parameter temporaries in BuildHIR",
+				"number": 1292,
+				"runId": 41435543381,
+				"title": "[compiler] Preserve catch handlers for array spreads",
 				"workflow": "(Compiler) Discord Notify",
 				"status": "completed successfully"
 			},
 			{
-				"number": 9064,
-				"runId": 41256627027,
-				"title": "[compiler] Promote rest parameter temporaries in BuildHIR",
-				"workflow": "(Compiler) Playground",
-				"status": "completed successfully",
-				"branch": "zhoubiao188:scan-2026-11-01"
-			},
-			{
-				"number": 20676,
-				"runId": 41256627005,
-				"title": "[compiler] Promote rest parameter temporaries in BuildHIR",
-				"workflow": "(Shared) Lint",
-				"status": "completed successfully",
-				"branch": "zhoubiao188:scan-2026-11-01"
-			},
-			{
-				"number": 1326,
-				"runId": 41256626999,
-				"title": "[compiler] Promote rest parameter temporaries in BuildHIR",
-				"workflow": "React Compiler (Rust)",
-				"status": "completed successfully",
-				"branch": "zhoubiao188:scan-2026-11-01"
-			},
-			{
-				"number": 9069,
-				"runId": 41256626973,
-				"title": "[compiler] Promote rest parameter temporaries in BuildHIR",
-				"workflow": "(Compiler) TypeScript",
-				"status": "completed successfully",
-				"branch": "zhoubiao188:scan-2026-11-01"
-			},
-			{
-				"number": 843,
-				"runId": 41255066831,
-				"title": "(DevTools) Regression Tests",
-				"workflow": "(DevTools) Regression Tests",
-				"status": "failed",
-				"branch": "main"
-			},
-			{
-				"number": 2330,
-				"runId": 41254847603,
-				"title": "(Shared) Cleanup Stale Branch Caches",
-				"workflow": "(Shared) Cleanup Stale Branch Caches",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22462,
-				"runId": 41251188151,
+				"number": 22498,
+				"runId": 41434512666,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 19872,
-				"runId": 41251074446,
+				"number": 19908,
+				"runId": 41434224480,
 				"title": "(Shared) Manage stale issues and PRs",
 				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
 				"branch": "main"
+			},
+			{
+				"number": 2468,
+				"runId": 41432103418,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 22497,
+				"runId": 41426540122,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 19907,
+				"runId": 41426248554,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 22496,
+				"runId": 41418954969,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 19906,
+				"runId": 41418616006,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 22495,
+				"runId": 41411684797,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
 			}
 		],
-		"/react/react/actions/runs/41266576601": [
+		"/react/react/actions/runs/41435547736": [
 			{
-				"runId": 41266576601,
-				"number": 14580,
-				"title": "Fix transition type isolation across lanes",
-				"workflow": "(Runtime) Build and Test",
+				"runId": 41435547736,
+				"number": 9072,
+				"title": "[compiler] Preserve catch handlers for array spreads",
+				"workflow": "(Compiler) TypeScript",
 				"status": "completed successfully",
-				"branch": "akasakariko:fix/37712-transition-types-per-lane"
+				"branch": "chengchuu:fix/compiler-preserve-array-spread-catch"
 			}
 		],
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": [
@@ -1133,6 +945,6 @@
 			}
 		]
 	},
-	"runListPage": "/react/react/actions?page=2",
-	"runPage": "/react/react/actions/runs/41266576601"
+	"runListPage": "/react/react/actions",
+	"runPage": "/react/react/actions/runs/41435547736"
 }
