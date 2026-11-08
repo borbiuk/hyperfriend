@@ -9,12 +9,69 @@
 		"/vercel/next.js/discussions": "discussion-list.html",
 		"/vercel/next.js/discussions/10640": "discussion.html",
 		"/react/react/actions": "run-list.html",
-		"/react/react/actions/runs/42342827728": "run.html",
+		"/react/react/actions/runs/42446842695": "run.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": "search-pulls.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=issues": "search-issues.html"
 	},
 	"items": {
 		"/react/react/pulls": [
+			{
+				"number": 38159,
+				"title": "[DOM] Replace an orphaned server-rendered <title> when mounting a title on the client",
+				"author": "SudoKMaar",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38158,
+				"title": "[compiler] Bail out on function declarations that redeclare a binding referenced earlier",
+				"author": "Naseq",
+				"state": "open"
+			},
+			{
+				"number": 38157,
+				"title": "[Flight] Fix infinite SSR loop when binding a Server Action during render",
+				"author": "lazerg",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38156,
+				"title": "[compiler] Only outline functions that are created at most once per render",
+				"author": "zhoubiao188",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38153,
+				"title": "Compiler: preserve native update semantics on member update expressions",
+				"author": "sundeep8967",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38152,
+				"title": "Fix unhandled promise rejection when stylesheet fails to load",
+				"author": "sundeep8967",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38151,
+				"title": "[compiler] Evaluate member-expression lvalue before rhs in assignments",
+				"author": "Naseq",
+				"state": "open"
+			},
 			{
 				"number": 38150,
 				"title": "[compiler] Repair phi operands before merging pruned catch blocks",
@@ -26,13 +83,13 @@
 			},
 			{
 				"number": 38149,
-				"title": "Fix compiler dropping statements after try/catch when try block cannot throw (#38141)",
+				"title": "[compiler] Rewrite goto(Try) to goto(Break) when a try is removed",
 				"author": "Naseq",
 				"state": "open"
 			},
 			{
 				"number": 38146,
-				"title": "Fix compiler invariant when try/catch with non-throwing try assigns binding used afterward (#38145)",
+				"title": "[compiler] Prune phi operands from removed blocks in pruneMaybeThrows",
 				"author": "Naseq",
 				"state": "open"
 			},
@@ -166,63 +223,6 @@
 				"title": "[Fizz] Preserve text boundaries around hoisted titles",
 				"author": "asssslay",
 				"state": "open"
-			},
-			{
-				"number": 38115,
-				"title": "[eslint-plugin-react-hooks] Reject computed optional dependency paths",
-				"author": "asssslay",
-				"state": "open"
-			},
-			{
-				"number": 38113,
-				"title": "[DOM] Avoid spurious change replay for duplicate select values",
-				"author": "wozhenbang2004",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38110,
-				"title": "Extract RSC stream entry dedupe checks into DevToolsFiberSuspense",
-				"author": "TheGeekyM",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38109,
-				"title": "docs: fix SSR fixture development and production commands",
-				"author": "MengqiLi0000",
-				"state": "open"
-			},
-			{
-				"number": 38107,
-				"title": "[compiler] Honor noEmit when deciding whether to emit compiled functions",
-				"author": "zhoubiao188",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38102,
-				"title": "Fix getNodeForCharacterOffset escaping its root",
-				"author": "Huang-404-Q",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38101,
-				"title": "[compiler]: add react-hook-form useFormContext to known incompatible libraries",
-				"author": "maximechbt",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
 			}
 		],
 		"/react/react/pull/9713": [
@@ -259,6 +259,18 @@
 			}
 		],
 		"/react/react/issues": [
+			{
+				"number": 38155,
+				"title": "Bug: Hoisted SSR title remains orphaned when deleting a dehydrated Suspense boundary",
+				"author": "Nerqis",
+				"state": "open"
+			},
+			{
+				"number": 38154,
+				"title": "Bug: useActionState with a bound Server Action loops forever during MPA postback SSR",
+				"author": "pdolezal0",
+				"state": "open"
+			},
 			{
 				"number": 38148,
 				"title": "[Compiler Bug]: Arrow function returned from a nested helper is outlined, so every call returns the same function object",
@@ -439,18 +451,6 @@
 				"title": "Bug: [Flight] Dev async-debug tracking retains unbounded ancestry in pendingOperations (still present, follows #36836)",
 				"author": "mredwin1",
 				"state": "open"
-			},
-			{
-				"number": 38084,
-				"title": "[Compiler Bug]: \"Expected temporaries to be promoted to named identifiers\" on an arrow function with a rest parameter that calls an imported function",
-				"author": "YevheniiKotyrlo",
-				"state": "open"
-			},
-			{
-				"number": 38081,
-				"title": "Bug: Reordering keyed inputs inside a ShadowRoot loses focus",
-				"author": "shoutoutuoadi325",
-				"state": "open"
 			}
 		],
 		"/react/react/issues/10": [
@@ -475,10 +475,22 @@
 				"category": "Feedback"
 			},
 			{
-				"number": 101330,
-				"title": "Turbopack Error: failed to create junction point at \"D:\\\\n2d-academy\\\\.next\\\\dev\\\\node_modules\\\\@prisma\\\\client-2c3a283f134fdcb6\" pointing to \"D:\\\\n2d-academy\\\\.next\\\\dev\\\\node_modules\\\\@prisma\\\\..\\\\.",
-				"author": "djian-nd",
-				"category": "Turbopack Error Report"
+				"number": 101372,
+				"title": "Why are custom environment variables undefined inside Server Actions in Next.js?",
+				"author": "Boyet120803",
+				"category": "Help"
+			},
+			{
+				"number": 101371,
+				"title": "How to load local SVG files dynamically in Next.js App Router without inline raw code?",
+				"author": "Boyet120803",
+				"category": "Help"
+			},
+			{
+				"number": 72538,
+				"title": "How to perform normal page navigation with the Link tag",
+				"author": "fushihara",
+				"category": "Help"
 			},
 			{
 				"number": 101326,
@@ -487,16 +499,40 @@
 				"category": "Turbopack Error Report"
 			},
 			{
-				"number": 101324,
-				"title": "Soluqube: 116-page static Next.js App Router architecture for B2B SaaS revenue accounting",
-				"author": "nlaky1",
+				"number": 101330,
+				"title": "Turbopack Error: failed to create junction point at \"D:\\\\n2d-academy\\\\.next\\\\dev\\\\node_modules\\\\@prisma\\\\client-2c3a283f134fdcb6\" pointing to \"D:\\\\n2d-academy\\\\.next\\\\dev\\\\node_modules\\\\@prisma\\\\..\\\\.",
+				"author": "djian-nd",
+				"category": "Turbopack Error Report"
+			},
+			{
+				"number": 101274,
+				"title": "Clarification: Next.js 15.5.29 release notes versus advisory affected/patched versions",
+				"author": "honeybadger1608",
+				"category": "Help"
+			},
+			{
+				"number": 101187,
+				"title": "Built an All-in-One AI Filmmaking & Short Drama Workspace on Infinite Canvas (3D Pre-vis, 130+ Skills, & Free BYOK)",
+				"author": "echox886",
 				"category": "Show and tell"
+			},
+			{
+				"number": 101219,
+				"title": "Turbopack Error: OS file watch limit reached. about [\"/vip_storage/projects/superhosting.vip\"]",
+				"author": "xerudro",
+				"category": "Turbopack Error Report"
 			},
 			{
 				"number": 101287,
 				"title": "Opt-in V8 explicit compile hints for first-load chunks",
 				"author": "AdzerKI",
 				"category": "Ideas"
+			},
+			{
+				"number": 101324,
+				"title": "Soluqube: 116-page static Next.js App Router architecture for B2B SaaS revenue accounting",
+				"author": "nlaky1",
+				"category": "Show and tell"
 			},
 			{
 				"number": 100698,
@@ -529,12 +565,6 @@
 				"category": "Show and tell"
 			},
 			{
-				"number": 101274,
-				"title": "Clarification: Next.js 15.5.29 release notes versus advisory affected/patched versions",
-				"author": "honeybadger1608",
-				"category": "Help"
-			},
-			{
 				"number": 101075,
 				"title": "Inline Logs: see server and client console.log values next to your Next.js code in VS Code",
 				"author": "lagudafuadtosin",
@@ -553,22 +583,10 @@
 				"category": "Turbopack Error Report"
 			},
 			{
-				"number": 101219,
-				"title": "Turbopack Error: OS file watch limit reached. about [\"/vip_storage/projects/superhosting.vip\"]",
-				"author": "xerudro",
-				"category": "Turbopack Error Report"
-			},
-			{
 				"number": 100825,
 				"title": "Turbopack Error: Failed to write page endpoint /[locale]/index",
 				"author": "zGrav",
 				"category": "Turbopack Error Report"
-			},
-			{
-				"number": 101187,
-				"title": "Built an All-in-One AI Filmmaking & Short Drama Workspace on Infinite Canvas (3D Pre-vis, 130+ Skills, & Free BYOK)",
-				"author": "echox886",
-				"category": "Show and tell"
 			},
 			{
 				"number": 101170,
@@ -605,24 +623,6 @@
 				"title": "Allow me to use --experimental-https when running a local production build",
 				"author": "Svish",
 				"category": "Feedback"
-			},
-			{
-				"number": 101134,
-				"title": "Turbopack Error: failed to create whole tree",
-				"author": "suman-bhatta",
-				"category": "Turbopack Error Report"
-			},
-			{
-				"number": 101130,
-				"title": "[Feature Request] Allow configuring a custom TypeScript compiler executable for type checking",
-				"author": "rubenferreira97",
-				"category": "Ideas"
-			},
-			{
-				"number": 101089,
-				"title": "Turbopack Error: Failed to write app endpoint /(app)/workspace/[organizationId]/page",
-				"author": "zero-one-creation-client",
-				"category": "Turbopack Error Report"
 			}
 		],
 		"/vercel/next.js/discussions/10640": [
@@ -635,406 +635,412 @@
 		],
 		"/react/react/actions": [
 			{
-				"number": 22622,
-				"runId": 42366808736,
+				"number": 22646,
+				"runId": 42474331981,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 20028,
-				"runId": 42366729795,
+				"number": 20052,
+				"runId": 42474234061,
 				"title": "(Shared) Manage stale issues and PRs",
 				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 22621,
-				"runId": 42362652235,
+				"number": 22645,
+				"runId": 42470137687,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 20027,
-				"runId": 42362519116,
+				"number": 20051,
+				"runId": 42470005384,
 				"title": "(Shared) Manage stale issues and PRs",
 				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 9098,
-				"runId": 42359923257,
-				"title": "[compiler] Repair phi operands before merging pruned catch blocks",
-				"workflow": "(Compiler) Playground",
-				"status": "requires action with the application",
-				"branch": "jipeng6036-del:fix/react-compiler-pruned-catch-phi-pr6"
-			},
-			{
-				"number": 1310,
-				"runId": 42359922695,
-				"title": "[compiler] Repair phi operands before merging pruned catch blocks",
-				"workflow": "(Compiler) Discord Notify",
-				"status": "completed successfully"
-			},
-			{
-				"number": 9103,
-				"runId": 42359922678,
-				"title": "[compiler] Repair phi operands before merging pruned catch blocks",
-				"workflow": "(Compiler) TypeScript",
-				"status": "requires action with the application",
-				"branch": "jipeng6036-del:fix/react-compiler-pruned-catch-phi-pr6"
-			},
-			{
-				"number": 20828,
-				"runId": 42359922664,
-				"title": "[compiler] Repair phi operands before merging pruned catch blocks",
-				"workflow": "(Shared) Lint",
-				"status": "requires action with the application",
-				"branch": "jipeng6036-del:fix/react-compiler-pruned-catch-phi-pr6"
-			},
-			{
-				"number": 1360,
-				"runId": 42359922638,
-				"title": "[compiler] Repair phi operands before merging pruned catch blocks",
-				"workflow": "React Compiler (Rust)",
-				"status": "requires action with the application",
-				"branch": "jipeng6036-del:fix/react-compiler-pruned-catch-phi-pr6"
-			},
-			{
-				"number": 5460,
-				"runId": 42359922620,
-				"title": "[compiler] Repair phi operands before merging pruned catch blocks",
-				"workflow": "(Shared) Label Core Team PRs",
-				"status": "completed successfully"
-			},
-			{
-				"number": 9102,
-				"runId": 42359181015,
-				"title": "Fix compiler dropping statements after try/catch when try block cannot throw (#38141)",
-				"workflow": "(Compiler) TypeScript",
-				"status": "requires action with the application",
-				"branch": "Naseq:fix-try-catch-statements-dropped"
-			},
-			{
-				"number": 20827,
-				"runId": 42359181006,
-				"title": "Fix compiler dropping statements after try/catch when try block cannot throw (#38141)",
-				"workflow": "(Shared) Lint",
-				"status": "requires action with the application",
-				"branch": "Naseq:fix-try-catch-statements-dropped"
-			},
-			{
-				"number": 9097,
-				"runId": 42359180993,
-				"title": "Fix compiler dropping statements after try/catch when try block cannot throw (#38141)",
-				"workflow": "(Compiler) Playground",
-				"status": "requires action with the application",
-				"branch": "Naseq:fix-try-catch-statements-dropped"
-			},
-			{
-				"number": 1359,
-				"runId": 42359180990,
-				"title": "Fix compiler dropping statements after try/catch when try block cannot throw (#38141)",
-				"workflow": "React Compiler (Rust)",
-				"status": "requires action with the application",
-				"branch": "Naseq:fix-try-catch-statements-dropped"
-			},
-			{
-				"number": 1309,
-				"runId": 42359180974,
-				"title": "Fix compiler dropping statements after try/catch when try block cannot throw (#38141)",
-				"workflow": "(Compiler) Discord Notify",
-				"status": "completed successfully"
-			},
-			{
-				"number": 5459,
-				"runId": 42359180960,
-				"title": "Fix compiler dropping statements after try/catch when try block cannot throw (#38141)",
-				"workflow": "(Shared) Label Core Team PRs",
-				"status": "completed successfully"
-			},
-			{
-				"number": 22620,
-				"runId": 42358484432,
+				"number": 22644,
+				"runId": 42465934345,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 20026,
-				"runId": 42358346524,
+				"number": 20050,
+				"runId": 42465798781,
 				"title": "(Shared) Manage stale issues and PRs",
 				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 22619,
-				"runId": 42354395931,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 20025,
-				"runId": 42354239382,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 9096,
-				"runId": 42354103466,
-				"title": "Fix compiler invariant when try/catch with non-throwing try assigns binding used afterward (#38145)",
-				"workflow": "(Compiler) Playground",
-				"status": "requires action with the application",
-				"branch": "Naseq:fix-try-catch-compiler-bug"
-			},
-			{
-				"number": 9101,
-				"runId": 42354103420,
-				"title": "Fix compiler invariant when try/catch with non-throwing try assigns binding used afterward (#38145)",
-				"workflow": "(Compiler) TypeScript",
-				"status": "requires action with the application",
-				"branch": "Naseq:fix-try-catch-compiler-bug"
-			},
-			{
-				"number": 1308,
-				"runId": 42354103418,
-				"title": "Fix compiler invariant when try/catch with non-throwing try assigns binding used afterward (#38145)",
-				"workflow": "(Compiler) Discord Notify",
-				"status": "completed successfully"
-			},
-			{
-				"number": 1358,
-				"runId": 42354103417,
-				"title": "Fix compiler invariant when try/catch with non-throwing try assigns binding used afterward (#38145)",
-				"workflow": "React Compiler (Rust)",
-				"status": "requires action with the application",
-				"branch": "Naseq:fix-try-catch-compiler-bug"
-			},
-			{
-				"number": 20826,
-				"runId": 42354103416,
-				"title": "Fix compiler invariant when try/catch with non-throwing try assigns binding used afterward (#38145)",
-				"workflow": "(Shared) Lint",
-				"status": "requires action with the application",
-				"branch": "Naseq:fix-try-catch-compiler-bug"
-			}
-		],
-		"/react/react/actions?page=2": [
-			{
-				"number": 5458,
-				"runId": 42354103414,
-				"title": "Fix compiler invariant when try/catch with non-throwing try assigns binding used afterward (#38145)",
-				"workflow": "(Shared) Label Core Team PRs",
-				"status": "completed successfully"
-			},
-			{
-				"number": 2706,
-				"runId": 42350682781,
+				"number": 2720,
+				"runId": 42465673297,
 				"title": "(Runtime) Sizebot Comment",
 				"workflow": "(Runtime) Sizebot Comment",
 				"status": "completed successfully"
 			},
 			{
-				"number": 22618,
-				"runId": 42350028518,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 20024,
-				"runId": 42349893179,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 2705,
-				"runId": 42347857769,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 2704,
-				"runId": 42347836178,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 2703,
-				"runId": 42347836035,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 2702,
-				"runId": 42347415677,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 22617,
-				"runId": 42346136132,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 20023,
-				"runId": 42345876435,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 2701,
-				"runId": 42345376698,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 20825,
-				"runId": 42345373638,
-				"title": "[DOM] Track document selectionchange listener separately from root listeners",
-				"workflow": "(Shared) Lint",
-				"status": "requires action with the application",
-				"branch": "abdulmajidcse:fix-document-root-event-listeners"
-			},
-			{
-				"number": 14705,
-				"runId": 42345373615,
-				"title": "[DOM] Track document selectionchange listener separately from root listeners",
-				"workflow": "(Runtime) Build and Test",
-				"status": "requires action with the application",
-				"branch": "abdulmajidcse:fix-document-root-event-listeners"
-			},
-			{
-				"number": 11073,
-				"runId": 42345373601,
-				"title": "[DOM] Track document selectionchange listener separately from root listeners",
+				"number": 11078,
+				"runId": 42465670611,
+				"title": "[Scheduler] Guard performWorkUntilDeadline against re-entrant MessageChannel events",
 				"workflow": "(Runtime) ESLint Plugin E2E",
 				"status": "requires action with the application",
-				"branch": "abdulmajidcse:fix-document-root-event-listeners"
+				"branch": "Abhishek764:fix/scheduler-reentrant-messagechannel-firefox"
 			},
 			{
-				"number": 2700,
-				"runId": 42345222759,
+				"number": 14710,
+				"runId": 42465670605,
+				"title": "[Scheduler] Guard performWorkUntilDeadline against re-entrant MessageChannel events",
+				"workflow": "(Runtime) Build and Test",
+				"status": "requires action with the application",
+				"branch": "Abhishek764:fix/scheduler-reentrant-messagechannel-firefox"
+			},
+			{
+				"number": 20848,
+				"runId": 42465670442,
+				"title": "[Scheduler] Guard performWorkUntilDeadline against re-entrant MessageChannel events",
+				"workflow": "(Shared) Lint",
+				"status": "requires action with the application",
+				"branch": "Abhishek764:fix/scheduler-reentrant-messagechannel-firefox"
+			},
+			{
+				"number": 2719,
+				"runId": 42461871281,
 				"title": "(Runtime) Sizebot Comment",
 				"workflow": "(Runtime) Sizebot Comment",
 				"status": "completed successfully"
 			},
 			{
-				"number": 2355,
-				"runId": 42345052390,
-				"title": "(Shared) Cleanup Stale Branch Caches",
-				"workflow": "(Shared) Cleanup Stale Branch Caches",
+				"number": 11077,
+				"runId": 42461868570,
+				"title": "[DOM] Replace an orphaned server-rendered <title> when mounting a title on the client",
+				"workflow": "(Runtime) ESLint Plugin E2E",
+				"status": "requires action with the application",
+				"branch": "SudoKMaar:fix-38155-orphaned-hoisted-title"
+			},
+			{
+				"number": 14709,
+				"runId": 42461868547,
+				"title": "[DOM] Replace an orphaned server-rendered <title> when mounting a title on the client",
+				"workflow": "(Runtime) Build and Test",
+				"status": "requires action with the application",
+				"branch": "SudoKMaar:fix-38155-orphaned-hoisted-title"
+			},
+			{
+				"number": 20847,
+				"runId": 42461868537,
+				"title": "[DOM] Replace an orphaned server-rendered <title> when mounting a title on the client",
+				"workflow": "(Shared) Lint",
+				"status": "requires action with the application",
+				"branch": "SudoKMaar:fix-38155-orphaned-hoisted-title"
+			},
+			{
+				"number": 5467,
+				"runId": 42461868390,
+				"title": "[DOM] Replace an orphaned server-rendered <title> when mounting a title on the client",
+				"workflow": "(Shared) Label Core Team PRs",
+				"status": "completed successfully"
+			},
+			{
+				"number": 3173,
+				"runId": 42461868387,
+				"title": "[DOM] Replace an orphaned server-rendered <title> when mounting a title on the client",
+				"workflow": "(Runtime) Discord Notify",
+				"status": "completed successfully"
+			},
+			{
+				"number": 22643,
+				"runId": 42461852229,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 1357,
-				"runId": 42344587849,
-				"title": "[compiler] Preserve array spread evaluation order before mutating elements",
-				"workflow": "React Compiler (Rust)",
-				"status": "requires action with the application",
-				"branch": "Rachit-Gandhi:fix-compiler-array-spread-eval-order"
+				"number": 20049,
+				"runId": 42461678572,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
 			},
 			{
-				"number": 9100,
-				"runId": 42344587823,
-				"title": "[compiler] Preserve array spread evaluation order before mutating elements",
-				"workflow": "(Compiler) TypeScript",
-				"status": "requires action with the application",
-				"branch": "Rachit-Gandhi:fix-compiler-array-spread-eval-order"
+				"number": 2718,
+				"runId": 42460845355,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
 			},
 			{
-				"number": 20824,
-				"runId": 42344587752,
-				"title": "[compiler] Preserve array spread evaluation order before mutating elements",
+				"number": 22642,
+				"runId": 42457641273,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 20048,
+				"runId": 42457516571,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 9113,
+				"runId": 42454849223,
+				"title": "[compiler] Rewrite goto(Try) to goto(Break) when a try is removed",
+				"workflow": "(Compiler) Playground",
+				"status": "requires action with the application",
+				"branch": "Naseq:fix-try-catch-statements-dropped"
+			},
+			{
+				"number": 20846,
+				"runId": 42454849219,
+				"title": "[compiler] Rewrite goto(Try) to goto(Break) when a try is removed",
 				"workflow": "(Shared) Lint",
 				"status": "requires action with the application",
-				"branch": "Rachit-Gandhi:fix-compiler-array-spread-eval-order"
+				"branch": "Naseq:fix-try-catch-statements-dropped"
 			},
 			{
-				"number": 5457,
-				"runId": 42344587717,
-				"title": "[compiler] Preserve array spread evaluation order before mutating elements",
+				"number": 9118,
+				"runId": 42454849211,
+				"title": "[compiler] Rewrite goto(Try) to goto(Break) when a try is removed",
+				"workflow": "(Compiler) TypeScript",
+				"status": "requires action with the application",
+				"branch": "Naseq:fix-try-catch-statements-dropped"
+			},
+			{
+				"number": 1375,
+				"runId": 42454849175,
+				"title": "[compiler] Rewrite goto(Try) to goto(Break) when a try is removed",
+				"workflow": "React Compiler (Rust)",
+				"status": "requires action with the application",
+				"branch": "Naseq:fix-try-catch-statements-dropped"
+			}
+		],
+		"/react/react/actions?page=3": [
+			{
+				"number": 22640,
+				"runId": 42449603892,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 2717,
+				"runId": 42449567465,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 20046,
+				"runId": 42449476770,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 2716,
+				"runId": 42447211373,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 2715,
+				"runId": 42446866107,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 2714,
+				"runId": 42446845339,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 14708,
+				"runId": 42446842695,
+				"title": "[Flight] Fix infinite SSR loop when binding a Server Action during render",
+				"workflow": "(Runtime) Build and Test",
+				"status": "completed successfully",
+				"branch": "lazerg:fix/issue-38154-bound-action-signature"
+			},
+			{
+				"number": 11076,
+				"runId": 42446842691,
+				"title": "[Flight] Fix infinite SSR loop when binding a Server Action during render",
+				"workflow": "(Runtime) ESLint Plugin E2E",
+				"status": "completed successfully",
+				"branch": "lazerg:fix/issue-38154-bound-action-signature"
+			},
+			{
+				"number": 20840,
+				"runId": 42446842661,
+				"title": "[Flight] Fix infinite SSR loop when binding a Server Action during render",
+				"workflow": "(Shared) Lint",
+				"status": "completed successfully",
+				"branch": "lazerg:fix/issue-38154-bound-action-signature"
+			},
+			{
+				"number": 2713,
+				"runId": 42446688369,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 14707,
+				"runId": 42446686349,
+				"title": "[Flight] Fix infinite SSR loop when binding a Server Action during render",
+				"workflow": "(Runtime) Build and Test",
+				"status": "cancelled",
+				"branch": "lazerg:fix/issue-38154-bound-action-signature"
+			},
+			{
+				"number": 11075,
+				"runId": 42446686327,
+				"title": "[Flight] Fix infinite SSR loop when binding a Server Action during render",
+				"workflow": "(Runtime) ESLint Plugin E2E",
+				"status": "cancelled",
+				"branch": "lazerg:fix/issue-38154-bound-action-signature"
+			},
+			{
+				"number": 20839,
+				"runId": 42446686320,
+				"title": "[Flight] Fix infinite SSR loop when binding a Server Action during render",
+				"workflow": "(Shared) Lint",
+				"status": "completed successfully",
+				"branch": "lazerg:fix/issue-38154-bound-action-signature"
+			},
+			{
+				"number": 5465,
+				"runId": 42446686309,
+				"title": "[Flight] Fix infinite SSR loop when binding a Server Action during render",
 				"workflow": "(Shared) Label Core Team PRs",
 				"status": "completed successfully"
 			},
 			{
-				"number": 1307,
-				"runId": 42344587613,
-				"title": "[compiler] Preserve array spread evaluation order before mutating elements",
+				"number": 3172,
+				"runId": 42446686287,
+				"title": "[Flight] Fix infinite SSR loop when binding a Server Action during render",
+				"workflow": "(Runtime) Discord Notify",
+				"status": "completed successfully"
+			},
+			{
+				"number": 22639,
+				"runId": 42445749845,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 20838,
+				"runId": 42445708360,
+				"title": "[compiler] Only outline functions that are created at most once per render",
+				"workflow": "(Shared) Lint",
+				"status": "completed successfully",
+				"branch": "zhoubiao188:fix-outline-function-identity"
+			},
+			{
+				"number": 1369,
+				"runId": 42445708286,
+				"title": "[compiler] Only outline functions that are created at most once per render",
+				"workflow": "React Compiler (Rust)",
+				"status": "completed successfully",
+				"branch": "zhoubiao188:fix-outline-function-identity"
+			},
+			{
+				"number": 9112,
+				"runId": 42445708261,
+				"title": "[compiler] Only outline functions that are created at most once per render",
+				"workflow": "(Compiler) TypeScript",
+				"status": "completed successfully",
+				"branch": "zhoubiao188:fix-outline-function-identity"
+			},
+			{
+				"number": 9107,
+				"runId": 42445708252,
+				"title": "[compiler] Only outline functions that are created at most once per render",
+				"workflow": "(Compiler) Playground",
+				"status": "completed successfully",
+				"branch": "zhoubiao188:fix-outline-function-identity"
+			},
+			{
+				"number": 5464,
+				"runId": 42445708174,
+				"title": "[compiler] Only outline functions that are created at most once per render",
+				"workflow": "(Shared) Label Core Team PRs",
+				"status": "completed successfully"
+			},
+			{
+				"number": 1313,
+				"runId": 42445708113,
+				"title": "[compiler] Only outline functions that are created at most once per render",
 				"workflow": "(Compiler) Discord Notify",
 				"status": "completed successfully"
 			},
 			{
-				"number": 9095,
-				"runId": 42344587609,
-				"title": "[compiler] Preserve array spread evaluation order before mutating elements",
-				"workflow": "(Compiler) Playground",
-				"status": "requires action with the application",
-				"branch": "Rachit-Gandhi:fix-compiler-array-spread-eval-order"
-			},
-			{
-				"number": 5456,
-				"runId": 42342827823,
-				"title": "[compiler] Record update expressions as scope reassignments",
-				"workflow": "(Shared) Label Core Team PRs",
-				"status": "completed successfully"
-			},
-			{
-				"number": 20823,
-				"runId": 42342827728,
-				"title": "[compiler] Record update expressions as scope reassignments",
-				"workflow": "(Shared) Lint",
+				"number": 20045,
+				"runId": 42445607679,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
-				"branch": "zhoubiao188:fix-scope-update-reassignment"
+				"branch": "main"
 			},
 			{
-				"number": 1356,
-				"runId": 42342827698,
-				"title": "[compiler] Record update expressions as scope reassignments",
-				"workflow": "React Compiler (Rust)",
+				"number": 22638,
+				"runId": 42441672490,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
-				"branch": "zhoubiao188:fix-scope-update-reassignment"
+				"branch": "main"
+			},
+			{
+				"number": 20044,
+				"runId": 42441504296,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
 			}
 		],
-		"/react/react/actions/runs/42342827728": [
+		"/react/react/actions/runs/42446842695": [
 			{
-				"runId": 42342827728,
-				"number": 20823,
-				"title": "[compiler] Record update expressions as scope reassignments",
-				"workflow": "(Shared) Lint",
+				"runId": 42446842695,
+				"number": 14708,
+				"title": "[Flight] Fix infinite SSR loop when binding a Server Action during render",
+				"workflow": "(Runtime) Build and Test",
 				"status": "completed successfully",
-				"branch": "zhoubiao188:fix-scope-update-reassignment"
+				"branch": "lazerg:fix/issue-38154-bound-action-signature"
 			}
 		],
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": [
 			{
 				"number": 37932,
 				"title": "[Fiber] Fix useActionState dispatching a stale action after switching back to a previous action"
+			},
+			{
+				"number": 38157,
+				"title": "[Flight] Fix infinite SSR loop when binding a Server Action during render"
 			},
 			{
 				"number": 37677,
@@ -1067,13 +1073,13 @@
 			{
 				"number": 36468,
 				"title": "[FlightReply] Don't drop FormData entries in `decodeReplyFromBusboy`"
-			},
-			{
-				"number": 35790,
-				"title": "[errors] s/form state/action state"
 			}
 		],
 		"/search?q=repo%3Areact%2Freact+useActionState&type=issues": [
+			{
+				"number": 38154,
+				"title": "Bug: useActionState with a bound Server Action loops forever during MPA postback SSR"
+			},
 			{
 				"number": 37676,
 				"title": "Bug: createFastHash errors in FIPS environments"
@@ -1109,13 +1115,9 @@
 			{
 				"number": 35399,
 				"title": "Bug: resolveLazy catching promises causes race condition with short-lived Suspense-wrapped components"
-			},
-			{
-				"number": 33556,
-				"title": "Bug: \"Rendered more hooks than ...\" throws when it shouldn't with multiple suspends"
 			}
 		]
 	},
-	"runListPage": "/react/react/actions?page=2",
-	"runPage": "/react/react/actions/runs/42342827728"
+	"runListPage": "/react/react/actions?page=3",
+	"runPage": "/react/react/actions/runs/42446842695"
 }
