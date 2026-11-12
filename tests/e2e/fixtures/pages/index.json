@@ -9,12 +9,43 @@
 		"/vercel/next.js/discussions": "discussion-list.html",
 		"/vercel/next.js/discussions/10640": "discussion.html",
 		"/react/react/actions": "run-list.html",
-		"/react/react/actions/runs/43005621743": "run.html",
+		"/react/react/actions/runs/43226706477": "run.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": "search-pulls.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=issues": "search-issues.html"
 	},
 	"items": {
 		"/react/react/pulls": [
+			{
+				"number": 38231,
+				"title": "Skip redundant type and name writes for text inputs",
+				"author": "smg99",
+				"state": "open"
+			},
+			{
+				"number": 38230,
+				"title": "[Fast Refresh] Clone custom Hook nodes for each HOC signature",
+				"author": "Elehiggle",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38227,
+				"title": "[DevTools] Expose Suspense suspended state in facade inspection results",
+				"author": "eps1lon",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"React Core Team"
+				]
+			},
+			{
+				"number": 38226,
+				"title": "[Fizz] Clean up destroyed Node prerender streams",
+				"author": "yxshee",
+				"state": "open"
+			},
 			{
 				"number": 38200,
 				"title": "[compiler] Keep for..of destructuring targets in sync with renamed bindings",
@@ -116,7 +147,7 @@
 			},
 			{
 				"number": 38185,
-				"title": "[Flight] Don't keep components alive through async debug info",
+				"title": "[Flight] Fix dev component memory leak",
 				"author": "RobertScholey98",
 				"state": "open",
 				"labels": [
@@ -203,42 +234,6 @@
 				"labels": [
 					"CLA Signed"
 				]
-			},
-			{
-				"number": 38166,
-				"title": "Fix false act await warnings with batched microtasks",
-				"author": "Artyx71",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38165,
-				"title": "[DOM] Move adopted hoistables into <head> on hydration",
-				"author": "gadcam",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38162,
-				"title": "[DOM] Fix controlled radio restoration when type has uppercase letters",
-				"author": "lunaxislu",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38160,
-				"title": "Bug: <div popover> / popover={true} is removed from the DOM and warns \"Received true for a non-boolean attribute\"",
-				"author": "ShakilUrRehman21",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
 			}
 		],
 		"/react/react/pull/9713": [
@@ -275,6 +270,21 @@
 			}
 		],
 		"/react/react/issues": [
+			{
+				"number": 38232,
+				"title": "Perf: Inserting many siblings in one commit is quadratic in getHostSibling",
+				"author": "CatIsApple",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
+			},
+			{
+				"number": 38229,
+				"title": "Bug: Fast Refresh remounts inline memo()/forwardRef() components that call an imported custom Hook",
+				"author": "Elehiggle",
+				"state": "open"
+			},
 			{
 				"number": 38194,
 				"title": "[DevTools Bug]:",
@@ -445,25 +455,6 @@
 				"labels": [
 					"Status: Unconfirmed"
 				]
-			},
-			{
-				"number": 38097,
-				"title": "Bug:",
-				"author": "developer7gomez",
-				"state": "open",
-				"labels": [
-					"Status: Unconfirmed"
-				]
-			},
-			{
-				"number": 38093,
-				"title": "[Compiler Bug]: Array spreads lose required catch handlers",
-				"author": "chengchuu",
-				"state": "open",
-				"labels": [
-					"Status: Unconfirmed",
-					"Type: Bug"
-				]
 			}
 		],
 		"/react/react/issues/10": [
@@ -488,10 +479,82 @@
 				"category": "Feedback"
 			},
 			{
-				"number": 101141,
-				"title": "How many next start instances per vCPU? Throughput is flat from 2 to 4 replicas on a 4 vCPU server",
-				"author": "bogdanishere",
-				"category": "App Router"
+				"number": 101636,
+				"title": "internal panic occurred outside the per-task panic boundary",
+				"author": "Remiiiiii",
+				"category": "Turbopack Error Report"
+			},
+			{
+				"number": 101559,
+				"title": "3 open-source checks before pushing AI-generated apps to production (Security, Browser QA & UI DNA)",
+				"author": "avivgerz-hue",
+				"category": "Show and tell"
+			},
+			{
+				"number": 101619,
+				"title": "Show and tell: vibe-shield and ghost-qa, two open-source CLIs for checking App Router security and running headless browser QA",
+				"author": "avivgerz-hue",
+				"category": "Show and tell"
+			},
+			{
+				"number": 101613,
+				"title": "Next.js 16.4.6: Setting runtime in proxy.ts throws an error after migrating from middleware.ts",
+				"author": "franksky1",
+				"category": "Help"
+			},
+			{
+				"number": 45774,
+				"title": "How to have image fill width yet not be squished in height using next/image?",
+				"author": "lancejpollard",
+				"category": "Help"
+			},
+			{
+				"number": 100969,
+				"title": "Tesla Wrap Pro — a Next.js app for free manual Paint Shop editing",
+				"author": "chenxingyuoo",
+				"category": "Show and tell"
+			},
+			{
+				"number": 100991,
+				"title": "Arguseye: inspect Next.js component edits without starting the app",
+				"author": "DarkWorldCoder",
+				"category": "Show and tell"
+			},
+			{
+				"number": 101024,
+				"title": "Counting API usage per customer in Next.js route handlers, without a background process",
+				"author": "supertj",
+				"category": "Show and tell"
+			},
+			{
+				"number": 101284,
+				"title": "ManaWG: an open-source PWA for shared flats on Next.js 16",
+				"author": "Abuarchiv",
+				"category": "Show and tell"
+			},
+			{
+				"number": 101324,
+				"title": "Soluqube: 116-page static Next.js App Router architecture for B2B SaaS revenue accounting",
+				"author": "nlaky1",
+				"category": "Show and tell"
+			},
+			{
+				"number": 101605,
+				"title": "Per-user cost metering for a Claude agent in Next.js (price snapshots, plan caps)",
+				"author": "agentwrightapp",
+				"category": "Show and tell"
+			},
+			{
+				"number": 101607,
+				"title": "An offline check for App Router robots metadata after a prompt edit",
+				"author": "fainir",
+				"category": "Show and tell"
+			},
+			{
+				"number": 101602,
+				"title": "Serving untrusted, model-built HTML from an App Router route handler: sandbox CSP, a separate origin and a localStorage shim",
+				"author": "nanaubusiness",
+				"category": "Show and tell"
 			},
 			{
 				"number": 19065,
@@ -500,16 +563,28 @@
 				"category": "Help"
 			},
 			{
-				"number": 89404,
-				"title": "I think proxyClientMaxBodySize should not be implemented like this",
-				"author": "lkho",
-				"category": "App Router"
-			},
-			{
 				"number": 55930,
 				"title": "How to use sqlite in my next.js with electron template project?",
 				"author": "liaodalin19903",
 				"category": "Help"
+			},
+			{
+				"number": 10640,
+				"title": "Companies / Sites using Next.js",
+				"author": "timneutkens",
+				"category": "Show and tell"
+			},
+			{
+				"number": 101141,
+				"title": "How many next start instances per vCPU? Throughput is flat from 2 to 4 replicas on a 4 vCPU server",
+				"author": "bogdanishere",
+				"category": "App Router"
+			},
+			{
+				"number": 89404,
+				"title": "I think proxyClientMaxBodySize should not be implemented like this",
+				"author": "lkho",
+				"category": "App Router"
 			},
 			{
 				"number": 100787,
@@ -542,12 +617,6 @@
 				"category": "Help"
 			},
 			{
-				"number": 45774,
-				"title": "How to have image fill width yet not be squished in height using next/image?",
-				"author": "lancejpollard",
-				"category": "Help"
-			},
-			{
 				"number": 100006,
 				"title": "Release-specific copyright/license references for client-only 0.0.1 and vendored Edge packages in Next 16.4.0",
 				"author": "diegosr00",
@@ -557,84 +626,6 @@
 				"number": 89020,
 				"title": "How to support CSS localization in a Next.js App Router application?",
 				"author": "4zuko",
-				"category": "Help"
-			},
-			{
-				"number": 85960,
-				"title": "I set up Playwright tests in a TurboRepo project using Next.js, but the tests often fail — is it just me?",
-				"author": "chbaefront",
-				"category": "Help"
-			},
-			{
-				"number": 77391,
-				"title": "use cache Directive in Next.js 15 Canary Fails to Persist Cache and Deduplicate Requests Reliably",
-				"author": "TheKing0000",
-				"category": "Help"
-			},
-			{
-				"number": 84825,
-				"title": "Preload whole content (not just prefetch)",
-				"author": "toitzi",
-				"category": "App Router"
-			},
-			{
-				"number": 100361,
-				"title": "Nextjs + Plugin Architecture - Is it possible to dynamically load compiled components in runtime?",
-				"author": "HybridSolutions",
-				"category": "Help"
-			},
-			{
-				"number": 99277,
-				"title": "Allow controlling prefetch depth with PPR / Cache Components",
-				"author": "zaynelovecraft",
-				"category": "Feedback"
-			},
-			{
-				"number": 101481,
-				"title": "Bundled @vercel/og is patched but still labeled 1.0.1, so scanners flag GHSA-wx4j-mvgx-mqwp on fixed Next releases",
-				"author": "amoreno-sonatype",
-				"category": "Ideas"
-			},
-			{
-				"number": 10640,
-				"title": "Companies / Sites using Next.js",
-				"author": "timneutkens",
-				"category": "Show and tell"
-			},
-			{
-				"number": 51643,
-				"title": "Make Middleware.ts working per route inside app folder",
-				"author": "dmitryuck",
-				"category": "Ideas"
-			},
-			{
-				"number": 48123,
-				"title": "How to combine CSS modules to a single file in final build ?",
-				"author": "borislavone",
-				"category": "Help"
-			},
-			{
-				"number": 59867,
-				"title": "In App Router how do I inspect SSR Component in React Dev Tools?",
-				"author": "mangonox",
-				"category": "App Router"
-			},
-			{
-				"number": 100192,
-				"title": "When do apps need a true 404 after streaming starts?",
-				"author": "aurorascharff",
-				"category": "Feedback"
-			},
-			{
-				"number": 100864,
-				"title": "Guidance on bundled Undici and Zod versions in Next.js 16.4.3",
-				"author": "abensemann",
-				"category": "Help"
-			},
-			{
-				"number": 11990,
-				"title": "How to serve static files from a graphql yoga server? Or how to save files from graphql to next.js' public folder?",
-				"author": "jamestrenda",
 				"category": "Help"
 			}
 		],
@@ -648,207 +639,206 @@
 		],
 		"/react/react/actions": [
 			{
-				"number": 22724,
-				"runId": 43018601673,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 20125,
-				"runId": 43018236084,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 2372,
-				"runId": 43016585438,
-				"title": "(Shared) Cleanup Stale Branch Caches",
-				"workflow": "(Shared) Cleanup Stale Branch Caches",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 2915,
-				"runId": 43013406497,
+				"number": 3001,
+				"runId": 43227701519,
 				"title": "(Runtime) Sizebot Comment",
 				"workflow": "(Runtime) Sizebot Comment",
 				"status": "completed successfully"
 			},
 			{
-				"number": 2914,
-				"runId": 43012677790,
+				"number": 3000,
+				"runId": 43227679506,
 				"title": "(Runtime) Sizebot Comment",
 				"workflow": "(Runtime) Sizebot Comment",
 				"status": "completed successfully"
 			},
 			{
-				"number": 14818,
-				"runId": 43012670070,
-				"title": "[Flight] Don't keep components alive through async debug info",
-				"workflow": "(Runtime) Build and Test",
-				"status": "requires action with the application",
-				"branch": "RobertScholey98:flight-async-debug-weak-owner"
-			},
-			{
-				"number": 20971,
-				"runId": 43012669931,
-				"title": "[Flight] Don't keep components alive through async debug info",
-				"workflow": "(Shared) Lint",
-				"status": "requires action with the application",
-				"branch": "RobertScholey98:flight-async-debug-weak-owner"
-			},
-			{
-				"number": 11186,
-				"runId": 43012669887,
-				"title": "[Flight] Don't keep components alive through async debug info",
-				"workflow": "(Runtime) ESLint Plugin E2E",
-				"status": "requires action with the application",
-				"branch": "RobertScholey98:flight-async-debug-weak-owner"
-			},
-			{
-				"number": 2913,
-				"runId": 43010632057,
+				"number": 2999,
+				"runId": 43227239222,
 				"title": "(Runtime) Sizebot Comment",
 				"workflow": "(Runtime) Sizebot Comment",
 				"status": "completed successfully"
 			},
 			{
-				"number": 22723,
-				"runId": 43009496861,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 20124,
-				"runId": 43009225485,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 2912,
-				"runId": 43006073714,
+				"number": 2998,
+				"runId": 43227120374,
 				"title": "(Runtime) Sizebot Comment",
 				"workflow": "(Runtime) Sizebot Comment",
 				"status": "skipped"
 			},
 			{
-				"number": 2792,
-				"runId": 43006073532,
+				"number": 2794,
+				"runId": 43227119880,
 				"title": "(Runtime) Commit Artifacts for Meta WWW and fbsource V2",
 				"workflow": "(Runtime) Commit Artifacts for Meta WWW and fbsource V2",
 				"status": "completed successfully"
 			},
 			{
-				"number": 2911,
-				"runId": 43005628445,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "skipped"
-			},
-			{
-				"number": 2501,
-				"runId": 43005621743,
-				"title": "[Flight] Fix streams hanging after a synchronous abort",
-				"workflow": "(Shared) Cleanup Merged Branch Caches",
-				"status": "completed successfully",
-				"branch": "unstubbable:hl/fix-flight-aborted-iterables"
-			},
-			{
-				"number": 14817,
-				"runId": 43005620862,
-				"title": "[Flight] Fix streams hanging after a synchronous abort (#38186)",
-				"workflow": "(Runtime) Build and Test",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 11185,
-				"runId": 43005620777,
-				"title": "[Flight] Fix streams hanging after a synchronous abort (#38186)",
-				"workflow": "(Runtime) ESLint Plugin E2E",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 1396,
-				"runId": 43005620701,
-				"title": "[Flight] Fix streams hanging after a synchronous abort (#38186)",
-				"workflow": "React Compiler (Rust)",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 9139,
-				"runId": 43005620666,
-				"title": "[Flight] Fix streams hanging after a synchronous abort (#38186)",
-				"workflow": "(Compiler) TypeScript",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 20970,
-				"runId": 43005620644,
-				"title": "[Flight] Fix streams hanging after a synchronous abort (#38186)",
-				"workflow": "(Shared) Lint",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22722,
-				"runId": 43005620604,
-				"title": "[Flight] Fix streams hanging after a synchronous abort (#38186)",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 9134,
-				"runId": 43005620601,
-				"title": "[Flight] Fix streams hanging after a synchronous abort (#38186)",
-				"workflow": "(Compiler) Playground",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22721,
-				"runId": 43001214439,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 20123,
-				"runId": 43000929970,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 2910,
-				"runId": 42998733031,
+				"number": 2997,
+				"runId": 43226714045,
 				"title": "(Runtime) Sizebot Comment",
 				"workflow": "(Runtime) Sizebot Comment",
 				"status": "completed successfully"
+			},
+			{
+				"number": 11229,
+				"runId": 43226706477,
+				"title": "Bump undici from 5.28.4 to 6.29.1",
+				"workflow": "(Runtime) ESLint Plugin E2E",
+				"status": "completed successfully",
+				"branch": "dependabot/npm_and_yarn/undici-6.29.1"
+			},
+			{
+				"number": 14861,
+				"runId": 43226706177,
+				"title": "Bump undici from 5.28.4 to 6.29.1",
+				"workflow": "(Runtime) Build and Test",
+				"status": "completed successfully",
+				"branch": "dependabot/npm_and_yarn/undici-6.29.1"
+			},
+			{
+				"number": 21018,
+				"runId": 43226706157,
+				"title": "Bump undici from 5.28.4 to 6.29.1",
+				"workflow": "(Shared) Lint",
+				"status": "completed successfully",
+				"branch": "dependabot/npm_and_yarn/undici-6.29.1"
+			},
+			{
+				"number": 2996,
+				"runId": 43226704066,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 21017,
+				"runId": 43226702378,
+				"title": "Bump body-parser from 2.2.0 to 2.4.0 in /compiler",
+				"workflow": "(Shared) Lint",
+				"status": "completed successfully",
+				"branch": "dependabot/npm_and_yarn/compiler/body-parser-2.4.0"
+			},
+			{
+				"number": 9140,
+				"runId": 43226702270,
+				"title": "Bump body-parser from 2.2.0 to 2.4.0 in /compiler",
+				"workflow": "(Compiler) Playground",
+				"status": "completed successfully",
+				"branch": "dependabot/npm_and_yarn/compiler/body-parser-2.4.0"
+			},
+			{
+				"number": 1402,
+				"runId": 43226702184,
+				"title": "Bump body-parser from 2.2.0 to 2.4.0 in /compiler",
+				"workflow": "React Compiler (Rust)",
+				"status": "completed successfully",
+				"branch": "dependabot/npm_and_yarn/compiler/body-parser-2.4.0"
+			},
+			{
+				"number": 9145,
+				"runId": 43226702166,
+				"title": "Bump body-parser from 2.2.0 to 2.4.0 in /compiler",
+				"workflow": "(Compiler) TypeScript",
+				"status": "completed successfully",
+				"branch": "dependabot/npm_and_yarn/compiler/body-parser-2.4.0"
+			},
+			{
+				"number": 11228,
+				"runId": 43226697957,
+				"title": "Bump electron from 39.8.10 to 42.11.16",
+				"workflow": "(Runtime) ESLint Plugin E2E",
+				"status": "failed",
+				"branch": "dependabot/npm_and_yarn/electron-42.11.16"
+			},
+			{
+				"number": 21016,
+				"runId": 43226697536,
+				"title": "Bump electron from 39.8.10 to 42.11.16",
+				"workflow": "(Shared) Lint",
+				"status": "completed successfully",
+				"branch": "dependabot/npm_and_yarn/electron-42.11.16"
+			},
+			{
+				"number": 14860,
+				"runId": 43226697504,
+				"title": "Bump electron from 39.8.10 to 42.11.16",
+				"workflow": "(Runtime) Build and Test",
+				"status": "failed",
+				"branch": "dependabot/npm_and_yarn/electron-42.11.16"
+			},
+			{
+				"number": 2995,
+				"runId": 43226688471,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 14859,
+				"runId": 43226676708,
+				"title": "Bump zod from 4.1.12 to 4.6.6",
+				"workflow": "(Runtime) Build and Test",
+				"status": "completed successfully",
+				"branch": "dependabot/npm_and_yarn/zod-4.6.6"
+			},
+			{
+				"number": 21015,
+				"runId": 43226676447,
+				"title": "Bump zod from 4.1.12 to 4.6.6",
+				"workflow": "(Shared) Lint",
+				"status": "completed successfully",
+				"branch": "dependabot/npm_and_yarn/zod-4.6.6"
+			},
+			{
+				"number": 11227,
+				"runId": 43226676137,
+				"title": "Bump zod from 4.1.12 to 4.6.6",
+				"workflow": "(Runtime) ESLint Plugin E2E",
+				"status": "completed successfully",
+				"branch": "dependabot/npm_and_yarn/zod-4.6.6"
+			},
+			{
+				"number": 1037,
+				"runId": 43226590218,
+				"title": "npm_and_yarn in /fixtures/dom for node-forge - Update #1698409173",
+				"workflow": "Dependabot Updates",
+				"status": "failed",
+				"branch": "main"
+			},
+			{
+				"number": 1036,
+				"runId": 43226483845,
+				"title": "npm_and_yarn in / for node-forge - Update #1698408163",
+				"workflow": "Dependabot Updates",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 1035,
+				"runId": 43226479068,
+				"title": "npm_and_yarn in / for postcss-selector-parser - Update #1698408138",
+				"workflow": "Dependabot Updates",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 1034,
+				"runId": 43226478038,
+				"title": "npm_and_yarn in / for undici - Update #1698408130",
+				"workflow": "Dependabot Updates",
+				"status": "completed successfully",
+				"branch": "main"
 			}
 		],
-		"/react/react/actions/runs/43005621743": [
+		"/react/react/actions/runs/43226706477": [
 			{
-				"runId": 43005621743,
-				"number": 2501,
-				"title": "[Flight] Fix streams hanging after a synchronous abort",
-				"workflow": "(Shared) Cleanup Merged Branch Caches",
+				"runId": 43226706477,
+				"number": 11229,
+				"title": "Bump undici from 5.28.4 to 6.29.1",
+				"workflow": "(Runtime) ESLint Plugin E2E",
 				"status": "completed successfully",
-				"branch": "unstubbable:hl/fix-flight-aborted-iterables"
+				"branch": "dependabot/npm_and_yarn/undici-6.29.1"
 			}
 		],
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": [
@@ -937,5 +927,5 @@
 		]
 	},
 	"runListPage": "/react/react/actions",
-	"runPage": "/react/react/actions/runs/43005621743"
+	"runPage": "/react/react/actions/runs/43226706477"
 }
