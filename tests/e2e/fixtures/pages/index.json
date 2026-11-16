@@ -9,17 +9,65 @@
 		"/vercel/next.js/discussions": "discussion-list.html",
 		"/vercel/next.js/discussions/10640": "discussion.html",
 		"/react/react/actions": "run-list.html",
-		"/react/react/actions/runs/43690819353": "run.html",
+		"/react/react/actions/runs/43847521844": "run.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": "search-pulls.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=issues": "search-issues.html"
 	},
 	"items": {
 		"/react/react/pulls": [
 			{
+				"number": 38260,
+				"title": "[Fizz] Keep the leading line break of a textarea value that starts with \\r\\n",
+				"author": "0z5a",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38257,
+				"title": "[DOM] Reset forms and read method when controls shadow those names",
+				"author": "ranjithguggilla",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38256,
+				"title": "[Fiber] Point a Fragment instance back at the committed fiber before reusing it",
+				"author": "zhoubiao188",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38255,
+				"title": "[DOM] Use a single Map for the isAttributeNameSafe cache",
+				"author": "lukesandberg",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38254,
+				"title": "[Float] Support dataAttributes option in ReactDOM.preinit() for scripts",
+				"author": "lukesandberg",
+				"state": "draft",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
 				"number": 38251,
 				"title": "Fix Node.js fast hashing in FIPS-enabled environment",
 				"author": "katyayni241",
-				"state": "open"
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
 			},
 			{
 				"number": 38250,
@@ -52,7 +100,7 @@
 				"number": 38247,
 				"title": "[compiler] Enable Reanimated types when detected by the Rust Babel plugin",
 				"author": "smg99",
-				"state": "draft",
+				"state": "open",
 				"labels": [
 					"CLA Signed"
 				]
@@ -70,7 +118,7 @@
 				"number": 38245,
 				"title": "[compiler] Skip node_modules by default in the Rust Babel plugin",
 				"author": "smg99",
-				"state": "draft",
+				"state": "open",
 				"labels": [
 					"CLA Signed"
 				]
@@ -79,7 +127,7 @@
 				"number": 38244,
 				"title": "[compiler] Enable Fast Refresh cache resets in the Rust Babel plugin",
 				"author": "smg99",
-				"state": "draft",
+				"state": "open",
 				"labels": [
 					"CLA Signed"
 				]
@@ -88,7 +136,7 @@
 				"number": 38243,
 				"title": "[DOM] Avoid duplicate events from open shadow portals",
 				"author": "smg99",
-				"state": "draft",
+				"state": "open",
 				"labels": [
 					"CLA Signed"
 				]
@@ -183,48 +231,6 @@
 					"CLA Signed",
 					"React Core Team"
 				]
-			},
-			{
-				"number": 38226,
-				"title": "[Fizz] Clean up destroyed Node prerender streams",
-				"author": "yxshee",
-				"state": "open"
-			},
-			{
-				"number": 38200,
-				"title": "[compiler] Keep for..of destructuring targets in sync with renamed bindings",
-				"author": "zhoubiao188",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38199,
-				"title": "[DevTools] Preserve lone surrogates in operation strings",
-				"author": "JunaidAhamed-7777",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38198,
-				"title": "[Fizz] Count a task after creating it",
-				"author": "kassens",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38197,
-				"title": "[Fizz] Don't recurse over nested segments",
-				"author": "kassens",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
 			}
 		],
 		"/react/react/pull/9713": [
@@ -261,6 +267,12 @@
 			}
 		],
 		"/react/react/issues": [
+			{
+				"number": 38259,
+				"title": "Bug: Server-rendered <textarea> loses its first line break when the value starts with \\r\\n",
+				"author": "0z5a",
+				"state": "open"
+			},
 			{
 				"number": 38253,
 				"title": "Bug: Fragment ref listeners, observers and reactFragments handles never reach children hydrated after the ref attached (a Suspense or Activity boundary directly inside the Fragment)",
@@ -429,17 +441,6 @@
 				"title": "Bug: unhandled promise rejection when a precedence stylesheet fails to load",
 				"author": "pkuczynski",
 				"state": "open"
-			},
-			{
-				"number": 38117,
-				"title": "[DevTools Bug] Cannot add child \"2470\" to parent \"276\" because parent node was not found in the Store.",
-				"author": "WiktorGruszczynski",
-				"state": "open",
-				"labels": [
-					"Component: Developer Tools",
-					"Status: Unconfirmed",
-					"Type: Bug"
-				]
 			}
 		],
 		"/react/react/issues/10": [
@@ -462,6 +463,42 @@
 				"title": "Upgrading from Next.js 15 to 16: what's blocking you?",
 				"author": "icyJoseph",
 				"category": "Feedback"
+			},
+			{
+				"number": 101605,
+				"title": "Per-user cost metering for a Claude agent in Next.js (price snapshots, plan caps)",
+				"author": "agentwrightapp",
+				"category": "Show and tell"
+			},
+			{
+				"number": 101776,
+				"title": "Turbopack Error: create symlink to ../../../../my-prompt-library/node_modules/import-in-the-middle",
+				"author": "kingpo39",
+				"category": "Turbopack Error Report"
+			},
+			{
+				"number": 58165,
+				"title": "How to fetch data using SSR, and also use hooks in same component or parent component?",
+				"author": "CodeStarGM",
+				"category": "Help"
+			},
+			{
+				"number": 95679,
+				"title": "Next.js static export with Headless WordPress API - New products not updating after deployment",
+				"author": "loydabdullah22",
+				"category": "Help"
+			},
+			{
+				"number": 92771,
+				"title": "I want to understand why setting a placeholder in generateStaticParams works",
+				"author": "laurenskling",
+				"category": "App Router"
+			},
+			{
+				"number": 101644,
+				"title": "Is route with unlisted params for nested dynamic route segments upgraded after first visit?",
+				"author": "charshin",
+				"category": "Help"
 			},
 			{
 				"number": 59736,
@@ -494,22 +531,10 @@
 				"category": "Ideas"
 			},
 			{
-				"number": 101605,
-				"title": "Per-user cost metering for a Claude agent in Next.js (price snapshots, plan caps)",
-				"author": "agentwrightapp",
-				"category": "Show and tell"
-			},
-			{
 				"number": 101619,
 				"title": "Show and tell: vibe-shield and ghost-qa, two open-source CLIs for checking App Router security and running headless browser QA",
 				"author": "avivgerz-hue",
 				"category": "Show and tell"
-			},
-			{
-				"number": 101776,
-				"title": "Turbopack Error: create symlink to ../../../../my-prompt-library/node_modules/import-in-the-middle",
-				"author": "kingpo39",
-				"category": "Turbopack Error Report"
 			},
 			{
 				"number": 101759,
@@ -560,12 +585,6 @@
 				"category": "Ideas"
 			},
 			{
-				"number": 101644,
-				"title": "Is route with unlisted params for nested dynamic route segments upgraded after first visit?",
-				"author": "charshin",
-				"category": "Help"
-			},
-			{
 				"number": 101681,
 				"title": "JPEGXL support",
 				"author": "jthoward64",
@@ -594,24 +613,6 @@
 				"title": "internal panic occurred outside the per-task panic boundary",
 				"author": "Remiiiiii",
 				"category": "Turbopack Error Report"
-			},
-			{
-				"number": 101559,
-				"title": "3 open-source checks before pushing AI-generated apps to production (Security, Browser QA & UI DNA)",
-				"author": "avivgerz-hue",
-				"category": "Show and tell"
-			},
-			{
-				"number": 101613,
-				"title": "Next.js 16.4.6: Setting runtime in proxy.ts throws an error after migrating from middleware.ts",
-				"author": "franksky1",
-				"category": "Help"
-			},
-			{
-				"number": 45774,
-				"title": "How to have image fill width yet not be squished in height using next/image?",
-				"author": "lancejpollard",
-				"category": "Help"
 			}
 		],
 		"/vercel/next.js/discussions/10640": [
@@ -624,209 +625,206 @@
 		],
 		"/react/react/actions": [
 			{
-				"number": 3130,
-				"runId": 43713876683,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 22823,
-				"runId": 43712684535,
+				"number": 22848,
+				"runId": 43875454474,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 20221,
-				"runId": 43712476958,
+				"number": 20246,
+				"runId": 43874802473,
 				"title": "(Shared) Manage stale issues and PRs",
 				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 2388,
-				"runId": 43711616947,
+				"number": 22847,
+				"runId": 43865538597,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 20245,
+				"runId": 43864986840,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 2392,
+				"runId": 43862648458,
 				"title": "(Shared) Cleanup Stale Branch Caches",
 				"workflow": "(Shared) Cleanup Stale Branch Caches",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 22822,
-				"runId": 43707406543,
+				"number": 3142,
+				"runId": 43857072541,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 22846,
+				"runId": 43855283377,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 20220,
-				"runId": 43707265601,
+				"number": 20244,
+				"runId": 43854976006,
 				"title": "(Shared) Manage stale issues and PRs",
 				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 3129,
-				"runId": 43704623931,
+				"number": 3141,
+				"runId": 43850931480,
 				"title": "(Runtime) Sizebot Comment",
 				"workflow": "(Runtime) Sizebot Comment",
 				"status": "completed successfully"
 			},
 			{
-				"number": 21087,
-				"runId": 43704620730,
-				"title": "Fix Node.js fast hashing in FIPS-enabled environment",
-				"workflow": "(Shared) Lint",
-				"status": "requires action with the application",
-				"branch": "katyayni241:fix/fips-compatible-fast-hash"
-			},
-			{
-				"number": 14925,
-				"runId": 43704620705,
-				"title": "Fix Node.js fast hashing in FIPS-enabled environment",
-				"workflow": "(Runtime) Build and Test",
-				"status": "requires action with the application",
-				"branch": "katyayni241:fix/fips-compatible-fast-hash"
-			},
-			{
-				"number": 11293,
-				"runId": 43704620626,
-				"title": "Fix Node.js fast hashing in FIPS-enabled environment",
+				"number": 11299,
+				"runId": 43850923340,
+				"title": "[Fizz] Keep the leading line break of a textarea value that starts with \\r\\n",
 				"workflow": "(Runtime) ESLint Plugin E2E",
 				"status": "requires action with the application",
-				"branch": "katyayni241:fix/fips-compatible-fast-hash"
+				"branch": "0z5a:fix/textarea-leading-cr"
 			},
 			{
-				"number": 3264,
-				"runId": 43704618904,
-				"title": "Fix Node.js fast hashing in FIPS-enabled environment",
-				"workflow": "(Runtime) Discord Notify",
-				"status": "completed successfully"
+				"number": 14931,
+				"runId": 43850923266,
+				"title": "[Fizz] Keep the leading line break of a textarea value that starts with \\r\\n",
+				"workflow": "(Runtime) Build and Test",
+				"status": "requires action with the application",
+				"branch": "0z5a:fix/textarea-leading-cr"
 			},
 			{
-				"number": 5543,
-				"runId": 43704618898,
-				"title": "Fix Node.js fast hashing in FIPS-enabled environment",
+				"number": 21093,
+				"runId": 43850922574,
+				"title": "[Fizz] Keep the leading line break of a textarea value that starts with \\r\\n",
+				"workflow": "(Shared) Lint",
+				"status": "requires action with the application",
+				"branch": "0z5a:fix/textarea-leading-cr"
+			},
+			{
+				"number": 5549,
+				"runId": 43850732082,
+				"title": "[Fizz] Keep the leading line break of a textarea value that starts with \\r\\n",
 				"workflow": "(Shared) Label Core Team PRs",
 				"status": "completed successfully"
 			},
 			{
-				"number": 22821,
-				"runId": 43702616841,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
+				"number": 3272,
+				"runId": 43850732052,
+				"title": "[Fizz] Keep the leading line break of a textarea value that starts with \\r\\n",
+				"workflow": "(Runtime) Discord Notify",
+				"status": "completed successfully"
 			},
 			{
-				"number": 20219,
-				"runId": 43702469209,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22820,
-				"runId": 43697837137,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 20218,
-				"runId": 43697691873,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22819,
-				"runId": 43693351232,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 20217,
-				"runId": 43693161493,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 2529,
-				"runId": 43690819353,
-				"title": "[compiler] Assign hoisted function declarations that escape their scope",
-				"workflow": "(Shared) Cleanup Merged Branch Caches",
-				"status": "completed successfully",
-				"branch": "lazerg:fix/issue-37833-hoisted-function-declaration-scope"
-			},
-			{
-				"number": 2528,
-				"runId": 43690408830,
-				"title": "[compiler] Preserve named exports for gated hoisted functions",
-				"workflow": "(Shared) Cleanup Merged Branch Caches",
-				"status": "completed successfully",
-				"branch": "lazerg:fix/issue-37265-gating-named-export"
-			},
-			{
-				"number": 2527,
-				"runId": 43690405019,
-				"title": "[rust-compiler] Preserve the invariant error shape through lowering",
-				"workflow": "(Shared) Cleanup Merged Branch Caches",
-				"status": "completed successfully",
-				"branch": "lazerg:fix/issue-37533-invariant-event-shape"
-			},
-			{
-				"number": 22818,
-				"runId": 43688648177,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 20216,
-				"runId": 43688508171,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 3128,
-				"runId": 43687357933,
+				"number": 3140,
+				"runId": 43847580868,
 				"title": "(Runtime) Sizebot Comment",
 				"workflow": "(Runtime) Sizebot Comment",
 				"status": "completed successfully"
 			},
 			{
-				"number": 22817,
-				"runId": 43684577463,
+				"number": 2530,
+				"runId": 43847575827,
+				"title": "Dev",
+				"workflow": "(Shared) Cleanup Merged Branch Caches",
+				"status": "requires action with the application",
+				"branch": "Bugii137:dev"
+			},
+			{
+				"number": 3139,
+				"runId": 43847533064,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 14930,
+				"runId": 43847521844,
+				"title": "Dev",
+				"workflow": "(Runtime) Build and Test",
+				"status": "failed",
+				"branch": "Bugii137:dev"
+			},
+			{
+				"number": 21092,
+				"runId": 43847521834,
+				"title": "Dev",
+				"workflow": "(Shared) Lint",
+				"status": "failed",
+				"branch": "Bugii137:dev"
+			},
+			{
+				"number": 11298,
+				"runId": 43847521833,
+				"title": "Dev",
+				"workflow": "(Runtime) ESLint Plugin E2E",
+				"status": "failed",
+				"branch": "Bugii137:dev"
+			},
+			{
+				"number": 5548,
+				"runId": 43847513890,
+				"title": "Dev",
+				"workflow": "(Shared) Label Core Team PRs",
+				"status": "completed successfully"
+			},
+			{
+				"number": 3271,
+				"runId": 43847513868,
+				"title": "Dev",
+				"workflow": "(Runtime) Discord Notify",
+				"status": "completed successfully"
+			},
+			{
+				"number": 22845,
+				"runId": 43846770990,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 20243,
+				"runId": 43846231017,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 22844,
+				"runId": 43837956545,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			}
 		],
-		"/react/react/actions/runs/43690819353": [
+		"/react/react/actions/runs/43847521844": [
 			{
-				"runId": 43690819353,
-				"number": 2529,
-				"title": "[compiler] Assign hoisted function declarations that escape their scope",
-				"workflow": "(Shared) Cleanup Merged Branch Caches",
-				"status": "completed successfully",
-				"branch": "lazerg:fix/issue-37833-hoisted-function-declaration-scope"
+				"runId": 43847521844,
+				"number": 14930,
+				"title": "Dev",
+				"workflow": "(Runtime) Build and Test",
+				"status": "failed",
+				"branch": "Bugii137:dev"
 			}
 		],
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": [
@@ -915,5 +913,5 @@
 		]
 	},
 	"runListPage": "/react/react/actions",
-	"runPage": "/react/react/actions/runs/43690819353"
+	"runPage": "/react/react/actions/runs/43847521844"
 }
