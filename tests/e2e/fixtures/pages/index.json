@@ -9,12 +9,63 @@
 		"/vercel/next.js/discussions": "discussion-list.html",
 		"/vercel/next.js/discussions/10640": "discussion.html",
 		"/react/react/actions": "run-list.html",
-		"/react/react/actions/runs/43847521844": "run.html",
+		"/react/react/actions/runs/44102576343": "run.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": "search-pulls.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=issues": "search-issues.html"
 	},
 	"items": {
 		"/react/react/pulls": [
+			{
+				"number": 38274,
+				"title": "Fix Fragment refs when hydrating Suspense and Activity",
+				"author": "katyayni241",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38272,
+				"title": "[compiler] Keep hook calls out of memoized scopes",
+				"author": "zhoubiao188",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38271,
+				"title": "Revert \"Fix uDV: Re-render while in \"initial\" state (#38266)\"",
+				"author": "10wandile",
+				"state": "open"
+			},
+			{
+				"number": 38268,
+				"title": "[Tests] Reproduce useDeferredValue regressions from #38266",
+				"author": "samselikoff",
+				"state": "draft",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38267,
+				"title": "[Compiler] Promote hook call temporaries so they are never inlined into memoization cache blocks",
+				"author": "Siddharth22GIT",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38262,
+				"title": "[compiler] Keep render counters registered across updates",
+				"author": "chengchuu",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
 			{
 				"number": 38260,
 				"title": "[Fizz] Keep the leading line break of a textarea value that starts with \\r\\n",
@@ -163,73 +214,27 @@
 				"number": 38239,
 				"title": "[DevTools] Apply indexed source map column offsets only to the first line",
 				"author": "Aminark",
-				"state": "open"
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
 			},
 			{
 				"number": 38238,
 				"title": "[DevTools] Fix source map lookup at mapping boundaries",
 				"author": "Aminark",
-				"state": "open"
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
 			},
 			{
 				"number": 38237,
 				"title": "[DOM] Handle selection in plaintext-only editable elements",
 				"author": "Aminark",
-				"state": "open"
-			},
-			{
-				"number": 38236,
-				"title": "Fix: register beforetoggle and toggle listeners on dialog during hydration",
-				"author": "mathisbusanabussei359-web",
 				"state": "open",
 				"labels": [
 					"CLA Signed"
-				]
-			},
-			{
-				"number": 38235,
-				"title": "[Flight] Release the render when an unread Node prelude is destroyed",
-				"author": "zhoubiao188",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38234,
-				"title": "Preserve painted Suspense fallback when hydration suspends",
-				"author": "brett0x0",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38231,
-				"title": "Skip redundant type and name writes for text inputs",
-				"author": "smg99",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38230,
-				"title": "[Fast Refresh] Clone custom Hook nodes for each HOC signature",
-				"author": "Elehiggle",
-				"state": "open",
-				"labels": [
-					"CLA Signed"
-				]
-			},
-			{
-				"number": 38227,
-				"title": "[DevTools] Expose Suspense suspended state in facade inspection results",
-				"author": "eps1lon",
-				"state": "open",
-				"labels": [
-					"CLA Signed",
-					"React Core Team"
 				]
 			}
 		],
@@ -267,6 +272,67 @@
 			}
 		],
 		"/react/react/issues": [
+			{
+				"number": 38277,
+				"title": "Bug:",
+				"author": "10wandile",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
+			},
+			{
+				"number": 38276,
+				"title": "Bug:",
+				"author": "10wandile",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
+			},
+			{
+				"number": 38275,
+				"title": "Bug:",
+				"author": "10wandile",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
+			},
+			{
+				"number": 38273,
+				"title": "Bug: www.baseapp",
+				"author": "10wandile",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
+			},
+			{
+				"number": 38269,
+				"title": "Bug:",
+				"author": "10wandile",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
+			},
+			{
+				"number": 38264,
+				"title": "[Compiler Bug]: Hook called inside an object literal is memoized with it and skipped on later renders",
+				"author": "dkarlovi",
+				"state": "open"
+			},
+			{
+				"number": 38261,
+				"title": "[Compiler Bug]: Render counters unregister after the first update",
+				"author": "chengchuu",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed",
+					"Type: Bug"
+				]
+			},
 			{
 				"number": 38259,
 				"title": "Bug: Server-rendered <textarea> loses its first line break when the value starts with \\r\\n",
@@ -386,61 +452,6 @@
 				"title": "Bug: Hoisted SSR title remains orphaned when deleting a dehydrated Suspense boundary",
 				"author": "Nerqis",
 				"state": "open"
-			},
-			{
-				"number": 38145,
-				"title": "[Compiler Bug]: Non-throwing try/catch bails out when the catch assigns a binding used afterward",
-				"author": "Rachit-Gandhi",
-				"state": "open"
-			},
-			{
-				"number": 38141,
-				"title": "[Compiler Bug]: Statements after try/catch are dropped when try block cannot throw",
-				"author": "trackoor",
-				"state": "open"
-			},
-			{
-				"number": 38129,
-				"title": "[Compiler Bug]: Rust Babel adapter fails to compile lone surrogates after backslashes",
-				"author": "chengchuu",
-				"state": "open",
-				"labels": [
-					"Status: Unconfirmed",
-					"Type: Bug"
-				]
-			},
-			{
-				"number": 38126,
-				"title": "Bug:",
-				"author": "alkhrambdrbh681-star",
-				"state": "open",
-				"labels": [
-					"Status: Unconfirmed"
-				]
-			},
-			{
-				"number": 38125,
-				"title": "Bug:",
-				"author": "alkhrambdrbh681-star",
-				"state": "open",
-				"labels": [
-					"Status: Unconfirmed"
-				]
-			},
-			{
-				"number": 38119,
-				"title": "Bug: encodeReply silently drops null-prototype objects when temporaryReferences is set",
-				"author": "TIMMLOPK",
-				"state": "open",
-				"labels": [
-					"Status: Unconfirmed"
-				]
-			},
-			{
-				"number": 38118,
-				"title": "Bug: unhandled promise rejection when a precedence stylesheet fails to load",
-				"author": "pkuczynski",
-				"state": "open"
 			}
 		],
 		"/react/react/issues/10": [
@@ -465,6 +476,24 @@
 				"category": "Feedback"
 			},
 			{
+				"number": 58165,
+				"title": "How to fetch data using SSR, and also use hooks in same component or parent component?",
+				"author": "CodeStarGM",
+				"category": "Help"
+			},
+			{
+				"number": 101619,
+				"title": "Show and tell: vibe-shield and ghost-qa, two open-source CLIs for checking App Router security and running headless browser QA",
+				"author": "avivgerz-hue",
+				"category": "Show and tell"
+			},
+			{
+				"number": 101872,
+				"title": "Check where a deployed Next.js route actually lands",
+				"author": "fainir",
+				"category": "Show and tell"
+			},
+			{
 				"number": 101605,
 				"title": "Per-user cost metering for a Claude agent in Next.js (price snapshots, plan caps)",
 				"author": "agentwrightapp",
@@ -477,12 +506,6 @@
 				"category": "Turbopack Error Report"
 			},
 			{
-				"number": 58165,
-				"title": "How to fetch data using SSR, and also use hooks in same component or parent component?",
-				"author": "CodeStarGM",
-				"category": "Help"
-			},
-			{
 				"number": 95679,
 				"title": "Next.js static export with Headless WordPress API - New products not updating after deployment",
 				"author": "loydabdullah22",
@@ -493,12 +516,6 @@
 				"title": "I want to understand why setting a placeholder in generateStaticParams works",
 				"author": "laurenskling",
 				"category": "App Router"
-			},
-			{
-				"number": 101644,
-				"title": "Is route with unlisted params for nested dynamic route segments upgraded after first visit?",
-				"author": "charshin",
-				"category": "Help"
 			},
 			{
 				"number": 59736,
@@ -529,12 +546,6 @@
 				"title": "examples/auth: sign in without a GitHub OAuth app in development, and add an E2E test",
 				"author": "tianhuil",
 				"category": "Ideas"
-			},
-			{
-				"number": 101619,
-				"title": "Show and tell: vibe-shield and ghost-qa, two open-source CLIs for checking App Router security and running headless browser QA",
-				"author": "avivgerz-hue",
-				"category": "Show and tell"
 			},
 			{
 				"number": 101759,
@@ -625,206 +636,210 @@
 		],
 		"/react/react/actions": [
 			{
-				"number": 22848,
-				"runId": 43875454474,
+				"number": 9164,
+				"runId": 44102576343,
+				"title": "[compiler] Keep render counters registered across updates",
+				"workflow": "(Compiler) Playground",
+				"status": "completed successfully",
+				"branch": "chengchuu:fix/compiler-render-counter-registration"
+			},
+			{
+				"number": 21116,
+				"runId": 44102576252,
+				"title": "[compiler] Keep render counters registered across updates",
+				"workflow": "(Shared) Lint",
+				"status": "completed successfully",
+				"branch": "chengchuu:fix/compiler-render-counter-registration"
+			},
+			{
+				"number": 9169,
+				"runId": 44102576233,
+				"title": "[compiler] Keep render counters registered across updates",
+				"workflow": "(Compiler) TypeScript",
+				"status": "completed successfully",
+				"branch": "chengchuu:fix/compiler-render-counter-registration"
+			},
+			{
+				"number": 1426,
+				"runId": 44102576155,
+				"title": "[compiler] Keep render counters registered across updates",
+				"workflow": "React Compiler (Rust)",
+				"status": "currently running",
+				"branch": "chengchuu:fix/compiler-render-counter-registration"
+			},
+			{
+				"number": 22879,
+				"runId": 44100080533,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 20246,
-				"runId": 43874802473,
+				"number": 20271,
+				"runId": 44099729606,
 				"title": "(Shared) Manage stale issues and PRs",
 				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 22847,
-				"runId": 43865538597,
+				"number": 22878,
+				"runId": 44089967810,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 20245,
-				"runId": 43864986840,
+				"number": 20270,
+				"runId": 44089681353,
 				"title": "(Shared) Manage stale issues and PRs",
 				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 2392,
-				"runId": 43862648458,
+				"number": 2801,
+				"runId": 44088281249,
+				"title": "(Runtime) Commit Artifacts for Meta WWW and fbsource V2",
+				"workflow": "(Runtime) Commit Artifacts for Meta WWW and fbsource V2",
+				"status": "completed successfully"
+			},
+			{
+				"number": 3178,
+				"runId": 44088281214,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "skipped"
+			},
+			{
+				"number": 3177,
+				"runId": 44087804554,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "skipped"
+			},
+			{
+				"number": 2536,
+				"runId": 44087797928,
+				"title": "[React Compiler] fix: don't outline 'use no memo' functions and don't recurse into them",
+				"workflow": "(Shared) Cleanup Merged Branch Caches",
+				"status": "completed successfully",
+				"branch": "tjzel:@tjzel/opt-out-outline"
+			},
+			{
+				"number": 9168,
+				"runId": 44087795857,
+				"title": "[React Compiler] fix: don't outline 'use no memo' functions and don't…",
+				"workflow": "(Compiler) TypeScript",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 14947,
+				"runId": 44087794712,
+				"title": "[React Compiler] fix: don't outline 'use no memo' functions and don't…",
+				"workflow": "(Runtime) Build and Test",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 21115,
+				"runId": 44087794678,
+				"title": "[React Compiler] fix: don't outline 'use no memo' functions and don't…",
+				"workflow": "(Shared) Lint",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 1425,
+				"runId": 44087794602,
+				"title": "[React Compiler] fix: don't outline 'use no memo' functions and don't…",
+				"workflow": "React Compiler (Rust)",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 11315,
+				"runId": 44087794597,
+				"title": "[React Compiler] fix: don't outline 'use no memo' functions and don't…",
+				"workflow": "(Runtime) ESLint Plugin E2E",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 22877,
+				"runId": 44087794463,
+				"title": "[React Compiler] fix: don't outline 'use no memo' functions and don't…",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 9163,
+				"runId": 44087794152,
+				"title": "[React Compiler] fix: don't outline 'use no memo' functions and don't…",
+				"workflow": "(Compiler) Playground",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 3176,
+				"runId": 44085549309,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 22876,
+				"runId": 44081214102,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 20269,
+				"runId": 44080814740,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 2396,
+				"runId": 44079053057,
 				"title": "(Shared) Cleanup Stale Branch Caches",
 				"workflow": "(Shared) Cleanup Stale Branch Caches",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 3142,
-				"runId": 43857072541,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 22846,
-				"runId": 43855283377,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 20244,
-				"runId": 43854976006,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
-				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 3141,
-				"runId": 43850931480,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 11299,
-				"runId": 43850923340,
-				"title": "[Fizz] Keep the leading line break of a textarea value that starts with \\r\\n",
-				"workflow": "(Runtime) ESLint Plugin E2E",
-				"status": "requires action with the application",
-				"branch": "0z5a:fix/textarea-leading-cr"
-			},
-			{
-				"number": 14931,
-				"runId": 43850923266,
-				"title": "[Fizz] Keep the leading line break of a textarea value that starts with \\r\\n",
-				"workflow": "(Runtime) Build and Test",
-				"status": "requires action with the application",
-				"branch": "0z5a:fix/textarea-leading-cr"
-			},
-			{
-				"number": 21093,
-				"runId": 43850922574,
-				"title": "[Fizz] Keep the leading line break of a textarea value that starts with \\r\\n",
+				"number": 21114,
+				"runId": 44074736056,
+				"title": "[React Compiler] fix: don't outline 'use no memo' functions and don't recurse into them",
 				"workflow": "(Shared) Lint",
-				"status": "requires action with the application",
-				"branch": "0z5a:fix/textarea-leading-cr"
-			},
-			{
-				"number": 5549,
-				"runId": 43850732082,
-				"title": "[Fizz] Keep the leading line break of a textarea value that starts with \\r\\n",
-				"workflow": "(Shared) Label Core Team PRs",
-				"status": "completed successfully"
-			},
-			{
-				"number": 3272,
-				"runId": 43850732052,
-				"title": "[Fizz] Keep the leading line break of a textarea value that starts with \\r\\n",
-				"workflow": "(Runtime) Discord Notify",
-				"status": "completed successfully"
-			},
-			{
-				"number": 3140,
-				"runId": 43847580868,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 2530,
-				"runId": 43847575827,
-				"title": "Dev",
-				"workflow": "(Shared) Cleanup Merged Branch Caches",
-				"status": "requires action with the application",
-				"branch": "Bugii137:dev"
-			},
-			{
-				"number": 3139,
-				"runId": 43847533064,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 14930,
-				"runId": 43847521844,
-				"title": "Dev",
-				"workflow": "(Runtime) Build and Test",
-				"status": "failed",
-				"branch": "Bugii137:dev"
-			},
-			{
-				"number": 21092,
-				"runId": 43847521834,
-				"title": "Dev",
-				"workflow": "(Shared) Lint",
-				"status": "failed",
-				"branch": "Bugii137:dev"
-			},
-			{
-				"number": 11298,
-				"runId": 43847521833,
-				"title": "Dev",
-				"workflow": "(Runtime) ESLint Plugin E2E",
-				"status": "failed",
-				"branch": "Bugii137:dev"
-			},
-			{
-				"number": 5548,
-				"runId": 43847513890,
-				"title": "Dev",
-				"workflow": "(Shared) Label Core Team PRs",
-				"status": "completed successfully"
-			},
-			{
-				"number": 3271,
-				"runId": 43847513868,
-				"title": "Dev",
-				"workflow": "(Runtime) Discord Notify",
-				"status": "completed successfully"
-			},
-			{
-				"number": 22845,
-				"runId": 43846770990,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
-				"branch": "main"
+				"branch": "tjzel:@tjzel/opt-out-outline"
 			},
 			{
-				"number": 20243,
-				"runId": 43846231017,
-				"title": "(Shared) Manage stale issues and PRs",
-				"workflow": "(Shared) Manage stale issues and PRs",
+				"number": 9167,
+				"runId": 44074735992,
+				"title": "[React Compiler] fix: don't outline 'use no memo' functions and don't recurse into them",
+				"workflow": "(Compiler) TypeScript",
 				"status": "completed successfully",
-				"branch": "main"
-			},
-			{
-				"number": 22844,
-				"runId": 43837956545,
-				"title": "(Runtime) Fuzz tests",
-				"workflow": "(Runtime) Fuzz tests",
-				"status": "completed successfully",
-				"branch": "main"
+				"branch": "tjzel:@tjzel/opt-out-outline"
 			}
 		],
-		"/react/react/actions/runs/43847521844": [
+		"/react/react/actions/runs/44102576343": [
 			{
-				"runId": 43847521844,
-				"number": 14930,
-				"title": "Dev",
-				"workflow": "(Runtime) Build and Test",
-				"status": "failed",
-				"branch": "Bugii137:dev"
+				"runId": 44102576343,
+				"number": 9164,
+				"title": "[compiler] Keep render counters registered across updates",
+				"workflow": "(Compiler) Playground",
+				"status": "completed successfully",
+				"branch": "chengchuu:fix/compiler-render-counter-registration"
 			}
 		],
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": [
@@ -833,12 +848,12 @@
 				"title": "[Fiber] Fix useActionState dispatching a stale action after switching back to a previous action"
 			},
 			{
-				"number": 38157,
-				"title": "[Flight] Fix infinite SSR loop when binding a Server Action during render"
-			},
-			{
 				"number": 37555,
 				"title": "Fix Fizz SSR corrupting hooks state on nested renders"
+			},
+			{
+				"number": 38157,
+				"title": "[Flight] Fix infinite SSR loop when binding a Server Action during render"
 			},
 			{
 				"number": 37677,
@@ -913,5 +928,5 @@
 		]
 	},
 	"runListPage": "/react/react/actions",
-	"runPage": "/react/react/actions/runs/43847521844"
+	"runPage": "/react/react/actions/runs/44102576343"
 }
