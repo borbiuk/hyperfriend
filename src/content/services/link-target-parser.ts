@@ -51,6 +51,8 @@ const DETAIL_TITLE_TEXT_SELECTORS = [
 	'[data-testid="issue-title"]',
 	'.js-issue-title',
 	'.markdown-title',
+	// Title text of the new pull request layout (its class is hashed, so `data-component` is used)
+	'h1[data-component="Heading"] > [data-component="Text"]',
 ];
 
 /** Text of a `#123` number element next to a detail page title */
@@ -58,7 +60,7 @@ const NUMBER_TEXT_REGEX = /^#\d+$/;
 
 /** Title text (may contain `#123` references) and our own UI, never the number element */
 const TITLE_TEXT_SELECTOR =
-	'[data-testid="issue-title"], .markdown-title, .js-issue-title, [data-hyperfriend]';
+	'[data-testid="issue-title"], .markdown-title, .js-issue-title, h1[data-component="Heading"] > [data-component="Text"], [data-hyperfriend]';
 
 /** Elements that are never part of the title text */
 const NON_TITLE_SELECTOR = '.sr-only, [aria-hidden="true"], [data-hyperfriend]';

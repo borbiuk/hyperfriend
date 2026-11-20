@@ -68,8 +68,9 @@ const EXCLUDED_CONTAINER_SELECTOR = [
 const DETAIL_HEADER_SELECTORS = [
 	'h1[data-component="PH_Title"]',
 	// New pull request layout (Conversation and Commits tabs): the title text inside a Primer heading
-	// (resolved to its h1 by findDetailHeader; no :has(), which older Chrome versions reject)
-	'h1[data-component="Heading"] > .markdown-title',
+	// (resolved to its h1 by findDetailHeader; no :has(), which older Chrome versions reject).
+	// The class of this text changed from `markdown-title` to a hashed one, so `data-component` is used.
+	'h1[data-component="Heading"] > [data-component="Text"]',
 	'[data-testid="issue-title"]',
 	'.gh-header-title',
 	'bdi.js-issue-title',

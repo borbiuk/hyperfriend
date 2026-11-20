@@ -38,13 +38,11 @@ test.beforeAll(() => {
 	expect(snapshotItems(PAGES.issue)).toEqual([
 		{ number: NUMBER, title: TITLE, author: AUTHOR, state: STATE },
 	]);
-	// GitHub does not always send og:author on Issue pages; this snapshot has none, so the
-	// {{author}} placeholder test covers the link above the description
-	const html = snapshotHtml(PAGES.issue);
-	expect(html, 'precondition: no og:author in the snapshot').not.toContain(
-		'og:author:username'
+	// GitHub does not always send og:author on Issue pages, so a snapshot may or may not have it;
+	// the test of the author link above the description removes the meta tag itself
+	expect(snapshotHtml(PAGES.issue)).toContain(
+		'data-testid="issue-body-header-author"'
 	);
-	expect(html).toContain('data-testid="issue-body-header-author"');
 });
 
 /**
@@ -112,6 +110,51 @@ test('should fill the metadata placeholders and leave missing ones empty', async
 				`<a href="${ISSUE_URL}">${text}</a>`
 			),
 			text: `${text} — ${ISSUE_URL}`,
+		});
+});
+
+test('should read the author from the link above the description when og:author is missing', async ({
+	page,
+	storage,
+	readClipboard,
+	writeClipboardSentinel,
+	normalizeHtml,
+}) => {
+	await test.step('setup: remove the author meta tag from the snapshot', async () => {
+		const original = snapshotHtml(PAGES.issue);
+		const html = original.replace(
+			/<meta property="og:author:username"[^>]*>/g,
+			''
+		);
+		expect(html).not.toContain('og:author:username');
+		await page.route(snapshotUrl(PAGES.issue), (route) =>
+			route.fulfill({
+				contentType: 'text/html; charset=utf-8',
+				body: html,
+			})
+		);
+		await storage.seedConfig({
+			templates: {
+				[LinkType.PullRequest]: '[PR {{pr_number}}]: {{pr_name}}',
+				[LinkType.Issue]: '{{author}}',
+			},
+		});
+	});
+
+	await page.goto(snapshotUrl(PAGES.issue));
+	await readyForShortcut(page);
+	await writeClipboardSentinel(page, 'sentinel: issue author fallback');
+
+	await page.keyboard.press('Shift+C');
+
+	await expect
+		.poll(() => readClipboard(page))
+		.toEqual({
+			html: await normalizeHtml(
+				page,
+				`<a href="${ISSUE_URL}">${AUTHOR}</a>`
+			),
+			text: `${AUTHOR} — ${ISSUE_URL}`,
 		});
 });
 
