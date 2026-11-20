@@ -30,6 +30,27 @@
 	cursor: pointer;
 }
 
+/*
+	The text and hidden copies of every other text the chip can show share one grid cell, so the
+	chip is as wide as its longest text and does not change width when its text changes.
+*/
+.hyperfriend-filter-bar__label-box {
+	display: inline-grid;
+}
+
+.hyperfriend-filter-bar__label,
+.hyperfriend-filter-bar__sizer {
+	grid-area: 1 / 1;
+}
+
+.hyperfriend-filter-bar__sizer {
+	visibility: hidden;
+}
+
+.hyperfriend-filter-bar__sizer::before {
+	content: attr(data-text);
+}
+
 .hyperfriend-filter-bar__chip:hover {
 	background-color: var(--bgColor-muted, #f6f8fa);
 }

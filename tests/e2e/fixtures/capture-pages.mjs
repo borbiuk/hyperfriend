@@ -291,7 +291,11 @@ function readDetailMetadata() {
 		document
 			.querySelector('meta[property="og:author:username"]')
 			?.getAttribute('content') ??
-		text(document.querySelector('.gh-header-meta a.author'));
+		text(document.querySelector('.gh-header-meta a.author')) ??
+		// GitHub does not always send the author meta tag on Issue pages
+		text(
+			document.querySelector('a[data-testid="issue-body-header-author"]')
+		);
 	const state =
 		toState(
 			document

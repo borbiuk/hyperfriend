@@ -6,6 +6,12 @@ const BAR_MARKER = 'filter-bar';
 /** Class of the text element of a chip */
 const LABEL_CLASS = 'hyperfriend-filter-bar__label';
 
+/** Class of the box that holds the text and the hidden sizers of a chip */
+const LABEL_BOX_CLASS = 'hyperfriend-filter-bar__label-box';
+
+/** Class of a hidden copy of another text the chip can show; it keeps the chip as wide as its longest text */
+const SIZER_CLASS = 'hyperfriend-filter-bar__sizer';
+
 /**
  * What the bar shows for one chip.
  */
@@ -15,6 +21,12 @@ export interface FilterBarChip {
 
 	/** Text of the chip */
 	label: string;
+
+	/**
+	 * Every text the chip can show. The chip keeps the width of the longest one, so a change of its
+	 * text does not move the chips after it (or wrap them to the next line).
+	 */
+	labels: readonly string[];
 
 	/** Tooltip text */
 	title: string;
@@ -56,7 +68,10 @@ export class FilterBar {
 	public sync(anchor: Element, chips: readonly FilterBarChip[]): void {
 		const element = this.getElement();
 		const signature = chips
-			.map((chip) => `${chip.id}:${chip.icon}:${chip.colour}`)
+			.map(
+				(chip) =>
+					`${chip.id}:${chip.icon}:${chip.colour}:${chip.labels.join('|')}`
+			)
 			.join(' ');
 		if (element.dataset.chips !== signature) {
 			element.replaceChildren(
@@ -138,9 +153,22 @@ export class FilterBar {
 			button.append(createOcticon(icon));
 		}
 
+		// The sizers show their text through CSS (`attr(data-text)`), so it is not in the text or the
+		// accessible name of the button
+		const box = document.createElement('span');
+		box.className = LABEL_BOX_CLASS;
+		for (const text of chip.labels) {
+			const sizer = document.createElement('span');
+			sizer.className = SIZER_CLASS;
+			sizer.dataset.text = text;
+			sizer.setAttribute('aria-hidden', 'true');
+			box.append(sizer);
+		}
+
 		const label = document.createElement('span');
 		label.className = LABEL_CLASS;
-		button.append(label);
+		box.append(label);
+		button.append(box);
 
 		return button;
 	}

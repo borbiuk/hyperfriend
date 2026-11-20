@@ -188,13 +188,21 @@ export function isChipActive(
 
 /**
  * Returns the tokens after a click on the chip.
- * An active chip removes its tokens. An inactive one first removes the tokens of its facets,
- * so `author:@me` makes room for `review-requested:@me`, then adds its own tokens.
+ * An active chip removes its tokens, except the ones that a chip of `keep` needs, so turning off
+ * `Mine, waiting for review` keeps the `author:@me` of `Created by you`. A chip of `keep` that has
+ * every token of the clicked chip turns off with it. When every token is needed by `keep`, all of
+ * them are removed: the clicked chip has to turn off.
+ * An inactive one first removes the tokens of its facets, so `author:@me` makes room for
+ * `review-requested:@me`, then adds its own tokens.
  * The drafts chip goes to the next state.
+ *
+ * @param keep - Other chips that should stay on when the clicked chip turns off (the caller
+ * passes the chips the user turned on and that are still active).
  */
 export function toggleChip(
 	chip: FilterChipModel,
-	tokens: readonly string[]
+	tokens: readonly string[],
+	keep: readonly FilterChipModel[] = []
 ): string[] {
 	if (chip.kind === 'drafts') {
 		return setDraftState(tokens, nextDraftState(getDraftState(tokens)));
@@ -206,7 +214,18 @@ export function toggleChip(
 	}
 
 	if (isChipActive(chip, tokens)) {
-		return withoutTokens(tokens, chipTokens);
+		const needed = keep
+			.filter(
+				(other) =>
+					other.id !== chip.id &&
+					other.kind !== 'drafts' &&
+					isChipActive(other, tokens) &&
+					!chipTokens.every((token) => hasToken(other.tokens, token))
+			)
+			.flatMap((other) => other.tokens);
+		const removed = chipTokens.filter((token) => !hasToken(needed, token));
+
+		return withoutTokens(tokens, removed.length > 0 ? removed : chipTokens);
 	}
 
 	// In a grouped query (`(is:draft OR status:failure)`) a token can not be taken out alone

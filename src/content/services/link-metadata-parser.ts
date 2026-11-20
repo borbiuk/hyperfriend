@@ -108,6 +108,9 @@ const OG_AUTHOR_SELECTOR = 'meta[property="og:author:username"]';
 /** Author link of the classic Pull Request header */
 const CLASSIC_AUTHOR_SELECTOR = '.gh-header-meta a.author';
 
+/** Author link above the description of an Issue (GitHub does not always send the author meta tag) */
+const ISSUE_AUTHOR_SELECTOR = 'a[data-testid="issue-body-header-author"]';
+
 /**
  * Collapses whitespace (including non-breaking spaces) and trims.
  * Same as `normalizeText` in link-target-parser.ts, which imports this file (no import cycle).
@@ -530,6 +533,9 @@ export function readDetailMetadata(
 			(normalizeText(
 				document.querySelector(CLASSIC_AUTHOR_SELECTOR)?.textContent
 			) ||
+				normalizeText(
+					document.querySelector(ISSUE_AUTHOR_SELECTOR)?.textContent
+				) ||
 				undefined),
 		state: getDetailState(),
 		labels: unique(

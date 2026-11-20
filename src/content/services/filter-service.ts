@@ -43,6 +43,9 @@ const PULL_REQUEST_QUERY_REGEX = /(?:^|\s)is:pr(?:\s|$)/i;
 /** sessionStorage key of the last address the sticky chips redirected to (loop guard) */
 const REDIRECT_KEY = 'hyperfriend-filter-redirect';
 
+/** sessionStorage key of the ids of the chips the user turned on in this tab */
+const TURNED_ON_KEY = 'hyperfriend-filter-turned-on';
+
 /** The same redirect is not repeated within this time (GitHub may drop the tokens again) */
 const REDIRECT_WINDOW_MS = 10_000;
 
@@ -143,7 +146,8 @@ export class FilterService {
 	 */
 	private toggle(id: string): void {
 		const filters = this.config.get().filters;
-		const chip = resolveChips(filters).find((item) => item.id === id);
+		const chips = resolveChips(filters);
+		const chip = chips.find((item) => item.id === id);
 		if (!chip) {
 			return;
 		}
@@ -159,10 +163,28 @@ export class FilterService {
 			return;
 		}
 
-		const next = toggleChip(chip, tokens);
+		// The address can not tell `Created by you` + `Mine, waiting for review` from
+		// `Mine, waiting for review` alone, so the chips the user turned on are remembered
+		const turnedOn = readTurnedOn();
+		const next = toggleChip(
+			chip,
+			tokens,
+			chips.filter((item) => turnedOn.includes(item.id))
+		);
 		if (joinQuery(next) === joinQuery(tokens)) {
 			return;
 		}
+
+		writeTurnedOn(
+			chips
+				.filter(
+					(item) =>
+						item.kind !== 'drafts' &&
+						(turnedOn.includes(item.id) || item.id === id) &&
+						isChipActive(item, next)
+				)
+				.map((item) => item.id)
+		);
 
 		const remembered: { drafts: DraftState } = {
 			drafts: getDraftState(next),
@@ -296,6 +318,7 @@ function toBarChip(
 	return {
 		id: chip.id,
 		label: drafts ? DRAFT_LABELS[getDraftState(tokens)] : chip.label,
+		labels: drafts ? Object.values(DRAFT_LABELS) : [chip.label],
 		title: chip.description,
 		icon: chip.icon,
 		colour: chip.colour,
@@ -344,6 +367,34 @@ function readTokens(readBox: boolean): string[] | null {
 	return value && PULL_REQUEST_QUERY_REGEX.test(value)
 		? tokenizeQuery(value)
 		: null;
+}
+
+/**
+ * Reads the ids of the chips the user turned on in this tab.
+ */
+function readTurnedOn(): string[] {
+	try {
+		const parsed: unknown = JSON.parse(
+			window.sessionStorage.getItem(TURNED_ON_KEY) ?? '[]'
+		);
+		if (!Array.isArray(parsed)) {
+			return [];
+		}
+
+		return parsed.filter(
+			(item): item is string => typeof item === 'string'
+		);
+	} catch {
+		return [];
+	}
+}
+
+function writeTurnedOn(ids: readonly string[]): void {
+	try {
+		window.sessionStorage.setItem(TURNED_ON_KEY, JSON.stringify(ids));
+	} catch {
+		// Without sessionStorage a chip that turns off removes all its tokens
+	}
 }
 
 /**

@@ -266,6 +266,79 @@ test.describe('toggleChip', () => {
 	});
 });
 
+test.describe('toggleChip with chips that stay on', () => {
+	/**
+	 * Clicks a chip with other chips that should stay on and returns the new query text.
+	 *
+	 * @param id - Chip to click.
+	 * @param query - Query before the click.
+	 * @param keep - Chips that should stay on.
+	 */
+	function clickKeeping(
+		id: FilterChipId,
+		query: string,
+		keep: FilterChipId[]
+	): string {
+		return joinQuery(
+			toggleChip(chip(id), tokenizeQuery(query), keep.map(chip))
+		);
+	}
+
+	test('should keep the token of another active chip when a chip turns off', () => {
+		expect(
+			clickKeeping(
+				FilterChipId.MyWaiting,
+				'is:pr author:@me review:required',
+				[FilterChipId.CreatedByYou, FilterChipId.MyWaiting]
+			)
+		).toBe('is:pr author:@me');
+	});
+
+	test('should keep author:@me and status:success when Ready to merge turns off', () => {
+		expect(
+			clickKeeping(
+				FilterChipId.ReadyToMerge,
+				'is:pr author:@me review:approved status:success',
+				[FilterChipId.CreatedByYou, FilterChipId.CiPassing]
+			)
+		).toBe('is:pr author:@me status:success');
+	});
+
+	test('should turn off a chip that has every token of the clicked chip', () => {
+		expect(
+			clickKeeping(
+				FilterChipId.CreatedByYou,
+				'is:pr author:@me review:required',
+				[FilterChipId.MyWaiting]
+			)
+		).toBe('is:pr review:required');
+	});
+
+	test('should ignore a chip to keep that is not active', () => {
+		expect(
+			clickKeeping(
+				FilterChipId.MyWaiting,
+				'is:pr author:@me review:required',
+				[FilterChipId.ReadyToMerge]
+			)
+		).toBe('is:pr');
+	});
+
+	test('should remove every token when the chips to keep need all of them', () => {
+		expect(
+			clickKeeping(
+				FilterChipId.ReadyToMerge,
+				'is:pr author:@me review:approved status:success',
+				[
+					FilterChipId.CreatedByYou,
+					FilterChipId.Approved,
+					FilterChipId.CiPassing,
+				]
+			)
+		).toBe('is:pr');
+	});
+});
+
 test.describe('grouped queries', () => {
 	test('should only add the tokens of a chip when the query has a group', () => {
 		expect(

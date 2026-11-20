@@ -191,6 +191,72 @@ test('should go from all drafts to no drafts, only drafts and back with the Draf
 	await expect(chip(page, 'Drafts: all')).not.toHaveAttribute('aria-pressed');
 });
 
+test('should keep the width of the Drafts chip in all its states', async ({
+	page,
+}) => {
+	await page.goto(LIST_URL);
+	const drafts = filterBar(page).getByRole('button', {
+		name: /^Drafts: (all|hidden|only)$/,
+	});
+	const widths: number[] = [];
+
+	for (const label of ['Drafts: all', 'Drafts: hidden', 'Drafts: only']) {
+		await expect(drafts).toHaveText(label);
+		const box = await drafts.boundingBox();
+		widths.push(box?.width ?? 0);
+		await drafts.click();
+	}
+
+	// The chips after it do not move, or wrap to the next line, when its text changes
+	expect(widths[0]).toBeGreaterThan(0);
+	expect(widths).toEqual([widths[0], widths[0], widths[0]]);
+});
+
+test('should keep Created by you on when Mine, waiting for review is turned off', async ({
+	page,
+}) => {
+	await page.goto(LIST_URL);
+
+	await chip(page, 'Created by you').click();
+	await expect(page).toHaveURL(
+		listUrl('is%3Apr+state%3Aopen+author%3A%40me')
+	);
+	await chip(page, 'Mine, waiting for review').click();
+	await expect(page).toHaveURL(
+		listUrl('is%3Apr+state%3Aopen+author%3A%40me+review%3Arequired')
+	);
+
+	await chip(page, 'Mine, waiting for review').click();
+
+	await expect(page).toHaveURL(
+		listUrl('is%3Apr+state%3Aopen+author%3A%40me')
+	);
+	await expect(chip(page, 'Created by you')).toHaveAttribute(
+		'aria-pressed',
+		'true'
+	);
+	await expect(chip(page, 'Mine, waiting for review')).toHaveAttribute(
+		'aria-pressed',
+		'false'
+	);
+});
+
+test('should remove every token of Mine, waiting for review when only it was turned on', async ({
+	page,
+}) => {
+	await page.goto(LIST_URL);
+
+	await chip(page, 'Mine, waiting for review').click();
+	await expect(page).toHaveURL(
+		listUrl('is%3Apr+state%3Aopen+author%3A%40me+review%3Arequired')
+	);
+
+	await chip(page, 'Mine, waiting for review').click();
+
+	await expect(page).toHaveURL(listUrl('is%3Apr+state%3Aopen'));
+	await expect(filterBar(page).locator('[data-active]')).toHaveCount(0);
+});
+
 test('should mark the chips that match the search text of the address', async ({
 	page,
 }) => {

@@ -38,6 +38,13 @@ test.beforeAll(() => {
 	expect(snapshotItems(PAGES.issue)).toEqual([
 		{ number: NUMBER, title: TITLE, author: AUTHOR, state: STATE },
 	]);
+	// GitHub does not always send og:author on Issue pages; this snapshot has none, so the
+	// {{author}} placeholder test covers the link above the description
+	const html = snapshotHtml(PAGES.issue);
+	expect(html, 'precondition: no og:author in the snapshot').not.toContain(
+		'og:author:username'
+	);
+	expect(html).toContain('data-testid="issue-body-header-author"');
 });
 
 /**
