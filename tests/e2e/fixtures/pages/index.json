@@ -9,12 +9,68 @@
 		"/vercel/next.js/discussions": "discussion-list.html",
 		"/vercel/next.js/discussions/10640": "discussion.html",
 		"/react/react/actions": "run-list.html",
-		"/react/react/actions/runs/44799115397": "run.html",
+		"/react/react/actions/runs/44897000434": "run.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": "search-pulls.html",
 		"/search?q=repo%3Areact%2Freact+useActionState&type=issues": "search-issues.html"
 	},
 	"items": {
 		"/react/react/pulls": [
+			{
+				"number": 38339,
+				"title": "[Fizz] Fix RangeError when serializing large Blobs without Buffer",
+				"author": "sleitor",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38338,
+				"title": "Preserve leading CRLF line break in server-rendered textarea and pre elements",
+				"author": "vanibhardwaj05",
+				"state": "open"
+			},
+			{
+				"number": 38337,
+				"title": "Warn in DEV when passing empty string to boolean credentialless attribute",
+				"author": "vanibhardwaj05",
+				"state": "open"
+			},
+			{
+				"number": 38336,
+				"title": "fix(react-dom): warn when empty string is passed to boolean credentialless attribute",
+				"author": "pawannyadav05",
+				"state": "open"
+			},
+			{
+				"number": 38334,
+				"title": "Bump next from 15.5.9 to 15.5.29 in /compiler/apps/playground",
+				"author": "dependabot[bot]",
+				"state": "open",
+				"labels": [
+					"CLA Signed",
+					"dependencies",
+					"javascript"
+				]
+			},
+			{
+				"number": 38333,
+				"title": "[Fiber] Reuse the host sibling across a run of placements",
+				"author": "aliamanatali",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
+			{
+				"number": 38332,
+				"title": "Warn and treat credentialless=\"\" as true",
+				"author": "Allen5288",
+				"state": "open",
+				"labels": [
+					"CLA Signed"
+				]
+			},
 			{
 				"number": 38328,
 				"title": "[DOM] Handle submitters that lose their form owner",
@@ -22,16 +78,6 @@
 				"state": "open",
 				"labels": [
 					"CLA Signed"
-				]
-			},
-			{
-				"number": 38326,
-				"title": "[Flight] Write the faulty chunk in its own flush in the interrupted-write test",
-				"author": "acdlite",
-				"state": "open",
-				"labels": [
-					"CLA Signed",
-					"React Core Team"
 				]
 			},
 			{
@@ -127,16 +173,6 @@
 				]
 			},
 			{
-				"number": 38309,
-				"title": "[Flight] Return unchanged models from the resolve walk instead of cloning",
-				"author": "acdlite",
-				"state": "open",
-				"labels": [
-					"CLA Signed",
-					"React Core Team"
-				]
-			},
-			{
 				"number": 38308,
 				"title": "[Fiber] Skip unchanged input updates and redundant DOM writes",
 				"author": "ug-one",
@@ -198,56 +234,6 @@
 				"labels": [
 					"CLA Signed"
 				]
-			},
-			{
-				"number": 38299,
-				"title": "[ci] Run the Flight fuzz tests with random seeds on a schedule",
-				"author": "gaearon",
-				"state": "open",
-				"labels": [
-					"CLA Signed",
-					"React Core Team"
-				]
-			},
-			{
-				"number": 38298,
-				"title": "[Flight] Escape colons in reference paths",
-				"author": "gaearon",
-				"state": "open",
-				"labels": [
-					"CLA Signed",
-					"React Core Team"
-				]
-			},
-			{
-				"number": 38297,
-				"title": "[Flight] Keep properties whose value is undefined",
-				"author": "gaearon",
-				"state": "open",
-				"labels": [
-					"CLA Signed",
-					"React Core Team"
-				]
-			},
-			{
-				"number": 38296,
-				"title": "[Flight] Fix cyclic values, streams and FormData in decodeReply",
-				"author": "gaearon",
-				"state": "open",
-				"labels": [
-					"CLA Signed",
-					"React Core Team"
-				]
-			},
-			{
-				"number": 38295,
-				"title": "[Flight] Fix shared and consumed values in reply stream items",
-				"author": "gaearon",
-				"state": "open",
-				"labels": [
-					"CLA Signed",
-					"React Core Team"
-				]
 			}
 		],
 		"/react/react/pull/9713": [
@@ -284,6 +270,33 @@
 			}
 		],
 		"/react/react/issues": [
+			{
+				"number": 38335,
+				"title": "Bug: When I try to use [memo] wrap a form, the UI crash or dom mount/unmount",
+				"author": "liuyiqi123",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
+			},
+			{
+				"number": 38331,
+				"title": "RangeError when serializing a large Blob with readAsDataURL on Edge runtimes (no Buffer)",
+				"author": "swastiktawate",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
+			},
+			{
+				"number": 38330,
+				"title": "Bug: credentialless=\"\" is dropped",
+				"author": "mccabe-ant",
+				"state": "open",
+				"labels": [
+					"Status: Unconfirmed"
+				]
+			},
 			{
 				"number": 38322,
 				"title": "[Fizz] renderToPipeableStream throws error 390 (\"Aborted, errored or already flushed boundaries should not be flushed again\") when a child errors while its boundary's completed segment waits on backpressure",
@@ -446,24 +459,6 @@
 				"title": "Test translation tool",
 				"author": "jbarnduff",
 				"state": "open"
-			},
-			{
-				"number": 38170,
-				"title": "[DevTools Bug]: Selecting a hoisted <title> or <meta> in the Elements panel does not select the component that rendered it",
-				"author": "tjdsksro90",
-				"state": "open"
-			},
-			{
-				"number": 38164,
-				"title": "Bug: Hoistables flushed after the shell stay in <body> after hydration",
-				"author": "gadcam",
-				"state": "open"
-			},
-			{
-				"number": 38163,
-				"title": "Bug: Controlled radio with uppercase type (e.g. type=\"RADIO\") is not restored after click",
-				"author": "lunaxislu",
-				"state": "open"
 			}
 		],
 		"/react/react/issues/10": [
@@ -488,10 +483,34 @@
 				"category": "Feedback"
 			},
 			{
+				"number": 102187,
+				"title": "Streaming a local agent through one Next.js Route Handler",
+				"author": "jiangxingfan1-coder",
+				"category": "Show and tell"
+			},
+			{
 				"number": 102123,
 				"title": "What can change the App Router favicon hash across production builds?",
 				"author": "Chef-Code",
 				"category": "Help"
+			},
+			{
+				"number": 100360,
+				"title": "[Bug] next-intl routing exports and locale switching failing with Next.js 16.4.2 & Turbopack",
+				"author": "demonesschurch",
+				"category": "Help"
+			},
+			{
+				"number": 14772,
+				"title": "<img> tag onError function doesn't work",
+				"author": "aliemami",
+				"category": "Help"
+			},
+			{
+				"number": 71099,
+				"title": "How to fix or disable this error in production mode \"An error occurred in the Server Components render...\"",
+				"author": "dhayford92",
+				"category": "App Router"
 			},
 			{
 				"number": 10640,
@@ -612,30 +631,6 @@
 				"title": "Guidance on bundled Undici and Zod versions in Next.js 16.4.3",
 				"author": "abensemann",
 				"category": "Help"
-			},
-			{
-				"number": 101187,
-				"title": "Built an All-in-One AI Filmmaking & Short Drama Workspace on Infinite Canvas (3D Pre-vis, 130+ Skills, & Free BYOK)",
-				"author": "echox886",
-				"category": "Show and tell"
-			},
-			{
-				"number": 99865,
-				"title": "Daimon: a bilingual BaZi reflection app with Next.js App Router",
-				"author": "wyonliu",
-				"category": "Show and tell"
-			},
-			{
-				"number": 71709,
-				"title": "PnP support for Turbopack",
-				"author": "martinjlowm",
-				"category": "Ideas"
-			},
-			{
-				"number": 99638,
-				"title": "11 open source AI apps on Next.js 16, and the patterns that repeated",
-				"author": "Sahilll15",
-				"category": "Show and tell"
 			}
 		],
 		"/vercel/next.js/discussions/10640": [
@@ -648,207 +643,204 @@
 		],
 		"/react/react/actions": [
 			{
-				"number": 22962,
-				"runId": 44799297261,
+				"number": 22979,
+				"runId": 44897627334,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
-				"status": "queued",
+				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 4577,
-				"runId": 44799140897,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "queued"
-			},
-			{
-				"number": 4576,
-				"runId": 44799137972,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "queued"
-			},
-			{
-				"number": 4575,
-				"runId": 44799133618,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "cancelled"
-			},
-			{
-				"number": 4574,
-				"runId": 44799131043,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "cancelled"
-			},
-			{
-				"number": 4573,
-				"runId": 44799129596,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 4572,
-				"runId": 44799128988,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 4571,
-				"runId": 44799127865,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 21839,
-				"runId": 44799118748,
-				"title": "[Flight] Build a tee's model rows by value instead of parsing them",
-				"workflow": "(Shared) Lint",
-				"status": "currently running",
-				"branch": "flight-value-path"
-			},
-			{
-				"number": 12015,
-				"runId": 44799118657,
-				"title": "[Flight] Build a tee's model rows by value instead of parsing them",
-				"workflow": "(Runtime) ESLint Plugin E2E",
-				"status": "currently running",
-				"branch": "flight-value-path"
-			},
-			{
-				"number": 15647,
-				"runId": 44799118615,
-				"title": "[Flight] Build a tee's model rows by value instead of parsing them",
-				"workflow": "(Runtime) Build and Test",
-				"status": "currently running",
-				"branch": "flight-value-path"
-			},
-			{
-				"number": 12014,
-				"runId": 44799115745,
-				"title": "[Flight] Run @gaearon's Flight fuzz tests on the tee stack",
-				"workflow": "(Runtime) ESLint Plugin E2E",
-				"status": "currently running",
-				"branch": "flight-fuzz-harness"
-			},
-			{
-				"number": 15646,
-				"runId": 44799115715,
-				"title": "[Flight] Run @gaearon's Flight fuzz tests on the tee stack",
-				"workflow": "(Runtime) Build and Test",
-				"status": "queued",
-				"branch": "flight-fuzz-harness"
-			},
-			{
-				"number": 12013,
-				"runId": 44799115613,
-				"title": "[Flight] Let a Flight Client in the same process read a render through a tee",
-				"workflow": "(Runtime) ESLint Plugin E2E",
-				"status": "currently running",
-				"branch": "flight-tee-skeleton"
-			},
-			{
-				"number": 21838,
-				"runId": 44799115550,
-				"title": "[Flight] Run @gaearon's Flight fuzz tests on the tee stack",
-				"workflow": "(Shared) Lint",
-				"status": "currently running",
-				"branch": "flight-fuzz-harness"
-			},
-			{
-				"number": 21837,
-				"runId": 44799115397,
-				"title": "[Flight] Let a Flight Client in the same process read a render through a tee",
-				"workflow": "(Shared) Lint",
-				"status": "completed successfully",
-				"branch": "flight-tee-skeleton"
-			},
-			{
-				"number": 15645,
-				"runId": 44799115358,
-				"title": "[Flight] Let a Flight Client in the same process read a render through a tee",
-				"workflow": "(Runtime) Build and Test",
-				"status": "queued",
-				"branch": "flight-tee-skeleton"
-			},
-			{
-				"number": 15644,
-				"runId": 44799115247,
-				"title": "[Flight] Run @gaearon's Flight fuzz tests on the tee stack",
-				"workflow": "(Runtime) Build and Test",
-				"status": "cancelled",
-				"branch": "flight-fuzz-harness"
-			},
-			{
-				"number": 12012,
-				"runId": 44799114852,
-				"title": "[Flight] Build a tee's model rows by value instead of parsing them",
-				"workflow": "(Runtime) ESLint Plugin E2E",
-				"status": "cancelled",
-				"branch": "flight-value-path"
-			},
-			{
-				"number": 15643,
-				"runId": 44799114726,
-				"title": "[Flight] Build a tee's model rows by value instead of parsing them",
-				"workflow": "(Runtime) Build and Test",
-				"status": "cancelled",
-				"branch": "flight-value-path"
-			},
-			{
-				"number": 21836,
-				"runId": 44799114717,
-				"title": "[Flight] Build a tee's model rows by value instead of parsing them",
-				"workflow": "(Shared) Lint",
-				"status": "cancelled",
-				"branch": "flight-value-path"
-			},
-			{
-				"number": 21835,
-				"runId": 44799114571,
-				"title": "[Flight] Run @gaearon's Flight fuzz tests on the tee stack",
-				"workflow": "(Shared) Lint",
-				"status": "cancelled",
-				"branch": "flight-fuzz-harness"
-			},
-			{
-				"number": 12011,
-				"runId": 44799114487,
-				"title": "[Flight] Run @gaearon's Flight fuzz tests on the tee stack",
-				"workflow": "(Runtime) ESLint Plugin E2E",
-				"status": "cancelled",
-				"branch": "flight-fuzz-harness"
-			},
-			{
-				"number": 20348,
-				"runId": 44799022111,
+				"number": 20364,
+				"runId": 44897481019,
 				"title": "(Shared) Manage stale issues and PRs",
 				"workflow": "(Shared) Manage stale issues and PRs",
 				"status": "completed successfully",
 				"branch": "main"
 			},
 			{
-				"number": 22961,
-				"runId": 44790407856,
+				"number": 4703,
+				"runId": 44897275017,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 4702,
+				"runId": 44897007536,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 15713,
+				"runId": 44897000434,
+				"title": "[Fizz] Fix RangeError when serializing large Blobs without Buffer",
+				"workflow": "(Runtime) Build and Test",
+				"status": "completed successfully",
+				"branch": "sleitor:fix-38331"
+			},
+			{
+				"number": 12081,
+				"runId": 44897000426,
+				"title": "[Fizz] Fix RangeError when serializing large Blobs without Buffer",
+				"workflow": "(Runtime) ESLint Plugin E2E",
+				"status": "completed successfully",
+				"branch": "sleitor:fix-38331"
+			},
+			{
+				"number": 3349,
+				"runId": 44897000415,
+				"title": "[Fizz] Fix RangeError when serializing large Blobs without Buffer",
+				"workflow": "(Runtime) Discord Notify",
+				"status": "completed successfully"
+			},
+			{
+				"number": 5611,
+				"runId": 44897000385,
+				"title": "[Fizz] Fix RangeError when serializing large Blobs without Buffer",
+				"workflow": "(Shared) Label Core Team PRs",
+				"status": "completed successfully"
+			},
+			{
+				"number": 21910,
+				"runId": 44897000359,
+				"title": "[Fizz] Fix RangeError when serializing large Blobs without Buffer",
+				"workflow": "(Shared) Lint",
+				"status": "completed successfully",
+				"branch": "sleitor:fix-38331"
+			},
+			{
+				"number": 22978,
+				"runId": 44892893537,
 				"title": "(Runtime) Fuzz tests",
 				"workflow": "(Runtime) Fuzz tests",
 				"status": "completed successfully",
 				"branch": "main"
-			}
-		],
-		"/react/react/actions/runs/44799115397": [
+			},
 			{
-				"runId": 44799115397,
-				"number": 21837,
-				"title": "[Flight] Let a Flight Client in the same process read a render through a tee",
+				"number": 20363,
+				"runId": 44892745571,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 4701,
+				"runId": 44889593421,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 4700,
+				"runId": 44889495041,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 15712,
+				"runId": 44889488063,
+				"title": "Preserve leading CRLF line break in server-rendered textarea and pre elements",
+				"workflow": "(Runtime) Build and Test",
+				"status": "requires action with the application",
+				"branch": "vanibhardwaj05:fix/textarea-crlf-leading-newline"
+			},
+			{
+				"number": 12080,
+				"runId": 44889488047,
+				"title": "Preserve leading CRLF line break in server-rendered textarea and pre elements",
+				"workflow": "(Runtime) ESLint Plugin E2E",
+				"status": "requires action with the application",
+				"branch": "vanibhardwaj05:fix/textarea-crlf-leading-newline"
+			},
+			{
+				"number": 21909,
+				"runId": 44889488026,
+				"title": "Preserve leading CRLF line break in server-rendered textarea and pre elements",
+				"workflow": "(Shared) Lint",
+				"status": "requires action with the application",
+				"branch": "vanibhardwaj05:fix/textarea-crlf-leading-newline"
+			},
+			{
+				"number": 5610,
+				"runId": 44889487986,
+				"title": "Preserve leading CRLF line break in server-rendered textarea and pre elements",
+				"workflow": "(Shared) Label Core Team PRs",
+				"status": "completed successfully"
+			},
+			{
+				"number": 3348,
+				"runId": 44889487983,
+				"title": "Preserve leading CRLF line break in server-rendered textarea and pre elements",
+				"workflow": "(Runtime) Discord Notify",
+				"status": "completed successfully"
+			},
+			{
+				"number": 4699,
+				"runId": 44889351149,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 15711,
+				"runId": 44889343058,
+				"title": "[Flight] Mark anonymous async frames as async in parsed stack traces",
+				"workflow": "(Runtime) Build and Test",
+				"status": "completed successfully",
+				"branch": "zhoubiao188:scan-2026-10-15b"
+			},
+			{
+				"number": 12079,
+				"runId": 44889343002,
+				"title": "[Flight] Mark anonymous async frames as async in parsed stack traces",
+				"workflow": "(Runtime) ESLint Plugin E2E",
+				"status": "completed successfully",
+				"branch": "zhoubiao188:scan-2026-10-15b"
+			},
+			{
+				"number": 21908,
+				"runId": 44889342998,
+				"title": "[Flight] Mark anonymous async frames as async in parsed stack traces",
 				"workflow": "(Shared) Lint",
 				"status": "completed successfully",
-				"branch": "flight-tee-skeleton"
+				"branch": "zhoubiao188:scan-2026-10-15b"
+			},
+			{
+				"number": 4698,
+				"runId": 44888682846,
+				"title": "(Runtime) Sizebot Comment",
+				"workflow": "(Runtime) Sizebot Comment",
+				"status": "completed successfully"
+			},
+			{
+				"number": 12078,
+				"runId": 44888671102,
+				"title": "Warn in DEV when passing empty string to boolean credentialless attribute",
+				"workflow": "(Runtime) ESLint Plugin E2E",
+				"status": "requires action with the application",
+				"branch": "vanibhardwaj05:fix/warn-credentialless-empty-string"
+			},
+			{
+				"number": 15710,
+				"runId": 44888671020,
+				"title": "Warn in DEV when passing empty string to boolean credentialless attribute",
+				"workflow": "(Runtime) Build and Test",
+				"status": "requires action with the application",
+				"branch": "vanibhardwaj05:fix/warn-credentialless-empty-string"
+			}
+		],
+		"/react/react/actions/runs/44897000434": [
+			{
+				"runId": 44897000434,
+				"number": 15713,
+				"title": "[Fizz] Fix RangeError when serializing large Blobs without Buffer",
+				"workflow": "(Runtime) Build and Test",
+				"status": "completed successfully",
+				"branch": "sleitor:fix-38331"
 			}
 		],
 		"/search?q=repo%3Areact%2Freact+useActionState&type=pullrequests": [
@@ -937,5 +929,5 @@
 		]
 	},
 	"runListPage": "/react/react/actions",
-	"runPage": "/react/react/actions/runs/44799115397"
+	"runPage": "/react/react/actions/runs/44897000434"
 }
