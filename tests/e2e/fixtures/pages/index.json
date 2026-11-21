@@ -483,6 +483,12 @@
 				"category": "Feedback"
 			},
 			{
+				"number": 102191,
+				"title": "HazardWatch: real-time natural hazard monitoring with Next.js (open source)",
+				"author": "HIRATRA",
+				"category": "Show and tell"
+			},
+			{
 				"number": 102187,
 				"title": "Streaming a local agent through one Next.js Route Handler",
 				"author": "jiangxingfan1-coder",
@@ -625,12 +631,6 @@
 				"title": "What common performance issues have you faced in Next.js apps?",
 				"author": "LakshanHewagama",
 				"category": "Help"
-			},
-			{
-				"number": 100864,
-				"title": "Guidance on bundled Undici and Zod versions in Next.js 16.4.3",
-				"author": "abensemann",
-				"category": "Help"
 			}
 		],
 		"/vercel/next.js/discussions/10640": [
@@ -642,6 +642,46 @@
 			}
 		],
 		"/react/react/actions": [
+			{
+				"number": 22981,
+				"runId": 44907332277,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 20366,
+				"runId": 44907177198,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 22980,
+				"runId": 44902790267,
+				"title": "(Runtime) Fuzz tests",
+				"workflow": "(Runtime) Fuzz tests",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 20365,
+				"runId": 44902543859,
+				"title": "(Shared) Manage stale issues and PRs",
+				"workflow": "(Shared) Manage stale issues and PRs",
+				"status": "completed successfully",
+				"branch": "main"
+			},
+			{
+				"number": 2412,
+				"runId": 44901740418,
+				"title": "(Shared) Cleanup Stale Branch Caches",
+				"workflow": "(Shared) Cleanup Stale Branch Caches",
+				"status": "completed successfully",
+				"branch": "main"
+			},
 			{
 				"number": 22979,
 				"runId": 44897627334,
@@ -792,45 +832,6 @@
 				"workflow": "(Runtime) Build and Test",
 				"status": "completed successfully",
 				"branch": "zhoubiao188:scan-2026-10-15b"
-			},
-			{
-				"number": 12079,
-				"runId": 44889343002,
-				"title": "[Flight] Mark anonymous async frames as async in parsed stack traces",
-				"workflow": "(Runtime) ESLint Plugin E2E",
-				"status": "completed successfully",
-				"branch": "zhoubiao188:scan-2026-10-15b"
-			},
-			{
-				"number": 21908,
-				"runId": 44889342998,
-				"title": "[Flight] Mark anonymous async frames as async in parsed stack traces",
-				"workflow": "(Shared) Lint",
-				"status": "completed successfully",
-				"branch": "zhoubiao188:scan-2026-10-15b"
-			},
-			{
-				"number": 4698,
-				"runId": 44888682846,
-				"title": "(Runtime) Sizebot Comment",
-				"workflow": "(Runtime) Sizebot Comment",
-				"status": "completed successfully"
-			},
-			{
-				"number": 12078,
-				"runId": 44888671102,
-				"title": "Warn in DEV when passing empty string to boolean credentialless attribute",
-				"workflow": "(Runtime) ESLint Plugin E2E",
-				"status": "requires action with the application",
-				"branch": "vanibhardwaj05:fix/warn-credentialless-empty-string"
-			},
-			{
-				"number": 15710,
-				"runId": 44888671020,
-				"title": "Warn in DEV when passing empty string to boolean credentialless attribute",
-				"workflow": "(Runtime) Build and Test",
-				"status": "requires action with the application",
-				"branch": "vanibhardwaj05:fix/warn-credentialless-empty-string"
 			}
 		],
 		"/react/react/actions/runs/44897000434": [
