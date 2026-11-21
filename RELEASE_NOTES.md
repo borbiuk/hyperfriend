@@ -9,6 +9,15 @@ Format of a release (checked by `npm run lint:docs`, read by scripts/tag-release
 - End with a line about the settings and the settings file when they are unchanged.
 -->
 
+## 3.0.1
+
+Fixes for the Pull Request page and the quick filters.
+
+- **Pull Request page**: the copy button and the placeholders (state, labels, branches, assignees) work again on Pull Request pages. GitHub changed the markup of the Pull Request title, and Hyperfriend could not find it.
+- **Issue page**: the `{{author}}` placeholder also works when GitHub does not send the author in the page head. It is then read from the author link above the description.
+- **Filter chips**: turning off **Mine, waiting for review** keeps **Created by you** when you turned that one on yourself (the same for the other chips that share search words). The **Drafts** chip keeps one width in all its states, so the chips after it no longer move.
+- No new permissions. The settings and the settings file are unchanged.
+
 ## 3.0.0
 
 Quick filters on Pull Request lists.
