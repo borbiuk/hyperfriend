@@ -154,6 +154,15 @@ test("should keep the popup below Chrome's limit while the chip editor shows its
 	expect(await mainHeight(options)).toBeLessThanOrEqual(600);
 });
 
+/**
+ * The one warning that is ignored: Chromium 159 and later report a deprecated value in the CSS of
+ * Primer React (AnchoredOverlay, `position-visibility: anchors-visible`). The popup does not
+ * control that CSS and the value still works. Every other warning still fails the test. Remove
+ * this when a Primer React release no longer uses the value.
+ */
+const PRIMER_CSS_DEPRECATION =
+	'The `position-visibility: anchors-visible` value has been deprecated. Please use the singular `anchor-visible` instead. See https://chromestatus.com/feature/5136123851571200 for more information.';
+
 test('should log no warnings while loading and switching tabs', async ({
 	context,
 	extensionId,
@@ -164,6 +173,7 @@ test('should log no warnings while loading and switching tabs', async ({
 	context.on('console', (message) => {
 		if (
 			message.type() === 'warning' &&
+			message.text() !== PRIMER_CSS_DEPRECATION &&
 			message
 				.page()
 				?.url()
